@@ -25,6 +25,11 @@ const menuItems = [
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
+  const authRoutes = ["/login", "/signup"];
+  if (authRoutes.includes(pathname)) {
+    return <>{children}</>;
+  }
+
   return (
     <div className="flex min-h-screen bg-[#f0f4f8] font-sans">
       {/* Sidebar */}
