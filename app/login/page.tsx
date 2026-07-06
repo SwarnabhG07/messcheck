@@ -4,6 +4,10 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Utensils, Eye, EyeOff, Mail, Lock } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -79,49 +83,49 @@ export default function LoginPage() {
 
           {/* Email Field */}
           <div className="mb-5">
-            <label
+            <Label
               htmlFor="email"
               className="block text-gray-600 text-xs font-bold tracking-widest uppercase mb-2"
             >
               EMAIL
-            </label>
+            </Label>
             <div className="relative">
-              <Mail className="w-[18px] h-[18px] text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
-              <input
+              <Mail className="w-[18px] h-[18px] text-gray-400 absolute left-4 top-1/2 -translate-y-1/2 z-10" />
+              <Input
                 id="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@college.edu"
                 required
-                className="w-full pl-11 pr-4 py-3 rounded-xl bg-[#f0f4f8] border border-gray-200 focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-gray-300 text-sm text-gray-900 placeholder:text-gray-400 transition-all"
+                className="w-full pl-11 pr-4 h-[48px] rounded-xl bg-[#f0f4f8] border-gray-200 focus-visible:ring-black/10 focus-visible:border-gray-300 text-sm text-gray-900 placeholder:text-gray-400 transition-all"
               />
             </div>
           </div>
 
           {/* Password Field */}
           <div className="mb-6">
-            <label
+            <Label
               htmlFor="password"
               className="block text-gray-600 text-xs font-bold tracking-widest uppercase mb-2"
             >
               PASSWORD
-            </label>
+            </Label>
             <div className="relative">
-              <Lock className="w-[18px] h-[18px] text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
-              <input
+              <Lock className="w-[18px] h-[18px] text-gray-400 absolute left-4 top-1/2 -translate-y-1/2 z-10" />
+              <Input
                 id="password"
                 type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
                 required
-                className="w-full pl-11 pr-12 py-3 rounded-xl bg-[#f0f4f8] border border-gray-200 focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-gray-300 text-sm text-gray-900 placeholder:text-gray-400 transition-all"
+                className="w-full pl-11 pr-12 h-[48px] rounded-xl bg-[#f0f4f8] border-gray-200 focus-visible:ring-black/10 focus-visible:border-gray-300 text-sm text-gray-900 placeholder:text-gray-400 transition-all"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors z-10"
               >
                 {showPassword ? (
                   <EyeOff className="w-[18px] h-[18px]" />
@@ -134,13 +138,15 @@ export default function LoginPage() {
 
           {/* Remember & Forgot */}
           <div className="flex items-center justify-between mb-6">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                className="w-4 h-4 rounded border-gray-300 accent-black"
-              />
-              <span className="text-gray-500 text-[13px]">Remember me</span>
-            </label>
+            <div className="flex items-center space-x-2">
+              <Checkbox id="remember" className="rounded border-gray-300 data-[state=checked]:bg-black data-[state=checked]:border-black" />
+              <Label
+                htmlFor="remember"
+                className="text-gray-500 text-[13px] font-normal cursor-pointer leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                Remember me
+              </Label>
+            </div>
             <a
               href="#"
               className="text-[13px] text-indigo-500 hover:text-indigo-600 font-medium transition-colors"
@@ -150,13 +156,13 @@ export default function LoginPage() {
           </div>
 
           {/* Sign In Button */}
-          <button
+          <Button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-black text-white font-semibold text-sm rounded-xl hover:bg-gray-900 active:scale-[0.98] transition-all shadow-lg shadow-black/10 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full h-[48px] bg-black text-white font-semibold text-sm rounded-xl hover:bg-gray-900 transition-all shadow-lg shadow-black/10"
           >
             {loading ? "Signing in..." : "Sign In"}
-          </button>
+          </Button>
 
           {/* Divider */}
           <div className="flex items-center gap-4 my-6">
@@ -168,10 +174,11 @@ export default function LoginPage() {
           </div>
 
           {/* Google Sign In */}
-          <button
+          <Button
             type="button"
+            variant="outline"
             onClick={handleGoogleSignIn}
-            className="w-full py-3 bg-white border border-gray-200 text-gray-700 font-medium text-sm rounded-xl hover:bg-gray-50 active:scale-[0.98] transition-all flex items-center justify-center gap-3"
+            className="w-full h-[48px] bg-white border-gray-200 text-gray-700 font-medium text-sm rounded-xl hover:bg-gray-50 transition-all flex items-center justify-center gap-3"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path
@@ -192,7 +199,7 @@ export default function LoginPage() {
               />
             </svg>
             Continue with Google
-          </button>
+          </Button>
         </form>
 
         {/* Footer */}

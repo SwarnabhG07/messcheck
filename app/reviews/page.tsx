@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Star, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 interface Review {
   _id?: string;
@@ -60,7 +61,7 @@ export default function ReviewsPage() {
             Write Review
           </Button>
         </div>
-        <div className="bg-white rounded-[20px] shadow-[0_2px_15px_-3px_rgba(0,0,0,0.04)] border border-gray-100 flex flex-col">
+        <Card className="p-0 rounded-[20px] shadow-[0_2px_15px_-3px_rgba(0,0,0,0.04)] border-gray-100 flex flex-col overflow-hidden">
           {reviews.length === 0 ? (
             <div className="p-6 text-gray-500 text-[14px]">
               No reviews found yet. Add some reviews to your database!
@@ -93,7 +94,7 @@ export default function ReviewsPage() {
               </div>
             ))
           )}
-        </div>
+        </Card>
       </section>
     </div>
   );

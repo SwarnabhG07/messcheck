@@ -1,9 +1,18 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Home,
   Utensils,
@@ -27,19 +36,6 @@ const menuItems = [
 
 export default function ReviewPage({ children, user }: { children: React.ReactNode, user?: any }) {
   const pathname = usePathname();
-  const [profileOpen, setProfileOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setProfileOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
 
   const authRoutes = ["/login", "/signup"];
   if (authRoutes.includes(pathname)) {
@@ -88,57 +84,51 @@ export default function ReviewPage({ children, user }: { children: React.ReactNo
           </div>
           <div className="flex items-center gap-6 mt-1">
             <div className="relative">
-              <Search className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
-              <input
+              <Search className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2 z-10" />
+              <Input
                 type="text"
                 placeholder="Search"
-                className="pl-11 pr-4 py-2.5 rounded-full bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm w-64 shadow-sm"
+                className="pl-11 pr-4 h-10 rounded-full bg-white border-gray-200 focus-visible:ring-blue-500 text-sm w-64 shadow-sm"
               />
             </div>
-            <button className="relative p-2 text-gray-500 hover:text-gray-700 bg-white rounded-full shadow-sm border border-gray-100">
-              <Bell className="w-5 h-5" />
-              <span className="absolute top-2 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
-            </button>
+            <Button variant="outline" size="icon" className="relative w-10 h-10 rounded-full border-gray-100 text-gray-500 hover:text-gray-700 bg-white shadow-sm shrink-0">
+              <Bell className="w-[18px] h-[18px]" />
+              <span className="absolute top-[8px] right-[10px] w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+            </Button>
 
             {/* Profile with Dropdown */}
-            <div className="relative" ref={dropdownRef}>
-              <button
-                onClick={() => setProfileOpen(!profileOpen)}
-                className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity"
-              >
-                <div className="w-10 h-10 rounded-full bg-indigo-500 text-white flex items-center justify-center font-semibold shadow-sm">
-                  {user?.name?.[0]?.toUpperCase() || "U"}
-                </div>
-                <span className="text-gray-700 font-medium text-sm">
-                  {user?.name || "User"}
-                </span>
-              </button>
-
-              {/* Dropdown Menu */}
-              {profileOpen && (
-                <div className="absolute right-0 top-14 w-48 bg-white rounded-xl shadow-[0_8px_30px_-6px_rgba(0,0,0,0.12)] border border-gray-100 py-1.5 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
-                  <Link
-                    href="/settings"
-                    onClick={() => setProfileOpen(false)}
-                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
-                  >
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity outline-none">
+                  <Avatar className="w-10 h-10 shadow-sm border border-gray-100">
+                    <AvatarFallback className="bg-indigo-500 text-white font-semibold">
+                      {user?.name?.[0]?.toUpperCase() || "U"}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="text-gray-700 font-medium text-sm">
+                    {user?.name || "User"}
+                  </span>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48 rounded-xl p-1.5 shadow-[0_8px_30px_-6px_rgba(0,0,0,0.12)] border-gray-100">
+                <DropdownMenuItem asChild className="rounded-lg cursor-pointer">
+                  <Link href="/settings" className="flex items-center gap-3 px-3 py-2 text-sm text-gray-600">
                     <Settings className="w-4 h-4" />
                     Settings
                   </Link>
-                  <div className="mx-3 my-1 h-px bg-gray-100" />
-                  <button
-                    onClick={() => {
-                      setProfileOpen(false);
-                      signOut();
-                    }}
-                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors w-full"
-                  >
+                </DropdownMenuItem>
+                <DropdownMenuSeparator className="bg-gray-100 mx-2" />
+                <DropdownMenuItem 
+                  onClick={() => signOut()}
+                  className="rounded-lg cursor-pointer text-red-500 focus:text-red-600 focus:bg-red-50"
+                >
+                  <div className="flex items-center gap-3 px-1 py-1 text-sm w-full">
                     <LogOut className="w-4 h-4" />
                     Sign Out
-                  </button>
-                </div>
-              )}
-            </div>
+                  </div>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </header>
 

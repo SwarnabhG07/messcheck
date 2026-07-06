@@ -10,6 +10,7 @@ import {
   CartesianGrid,
   ResponsiveContainer,
 } from "recharts";
+import { Card, CardContent } from "@/components/ui/card";
 
 const todayMenu = [
   {
@@ -69,11 +70,12 @@ export default function Dashboard() {
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {todayMenu.map((item) => (
-            <div
+            <Card
               key={item.type}
-              className="bg-white rounded-xl p-3 flex gap-4 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] border border-gray-50/50"
+              className="p-0 rounded-xl shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] border-gray-50/50"
             >
-              <div className="w-[84px] h-[84px] rounded-lg overflow-hidden shrink-0 relative">
+              <CardContent className="p-2.5 flex gap-3.5 items-center">
+              <div className="w-[76px] h-[76px] rounded-lg overflow-hidden shrink-0 relative">
                 <Image
                   src={item.image}
                   alt={item.name}
@@ -81,32 +83,33 @@ export default function Dashboard() {
                   className="object-cover"
                 />
               </div>
-              <div className="flex-1 flex flex-col justify-center py-1">
+              <div className="flex-1 flex flex-col justify-center">
                 <div className="flex justify-between items-start mb-0.5">
-                  <h3 className="font-bold text-gray-900 text-base">
+                  <h3 className="font-bold text-gray-900 text-[15px]">
                     {item.type}
                   </h3>
                   <div className="text-right">
-                    <div className="font-bold text-gray-900 text-base flex items-center gap-1 justify-end">
+                    <div className="font-bold text-gray-900 text-[15px] flex items-center gap-1 justify-end leading-none">
                       {item.rating}
-                      <Star className="w-[14px] h-[14px] text-orange-400 fill-orange-400 mb-0.5" />
+                      <Star className="w-[13px] h-[13px] text-orange-400 fill-orange-400" />
                     </div>
-                    <div className="text-gray-400 text-[11px] mt-0.5">
+                    <div className="text-gray-400 text-[10px] mt-0.5 leading-none">
                       {item.votes} votes
                     </div>
                   </div>
                 </div>
-                <p className="text-gray-500 text-[12px] leading-snug line-clamp-2 max-w-[85%] pr-2 mb-1.5">
+                <p className="text-gray-500 text-[11.5px] leading-snug line-clamp-2 max-w-[85%] pr-2 mb-1">
                   {item.name}
                 </p>
                 <a
                   href="#"
-                  className="text-blue-600 font-bold text-xs tracking-wider uppercase hover:text-blue-700 transition-colors"
+                  className="text-blue-600 font-bold text-[11px] tracking-wider uppercase hover:text-blue-700 transition-colors"
                 >
                   VIEW DETAILS
                 </a>
               </div>
-            </div>
+              </CardContent>
+            </Card>
           ))}
         </div>
       </section>
@@ -118,10 +121,11 @@ export default function Dashboard() {
         </h2>
         <div className="grid grid-cols-4 gap-4">
           {overviewData.map((stat, i) => (
-            <div
+            <Card
               key={i}
-              className="bg-white rounded-xl p-4 flex flex-col items-center justify-center text-center shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] border border-gray-50/50"
+              className="p-0 rounded-xl shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] border-gray-50/50"
             >
+              <CardContent className="p-4 flex flex-col items-center justify-center text-center">
               <div className="text-gray-500 text-[13px] font-medium mb-1">
                 {stat.title}
               </div>
@@ -132,7 +136,8 @@ export default function Dashboard() {
               <div className="text-gray-400 text-[11px] h-3.5">
                 {stat.subtitle}
               </div>
-            </div>
+              </CardContent>
+            </Card>
           ))}
         </div>
       </section>
@@ -142,8 +147,9 @@ export default function Dashboard() {
         <h2 className="text-gray-600 text-xs font-bold tracking-widest uppercase mb-3">
           WEEKLY SATISFACTION TREND
         </h2>
-        <div className="bg-white rounded-xl p-5 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] border border-gray-50/50 h-[240px]">
-          <ResponsiveContainer width="100%" height="100%">
+        <Card className="p-0 rounded-xl shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] border-gray-50/50">
+          <CardContent className="p-5 h-[240px]">
+            <ResponsiveContainer width="100%" height="100%">
             <BarChart
               data={chartData}
               margin={{ top: 20, right: 30, left: -20, bottom: 5 }}
@@ -176,7 +182,8 @@ export default function Dashboard() {
               />
             </BarChart>
           </ResponsiveContainer>
-        </div>
+          </CardContent>
+        </Card>
       </section>
     </div>
   );
