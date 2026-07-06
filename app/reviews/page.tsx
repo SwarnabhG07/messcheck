@@ -17,6 +17,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
 
 const reviewSchema = z.object({
+  day: z.string().min(1, "Day is required"),
   rating: z.string().min(1, "Rating is required"),
   for: z.string().min(1, "Meal type is required"),
   text: z.string().min(5, "Review must be at least 5 characters long").max(500, "Review is too long"),
@@ -30,6 +31,7 @@ interface Review {
   rating: string;
   text: string;
   for: string;
+  day?: string;
   time: string;
 }
 
@@ -48,6 +50,7 @@ export default function ReviewsPage() {
   } = useForm<ReviewFormValues>({
     resolver: zodResolver(reviewSchema),
     defaultValues: {
+      day: "MONDAY",
       rating: "5",
       for: "BREAKFAST",
       text: "",
@@ -130,19 +133,39 @@ export default function ReviewsPage() {
                 <DialogTitle className="text-xl font-bold text-gray-900">Write a Review</DialogTitle>
               </DialogHeader>
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-2">
-                <div>
-                  <Label htmlFor="for" className="text-xs font-bold text-gray-600 uppercase tracking-widest">Meal</Label>
-                  <select
-                    id="for"
-                    {...register("for")}
-                    className="w-full mt-1.5 h-10 px-3 rounded-lg bg-[#f0f4f8] border-none focus:ring-2 focus:ring-black/10 text-sm outline-none"
-                  >
-                    <option value="BREAKFAST">Breakfast</option>
-                    <option value="LUNCH">Lunch</option>
-                    <option value="SNACKS">Snacks</option>
-                    <option value="DINNER">Dinner</option>
-                  </select>
-                  {errors.for && <p className="text-red-500 text-xs mt-1">{errors.for.message}</p>}
+                <div className="flex gap-4">
+                  <div className="flex-1">
+                    <Label htmlFor="day" className="text-xs font-bold text-gray-600 uppercase tracking-widest">Day</Label>
+                    <select
+                      id="day"
+                      {...register("day")}
+                      className="w-full mt-1.5 h-10 px-3 rounded-lg bg-[#f0f4f8] border-none focus:ring-2 focus:ring-black/10 text-sm outline-none"
+                    >
+                      <option value="MONDAY">Monday</option>
+                      <option value="TUESDAY">Tuesday</option>
+                      <option value="WEDNESDAY">Wednesday</option>
+                      <option value="THURSDAY">Thursday</option>
+                      <option value="FRIDAY">Friday</option>
+                      <option value="SATURDAY">Saturday</option>
+                      <option value="SUNDAY">Sunday</option>
+                    </select>
+                    {errors.day && <p className="text-red-500 text-xs mt-1">{errors.day.message}</p>}
+                  </div>
+
+                  <div className="flex-1">
+                    <Label htmlFor="for" className="text-xs font-bold text-gray-600 uppercase tracking-widest">Meal</Label>
+                    <select
+                      id="for"
+                      {...register("for")}
+                      className="w-full mt-1.5 h-10 px-3 rounded-lg bg-[#f0f4f8] border-none focus:ring-2 focus:ring-black/10 text-sm outline-none"
+                    >
+                      <option value="BREAKFAST">Breakfast</option>
+                      <option value="LUNCH">Lunch</option>
+                      <option value="SNACKS">Snacks</option>
+                      <option value="DINNER">Dinner</option>
+                    </select>
+                    {errors.for && <p className="text-red-500 text-xs mt-1">{errors.for.message}</p>}
+                  </div>
                 </div>
 
                 <div>
@@ -213,7 +236,7 @@ export default function ReviewsPage() {
                   {review.text}
                 </p>
                 <div className="text-gray-400 text-[13px]">
-                  For: {review.for} &bull; {review.time ? dayjs(review.time).fromNow() : "Just now"}
+                  For: {review.day ? `${review.day} - ` : ""}{review.for} &bull; {review.time ? dayjs(review.time).fromNow() : "Just now"}
                 </div>
               </div>
             ))

@@ -165,7 +165,6 @@ export default function Dashboard() {
                 tickLine={false}
                 tick={{ fill: "#94a3b8", fontSize: 12 }}
                 dy={10}
-                hide
               />
               <YAxis
                 domain={[4.0, 4.5]}

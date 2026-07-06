@@ -19,9 +19,8 @@ export async function GET() {
 export async function POST(req) {
   try {
     const data = await req.json();
-    
-    
-    if (!data.name || !data.rating || !data.text || !data.for) {
+    // Validate required fields
+    if (!data.name || !data.rating || !data.text || !data.for || !data.day) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
@@ -33,7 +32,8 @@ export async function POST(req) {
       rating: data.rating.toString(),
       text: data.text,
       for: data.for,
-      time: dayjs().toISOString(), 
+      day: data.day,
+      time: dayjs().toISOString(), // Store as ISO string
       createdAt: new Date(),
     };
     
