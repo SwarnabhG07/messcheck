@@ -1,5 +1,6 @@
 import clientPromise from "../../lib/mongodb";
 import { NextResponse } from "next/server";
+import { ObjectId } from "mongodb";
 import dayjs from "dayjs";
 
 export async function GET() {
@@ -44,5 +45,44 @@ export async function POST(req) {
   } catch (e) {
     console.error("Failed to post review:", e);
     return NextResponse.json({ error: "Failed to post review" }, { status: 500 });
+  }
+}
+
+export async function PUT(req) {
+  try {
+    const data = await req.json();
+    if (!data._id || !data.email || !data.rating || !data.text || !data.for || !data.day) {
+      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    }
+
+    const client = await clientPromise;
+    const db = client.db("messcheck");
+    
+    // Ensure the review belongs to the user editing it
+    const existingReview = await db.collection("reviews").findOne({ _id: new ObjectId(data._id) });
+    if (!existingReview) {
+      return NextResponse.json({ error: "Review not found" }, { status: 404 });
+    }
+    
+    if (existingReview.email !== data.email) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+    }
+
+    const updatedFields = {
+      rating: data.rating.toString(),
+      text: data.text,
+      for: data.for,
+      day: data.day,
+    };
+
+    await db.collection("reviews").updateOne(
+      { _id: new ObjectId(data._id) },
+      { $set: updatedFields }
+    );
+    
+    return NextResponse.json({ success: true }, { status: 200 });
+  } catch (e) {
+    console.error("Failed to update review:", e);
+    return NextResponse.json({ error: "Failed to update review" }, { status: 500 });
   }
 }

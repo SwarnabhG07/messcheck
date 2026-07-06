@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { Star, Plus } from "lucide-react";
+import { Star, Plus, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
@@ -44,6 +44,7 @@ export default function ReviewsPage() {
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showMyReviews, setShowMyReviews] = useState(false);
+  const [editingReviewId, setEditingReviewId] = useState<string | null>(null);
 
   const displayedReviews = showMyReviews 
     ? reviews.filter(review => review.email && session?.user?.email && review.email === session.user.email) 
@@ -64,6 +65,27 @@ export default function ReviewsPage() {
     },
   });
 
+  const handleEditClick = (review: Review) => {
+    setEditingReviewId(review._id || null);
+    reset({
+      day: review.day || "MONDAY",
+      rating: review.rating,
+      for: review.for,
+      text: review.text,
+    });
+    setShowReviewForm(true);
+  };
+  
+  const handleOpenNewReview = () => {
+    setEditingReviewId(null);
+    reset({
+      day: "MONDAY",
+      rating: "5",
+      for: "BREAKFAST",
+      text: "",
+    });
+  };
+
   const onSubmit = async (data: ReviewFormValues) => {
     setIsSubmitting(true);
     try {
@@ -73,18 +95,43 @@ export default function ReviewsPage() {
         email: session?.user?.email || "",
       };
       
-      const res = await fetch("/api/reviews", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      if (editingReviewId) {
+        // PUT request for edit
+        const res = await fetch("/api/reviews", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...payload, _id: editingReviewId }),
+        });
+        
+        if (!res.ok) throw new Error("Failed to update review");
+        
+        setReviews(reviews.map(r => 
+          r._id === editingReviewId 
+            ? { ...r, ...data } 
+            : r
+        ));
+      } else {
+        // POST request for new review
+        const res = await fetch("/api/reviews", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        
+        if (!res.ok) throw new Error("Failed to post review");
+        
+        const newReview = await res.json();
+        setReviews([newReview, ...reviews]);
+      }
       
-      if (!res.ok) throw new Error("Failed to post review");
-      
-      const newReview = await res.json();
-      setReviews([newReview, ...reviews]);
       setShowReviewForm(false);
-      reset();
+      setEditingReviewId(null);
+      reset({
+        day: "MONDAY",
+        rating: "5",
+        for: "BREAKFAST",
+        text: "",
+      });
     } catch (error) {
       console.error(error);
       alert("Failed to submit review.");
@@ -142,6 +189,7 @@ export default function ReviewsPage() {
             <Dialog open={showReviewForm} onOpenChange={setShowReviewForm}>
             <DialogTrigger asChild>
               <Button
+                onClick={handleOpenNewReview}
                 className="flex items-center gap-2 rounded-xl text-xs font-bold uppercase tracking-wider"
               >
                 <Plus className="w-4 h-4" />
@@ -150,7 +198,7 @@ export default function ReviewsPage() {
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px] rounded-xl bg-white border-gray-100">
               <DialogHeader>
-                <DialogTitle className="text-xl font-bold text-gray-900">Write a Review</DialogTitle>
+                <DialogTitle className="text-xl font-bold text-gray-900">{editingReviewId ? "Edit Review" : "Write a Review"}</DialogTitle>
               </DialogHeader>
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-2">
                 <div className="flex gap-4">
@@ -221,7 +269,7 @@ export default function ReviewsPage() {
                     disabled={isSubmitting}
                     className="w-full h-[48px] rounded-xl bg-black text-white font-bold"
                   >
-                    {isSubmitting ? "Submitting..." : "Submit Review"}
+                    {isSubmitting ? (editingReviewId ? "Saving..." : "Submitting...") : (editingReviewId ? "Save Changes" : "Submit Review")}
                   </Button>
                 </div>
               </form>
@@ -256,8 +304,17 @@ export default function ReviewsPage() {
                 <p className="text-gray-500 text-[14px] leading-relaxed mb-3">
                   {review.text}
                 </p>
-                <div className="text-gray-400 text-[13px]">
-                  For: {review.day ? `${review.day} - ` : ""}{review.for} &bull; {review.time ? dayjs(review.time).fromNow() : "Just now"}
+                <div className="text-gray-400 text-[13px] flex items-center justify-between mt-1">
+                  <div>For: {review.day ? `${review.day} - ` : ""}{review.for} &bull; {review.time ? dayjs(review.time).fromNow() : "Just now"}</div>
+                  {review.email && session?.user?.email && review.email === session.user.email && (
+                    <button 
+                      onClick={() => handleEditClick(review)}
+                      className="text-gray-400 hover:text-blue-500 transition-colors flex items-center gap-1"
+                      title="Edit Review"
+                    >
+                      <Pencil className="w-3.5 h-3.5" />
+                    </button>
+                  )}
                 </div>
               </div>
             ))
