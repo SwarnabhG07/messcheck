@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Star } from "lucide-react";
 import {
@@ -12,55 +13,79 @@ import {
 } from "recharts";
 import { Card, CardContent } from "@/components/ui/card";
 
-const todayMenu = [
-  {
-    type: "BREAKFAST",
-    name: "Masala Dosa, Sambar, Coconut Chutney, Bread Omelette, Tea,...",
-    image: "/breakfast.png",
-    rating: 4.1,
-    votes: 210,
-  },
-  {
-    type: "LUNCH",
-    name: "Rice, Dal Tadka, Paneer Makhani, Roti, Salad, Fruit Salad, Buttermilk.",
-    image: "/lunch.png",
-    rating: 4.2,
-    votes: 145,
-  },
-  {
-    type: "SNACKS",
-    name: "Punjabi Samosa, Mint Chutney, Jalebi, Filter Coffee, Masala Chai.",
-    image: "/snacks.png",
-    rating: 4.6,
-    votes: 342,
-  },
-  {
-    type: "DINNER",
-    name: "Vegetable Biryani, Raita, Gulab Jamun, Papad, Naan, Fried Rice.",
-    image: "/dinner.png",
-    rating: 4.5,
-    votes: 189,
-  },
-];
-
-const overviewData = [
-  { title: "Overall Rating", value: "4.3", suffix: <Star className="w-[18px] h-[18px] text-orange-400 fill-orange-400 inline mb-1" />, subtitle: "4.1k Ratings" },
-  { title: "Menu Updates", value: "6", subtitle: "This Week" },
-  { title: "Active Users", value: "312", subtitle: " " },
-  { title: "Feedback Volume", value: "120", subtitle: "new reviews" },
-];
-
-const chartData = [
-  { name: "Mon", value: 4.3 },
-  { name: "Tue", value: 4.2 },
-  { name: "Wed", value: 4.15 },
-  { name: "Thu", value: 4.32 },
-  { name: "Fri", value: 4.1 },
-  { name: "Sat", value: 4.34 },
-  { name: "Sun", value: 4.25 },
-];
-
 export default function Dashboard() {
+  const [reviews, setReviews] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchReviews() {
+      try {
+        const res = await fetch("/api/reviews");
+        if (res.ok) {
+          const data = await res.json();
+          setReviews(data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch reviews", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchReviews();
+  }, []);
+
+  // Compute Today's Menu
+  const mealTypes = [
+    { type: "BREAKFAST", name: "Masala Dosa, Sambar, Coconut Chutney, Bread Omelette, Tea,...", image: "/breakfast.png" },
+    { type: "LUNCH", name: "Rice, Dal Tadka, Paneer Makhani, Roti, Salad, Fruit Salad, Buttermilk.", image: "/lunch.png" },
+    { type: "SNACKS", name: "Punjabi Samosa, Mint Chutney, Jalebi, Filter Coffee, Masala Chai.", image: "/snacks.png" },
+    { type: "DINNER", name: "Vegetable Biryani, Raita, Gulab Jamun, Papad, Naan, Fried Rice.", image: "/dinner.png" }
+  ];
+
+  const computedTodayMenu = mealTypes.map(meal => {
+    const mealReviews = reviews.filter(r => r.for === meal.type);
+    const totalRating = mealReviews.reduce((sum, r) => sum + parseFloat(r.rating || "0"), 0);
+    const avg = mealReviews.length > 0 ? (totalRating / mealReviews.length).toFixed(1) : "0.0";
+    return {
+      ...meal,
+      rating: avg,
+      votes: mealReviews.length
+    };
+  });
+
+  // Compute Overview
+  const totalReviews = reviews.length;
+  const globalTotalRating = reviews.reduce((sum, r) => sum + parseFloat(r.rating || "0"), 0);
+  const globalAvg = totalReviews > 0 ? (globalTotalRating / totalReviews).toFixed(1) : "0.0";
+
+  const computedOverviewData = [
+    { title: "Overall Rating", value: globalAvg, suffix: <Star className="w-[18px] h-[18px] text-orange-400 fill-orange-400 inline mb-1" />, subtitle: `${totalReviews} Ratings` },
+    { title: "Menu Updates", value: "6", subtitle: "This Week" }, // Hardcoded for now
+    { title: "Feedback Volume", value: totalReviews.toString(), subtitle: "total reviews" },
+  ];
+
+  // Compute Chart Data (Day of week)
+  const daysOrder = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
+  const displayNames: Record<string, string> = { MONDAY: "Mon", TUESDAY: "Tue", WEDNESDAY: "Wed", THURSDAY: "Thu", FRIDAY: "Fri", SATURDAY: "Sat", SUNDAY: "Sun" };
+  
+  const computedChartData = daysOrder.map(day => {
+    const dayReviews = reviews.filter(r => r.day === day);
+    const dayTotal = dayReviews.reduce((sum, r) => sum + parseFloat(r.rating || "0"), 0);
+    const dayAvg = dayReviews.length > 0 ? (dayTotal / dayReviews.length).toFixed(2) : "0";
+    return {
+      name: displayNames[day],
+      value: parseFloat(dayAvg)
+    };
+  });
+
+  if (loading) {
+    return (
+      <div className="px-8 py-6 text-gray-500 font-medium flex items-center justify-center h-64">
+        Loading dashboard metrics...
+      </div>
+    );
+  }
+
   return (
     <div className="px-8 pb-6 space-y-5">
       {/* Today's Menu Section */}
@@ -69,7 +94,7 @@ export default function Dashboard() {
           TODAY'S MENU
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {todayMenu.map((item) => (
+          {computedTodayMenu.map((item) => (
             <Card
               key={item.type}
               className="p-0 rounded-xl shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] border-gray-50/50"
@@ -119,8 +144,8 @@ export default function Dashboard() {
         <h2 className="text-gray-600 text-xs font-bold tracking-widest uppercase mb-3">
           WEEKLY OVERVIEW
         </h2>
-        <div className="grid grid-cols-4 gap-4">
-          {overviewData.map((stat, i) => (
+        <div className="grid grid-cols-3 gap-4">
+          {computedOverviewData.map((stat, i) => (
             <Card
               key={i}
               className="p-0 rounded-xl shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] border-gray-50/50"
@@ -151,7 +176,7 @@ export default function Dashboard() {
           <CardContent className="p-5 h-[240px]">
             <ResponsiveContainer width="100%" height="100%">
             <BarChart
-              data={chartData}
+              data={computedChartData}
               margin={{ top: 20, right: 30, left: -20, bottom: 5 }}
             >
               <CartesianGrid
@@ -167,8 +192,8 @@ export default function Dashboard() {
                 dy={10}
               />
               <YAxis
-                domain={[4.0, 4.5]}
-                ticks={[4.0, 4.1, 4.2, 4.3, 4.4, 4.5]}
+                domain={[0, 5]}
+                ticks={[0, 1, 2, 3, 4, 5]}
                 axisLine={false}
                 tickLine={false}
                 tick={{ fill: "#94a3b8", fontSize: 12 }}
