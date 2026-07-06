@@ -59,7 +59,7 @@ export default function Dashboard() {
   const globalAvg = totalReviews > 0 ? (globalTotalRating / totalReviews).toFixed(1) : "0.0";
 
   const computedOverviewData = [
-    { title: "Overall Rating", value: globalAvg, suffix: <Star className="w-[18px] h-[18px] text-orange-400 fill-orange-400 inline mb-1" />, subtitle: `${totalReviews} Ratings` },
+    { title: "Overall Rating", value: globalAvg, suffix: <Star className="w-4.5 h-4.5 text-orange-400 fill-orange-400 inline mb-1" />, subtitle: `${totalReviews} Ratings` },
     { title: "Menu Updates", value: "6", subtitle: "This Week" }, // Hardcoded for now
     { title: "Feedback Volume", value: totalReviews.toString(), subtitle: "total reviews" },
   ];
@@ -100,7 +100,7 @@ export default function Dashboard() {
               className="p-0 rounded-xl shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] border-gray-50/50"
             >
               <CardContent className="p-2.5 flex gap-3.5 items-center">
-              <div className="w-[76px] h-[76px] rounded-lg overflow-hidden shrink-0 relative">
+              <div className="w-19 h-19 rounded-lg overflow-hidden shrink-0 relative">
                 <Image
                   src={item.image}
                   alt={item.name}
@@ -116,7 +116,7 @@ export default function Dashboard() {
                   <div className="text-right">
                     <div className="font-bold text-gray-900 text-[15px] flex items-center gap-1 justify-end leading-none">
                       {item.rating}
-                      <Star className="w-[13px] h-[13px] text-orange-400 fill-orange-400" />
+                      <Star className="w-3.25 h-3.25 text-orange-400 fill-orange-400" />
                     </div>
                     <div className="text-gray-400 text-[10px] mt-0.5 leading-none">
                       {item.votes} votes
@@ -173,7 +173,7 @@ export default function Dashboard() {
           WEEKLY SATISFACTION TREND
         </h2>
         <Card className="p-0 rounded-xl shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] border-gray-50/50">
-          <CardContent className="p-5 h-[240px]">
+          <CardContent className="p-5 h-60">
             <ResponsiveContainer width="100%" height="100%">
             <BarChart
               data={computedChartData}

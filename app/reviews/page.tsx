@@ -196,7 +196,7 @@ export default function ReviewsPage() {
                 Write Review
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px] rounded-xl bg-white border-gray-100">
+            <DialogContent className="sm:max-w-106.25 rounded-xl bg-white border-gray-100">
               <DialogHeader>
                 <DialogTitle className="text-xl font-bold text-gray-900">{editingReviewId ? "Edit Review" : "Write a Review"}</DialogTitle>
               </DialogHeader>
@@ -258,7 +258,7 @@ export default function ReviewsPage() {
                     id="text"
                     {...register("text")}
                     placeholder="How was the food?"
-                    className="mt-1.5 rounded-lg bg-[#f0f4f8] border-none focus-visible:ring-black/10 min-h-[100px] text-sm resize-none"
+                    className="mt-1.5 rounded-lg bg-[#f0f4f8] border-none focus-visible:ring-black/10 min-h-25 text-sm resize-none"
                   />
                   {errors.text && <p className="text-red-500 text-xs mt-1">{errors.text.message}</p>}
                 </div>
@@ -267,7 +267,7 @@ export default function ReviewsPage() {
                   <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full h-[48px] rounded-xl bg-black text-white font-bold"
+                    className="w-full h-12 rounded-xl bg-black text-white font-bold"
                   >
                     {isSubmitting ? (editingReviewId ? "Saving..." : "Submitting...") : (editingReviewId ? "Save Changes" : "Submit Review")}
                   </Button>
@@ -298,7 +298,7 @@ export default function ReviewsPage() {
                   </h3>
                   <div className="flex items-center gap-1 font-bold text-gray-900 text-[15px]">
                     {review.rating}
-                    <Star className="w-[14px] h-[14px] text-orange-400 fill-orange-400 mb-0.5" />
+                    <Star className="w-3.5 h-3.5 text-orange-400 fill-orange-400 mb-0.5" />
                   </div>
                 </div>
                 <p className="text-gray-500 text-[14px] leading-relaxed mb-3">

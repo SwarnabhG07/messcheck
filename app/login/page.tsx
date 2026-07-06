@@ -51,11 +51,11 @@ export default function LoginPage() {
     <div className="min-h-screen bg-[#f0f4f8] flex items-center justify-center px-4 font-sans">
       {/* Background subtle pattern */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-[500px] h-[500px] rounded-full bg-indigo-500/5 blur-3xl" />
-        <div className="absolute -bottom-40 -left-40 w-[500px] h-[500px] rounded-full bg-blue-500/5 blur-3xl" />
+        <div className="absolute -top-40 -right-40 w-125 h-125 rounded-full bg-indigo-500/5 blur-3xl" />
+        <div className="absolute -bottom-40 -left-40 w-125 h-125 rounded-full bg-blue-500/5 blur-3xl" />
       </div>
 
-      <div className="relative w-full max-w-[420px]">
+      <div className="relative w-full max-w-105">
         {/* Logo & Branding */}
         <div className="text-center mb-5">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-black text-white mb-3 shadow-lg shadow-black/10">
@@ -90,7 +90,7 @@ export default function LoginPage() {
               EMAIL
             </Label>
             <div className="relative">
-              <Mail className="w-[18px] h-[18px] text-gray-400 absolute left-4 top-1/2 -translate-y-1/2 z-10" />
+              <Mail className="w-4.5 h-4.5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2 z-10" />
               <Input
                 id="email"
                 type="email"
@@ -98,7 +98,7 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@college.edu"
                 required
-                className="w-full pl-11 pr-4 h-[48px] rounded-xl bg-[#f0f4f8] border-gray-200 focus-visible:ring-black/10 focus-visible:border-gray-300 text-sm text-gray-900 placeholder:text-gray-400 transition-all"
+                className="w-full pl-11 pr-4 h-12 rounded-xl bg-[#f0f4f8] border-gray-200 focus-visible:ring-black/10 focus-visible:border-gray-300 text-sm text-gray-900 placeholder:text-gray-400 transition-all"
               />
             </div>
           </div>
@@ -112,7 +112,7 @@ export default function LoginPage() {
               PASSWORD
             </Label>
             <div className="relative">
-              <Lock className="w-[18px] h-[18px] text-gray-400 absolute left-4 top-1/2 -translate-y-1/2 z-10" />
+              <Lock className="w-4.5 h-4.5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2 z-10" />
               <Input
                 id="password"
                 type={showPassword ? "text" : "password"}
@@ -120,7 +120,7 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
                 required
-                className="w-full pl-11 pr-12 h-[48px] rounded-xl bg-[#f0f4f8] border-gray-200 focus-visible:ring-black/10 focus-visible:border-gray-300 text-sm text-gray-900 placeholder:text-gray-400 transition-all"
+                className="w-full pl-11 pr-12 h-12 rounded-xl bg-[#f0f4f8] border-gray-200 focus-visible:ring-black/10 focus-visible:border-gray-300 text-sm text-gray-900 placeholder:text-gray-400 transition-all"
               />
               <button
                 type="button"
@@ -128,9 +128,9 @@ export default function LoginPage() {
                 className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors z-10"
               >
                 {showPassword ? (
-                  <EyeOff className="w-[18px] h-[18px]" />
+                  <EyeOff className="w-4.5 h-4.5" />
                 ) : (
-                  <Eye className="w-[18px] h-[18px]" />
+                  <Eye className="w-4.5 h-4.5" />
                 )}
               </button>
             </div>
@@ -159,7 +159,7 @@ export default function LoginPage() {
           <Button
             type="submit"
             disabled={loading}
-            className="w-full h-[48px] bg-black text-white font-semibold text-sm rounded-xl hover:bg-gray-900 transition-all shadow-lg shadow-black/10"
+            className="w-full h-12 bg-black text-white font-semibold text-sm rounded-xl hover:bg-gray-900 transition-all shadow-lg shadow-black/10"
           >
             {loading ? "Signing in..." : "Sign In"}
           </Button>
@@ -178,7 +178,7 @@ export default function LoginPage() {
             type="button"
             variant="outline"
             onClick={handleGoogleSignIn}
-            className="w-full h-[48px] bg-white border-gray-200 text-gray-700 font-medium text-sm rounded-xl hover:bg-gray-50 transition-all flex items-center justify-center gap-3"
+            className="w-full h-12 bg-white border-gray-200 text-gray-700 font-medium text-sm rounded-xl hover:bg-gray-50 transition-all flex items-center justify-center gap-3"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path

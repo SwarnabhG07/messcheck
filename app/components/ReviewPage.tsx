@@ -94,8 +94,8 @@ export default function ReviewPage({ children }: { children: React.ReactNode }) 
               />
             </div>
             <Button variant="outline" size="icon" className="relative w-10 h-10 rounded-full border-gray-100 text-gray-500 hover:text-gray-700 bg-white shadow-sm shrink-0">
-              <Bell className="w-[18px] h-[18px]" />
-              <span className="absolute top-[8px] right-[10px] w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+              <Bell className="w-4.5 h-4.5" />
+              <span className="absolute top-2 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
             </Button>
 
             {/* Profile with Dropdown */}
