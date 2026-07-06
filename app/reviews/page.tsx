@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { Star, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -41,6 +42,11 @@ export default function ReviewsPage() {
   const [loading, setLoading] = useState(true);
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showMyReviews, setShowMyReviews] = useState(false);
+
+  const displayedReviews = showMyReviews 
+    ? reviews.filter(review => review.name === (session?.user?.name || "Anonymous User")) 
+    : reviews;
 
   const {
     register,
@@ -119,7 +125,19 @@ export default function ReviewsPage() {
           <h2 className="text-gray-600 text-xs font-bold tracking-widest uppercase">
             STUDENT REVIEWS
           </h2>
-          <Dialog open={showReviewForm} onOpenChange={setShowReviewForm}>
+          <div className="flex items-center gap-6">
+            <div className="flex items-center space-x-2">
+              <Switch 
+                id="my-reviews" 
+                checked={showMyReviews} 
+                onCheckedChange={setShowMyReviews} 
+                disabled={!session?.user}
+              />
+              <Label htmlFor="my-reviews" className="text-xs font-bold text-gray-600 cursor-pointer">
+                My Reviews
+              </Label>
+            </div>
+            <Dialog open={showReviewForm} onOpenChange={setShowReviewForm}>
             <DialogTrigger asChild>
               <Button
                 className="flex items-center gap-2 rounded-xl text-xs font-bold uppercase tracking-wider"
@@ -208,13 +226,14 @@ export default function ReviewsPage() {
             </DialogContent>
           </Dialog>
         </div>
+        </div>
         <Card className="p-0 rounded-[20px] shadow-[0_2px_15px_-3px_rgba(0,0,0,0.04)] border-gray-100 flex flex-col overflow-hidden">
-          {reviews.length === 0 ? (
+          {displayedReviews.length === 0 ? (
             <div className="p-6 text-gray-500 text-[14px]">
-              No reviews found yet. Add some reviews to your database!
+              {showMyReviews ? "You haven't written any reviews yet." : "No reviews found yet. Add some reviews to your database!"}
             </div>
           ) : (
-            reviews.map((review, idx) => (
+            displayedReviews.map((review, idx) => (
               <div
                 key={review._id || idx}
                 className={`p-6 ${
