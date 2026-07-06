@@ -29,6 +29,7 @@ type ReviewFormValues = z.infer<typeof reviewSchema>;
 interface Review {
   _id?: string;
   name: string;
+  email?: string;
   rating: string;
   text: string;
   for: string;
@@ -45,7 +46,7 @@ export default function ReviewsPage() {
   const [showMyReviews, setShowMyReviews] = useState(false);
 
   const displayedReviews = showMyReviews 
-    ? reviews.filter(review => review.name === (session?.user?.name || "Anonymous User")) 
+    ? reviews.filter(review => review.email && session?.user?.email && review.email === session.user.email) 
     : reviews;
 
   const {
@@ -69,6 +70,7 @@ export default function ReviewsPage() {
       const payload = {
         ...data,
         name: session?.user?.name || "Anonymous User",
+        email: session?.user?.email || "",
       };
       
       const res = await fetch("/api/reviews", {

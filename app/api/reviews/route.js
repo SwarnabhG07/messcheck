@@ -29,6 +29,7 @@ export async function POST(req) {
     
     const newReview = {
       name: data.name,
+      email: data.email,
       rating: data.rating.toString(),
       text: data.text,
       for: data.for,

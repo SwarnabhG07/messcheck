@@ -57,8 +57,8 @@ export default function LoginPage() {
 
       <div className="relative w-full max-w-[420px]">
         {/* Logo & Branding */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-black text-white mb-5 shadow-lg shadow-black/10">
+        <div className="text-center mb-5">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-black text-white mb-3 shadow-lg shadow-black/10">
             <Utensils className="w-8 h-8" />
           </div>
           <h1 className="text-2xl font-bold text-[#1e293b] tracking-tight">
@@ -72,17 +72,17 @@ export default function LoginPage() {
         {/* Login Card */}
         <form
           onSubmit={handleCredentialsSignIn}
-          className="bg-white rounded-[20px] shadow-[0_8px_30px_-6px_rgba(0,0,0,0.06)] border border-gray-100 p-8"
+          className="bg-white rounded-[20px] shadow-[0_8px_30px_-6px_rgba(0,0,0,0.06)] border border-gray-100 p-6"
         >
           {/* Error Message */}
           {error && (
-            <div className="mb-5 p-3 rounded-xl bg-red-50 border border-red-100 text-red-600 text-sm text-center">
+            <div className="mb-4 p-3 rounded-xl bg-red-50 border border-red-100 text-red-600 text-sm text-center">
               {error}
             </div>
           )}
 
           {/* Email Field */}
-          <div className="mb-5">
+          <div className="mb-4">
             <Label
               htmlFor="email"
               className="block text-gray-600 text-xs font-bold tracking-widest uppercase mb-2"
@@ -104,7 +104,7 @@ export default function LoginPage() {
           </div>
 
           {/* Password Field */}
-          <div className="mb-6">
+          <div className="mb-4">
             <Label
               htmlFor="password"
               className="block text-gray-600 text-xs font-bold tracking-widest uppercase mb-2"
@@ -137,7 +137,7 @@ export default function LoginPage() {
           </div>
 
           {/* Remember & Forgot */}
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-2">
               <Checkbox id="remember" className="rounded border-gray-300 data-[state=checked]:bg-black data-[state=checked]:border-black" />
               <Label
@@ -165,7 +165,7 @@ export default function LoginPage() {
           </Button>
 
           {/* Divider */}
-          <div className="flex items-center gap-4 my-6">
+          <div className="flex items-center gap-4 my-4">
             <div className="flex-1 h-px bg-gray-200" />
             <span className="text-gray-400 text-xs font-medium uppercase tracking-wider">
               or
@@ -203,7 +203,7 @@ export default function LoginPage() {
         </form>
 
         {/* Footer */}
-        <p className="text-center text-gray-400 text-[13px] mt-6">
+        <p className="text-center text-gray-400 text-[13px] mt-4">
           Don&apos;t have an account?{" "}
           <a
             href="/signup"

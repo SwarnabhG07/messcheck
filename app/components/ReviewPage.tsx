@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -34,7 +34,9 @@ const menuItems = [
   { name: "Settings", icon: Settings, href: "/settings" },
 ];
 
-export default function ReviewPage({ children, user }: { children: React.ReactNode, user?: any }) {
+export default function ReviewPage({ children }: { children: React.ReactNode }) {
+  const { data: session } = useSession();
+  const user = session?.user;
   const pathname = usePathname();
 
   const authRoutes = ["/login", "/signup"];
