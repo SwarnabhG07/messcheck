@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Star } from "lucide-react";
+import { Star, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface Review {
   _id?: string;
@@ -15,6 +16,7 @@ interface Review {
 export default function ReviewsPage() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showReviewForm, setShowReviewForm] = useState(false);
 
   useEffect(() => {
     async function fetchReviews() {
@@ -44,11 +46,20 @@ export default function ReviewsPage() {
   }
 
   return (
-    <div className="px-8 pb-6 space-y-5">
+    <div className="px-8 pb-6 space-y-5 relative">
       <section>
-        <h2 className="text-gray-600 text-xs font-bold tracking-widest uppercase mb-4 mt-2">
-          STUDENT REVIEWS
-        </h2>
+        <div className="flex justify-between items-center mb-4 mt-2">
+          <h2 className="text-gray-600 text-xs font-bold tracking-widest uppercase">
+            STUDENT REVIEWS
+          </h2>
+          <Button
+            onClick={() => setShowReviewForm(true)}
+            className="flex items-center gap-2 rounded-xl text-xs font-bold uppercase tracking-wider"
+          >
+            <Plus className="w-4 h-4" />
+            Write Review
+          </Button>
+        </div>
         <div className="bg-white rounded-[20px] shadow-[0_2px_15px_-3px_rgba(0,0,0,0.04)] border border-gray-100 flex flex-col">
           {reviews.length === 0 ? (
             <div className="p-6 text-gray-500 text-[14px]">
