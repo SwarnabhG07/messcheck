@@ -1,9 +1,28 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 import { Star, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+
+dayjs.extend(relativeTime);
+
+const reviewSchema = z.object({
+  rating: z.string().min(1, "Rating is required"),
+  for: z.string().min(1, "Meal type is required"),
+  text: z.string().min(5, "Review must be at least 5 characters long").max(500, "Review is too long"),
+});
+
+type ReviewFormValues = z.infer<typeof reviewSchema>;
 
 interface Review {
   _id?: string;
@@ -15,9 +34,53 @@ interface Review {
 }
 
 export default function ReviewsPage() {
+  const { data: session } = useSession();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [showReviewForm, setShowReviewForm] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<ReviewFormValues>({
+    resolver: zodResolver(reviewSchema),
+    defaultValues: {
+      rating: "5",
+      for: "BREAKFAST",
+      text: "",
+    },
+  });
+
+  const onSubmit = async (data: ReviewFormValues) => {
+    setIsSubmitting(true);
+    try {
+      const payload = {
+        ...data,
+        name: session?.user?.name || "Anonymous User",
+      };
+      
+      const res = await fetch("/api/reviews", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      
+      if (!res.ok) throw new Error("Failed to post review");
+      
+      const newReview = await res.json();
+      setReviews([newReview, ...reviews]);
+      setShowReviewForm(false);
+      reset();
+    } catch (error) {
+      console.error(error);
+      alert("Failed to submit review.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   useEffect(() => {
     async function fetchReviews() {
@@ -53,13 +116,74 @@ export default function ReviewsPage() {
           <h2 className="text-gray-600 text-xs font-bold tracking-widest uppercase">
             STUDENT REVIEWS
           </h2>
-          <Button
-            onClick={() => setShowReviewForm(true)}
-            className="flex items-center gap-2 rounded-xl text-xs font-bold uppercase tracking-wider"
-          >
-            <Plus className="w-4 h-4" />
-            Write Review
-          </Button>
+          <Dialog open={showReviewForm} onOpenChange={setShowReviewForm}>
+            <DialogTrigger asChild>
+              <Button
+                className="flex items-center gap-2 rounded-xl text-xs font-bold uppercase tracking-wider"
+              >
+                <Plus className="w-4 h-4" />
+                Write Review
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px] rounded-xl bg-white border-gray-100">
+              <DialogHeader>
+                <DialogTitle className="text-xl font-bold text-gray-900">Write a Review</DialogTitle>
+              </DialogHeader>
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-2">
+                <div>
+                  <Label htmlFor="for" className="text-xs font-bold text-gray-600 uppercase tracking-widest">Meal</Label>
+                  <select
+                    id="for"
+                    {...register("for")}
+                    className="w-full mt-1.5 h-10 px-3 rounded-lg bg-[#f0f4f8] border-none focus:ring-2 focus:ring-black/10 text-sm outline-none"
+                  >
+                    <option value="BREAKFAST">Breakfast</option>
+                    <option value="LUNCH">Lunch</option>
+                    <option value="SNACKS">Snacks</option>
+                    <option value="DINNER">Dinner</option>
+                  </select>
+                  {errors.for && <p className="text-red-500 text-xs mt-1">{errors.for.message}</p>}
+                </div>
+
+                <div>
+                  <Label htmlFor="rating" className="text-xs font-bold text-gray-600 uppercase tracking-widest">Rating (1-5)</Label>
+                  <select
+                    id="rating"
+                    {...register("rating")}
+                    className="w-full mt-1.5 h-10 px-3 rounded-lg bg-[#f0f4f8] border-none focus:ring-2 focus:ring-black/10 text-sm outline-none"
+                  >
+                    <option value="5">5 - Excellent</option>
+                    <option value="4">4 - Good</option>
+                    <option value="3">3 - Average</option>
+                    <option value="2">2 - Poor</option>
+                    <option value="1">1 - Terrible</option>
+                  </select>
+                  {errors.rating && <p className="text-red-500 text-xs mt-1">{errors.rating.message}</p>}
+                </div>
+
+                <div>
+                  <Label htmlFor="text" className="text-xs font-bold text-gray-600 uppercase tracking-widest">Your Review</Label>
+                  <Textarea
+                    id="text"
+                    {...register("text")}
+                    placeholder="How was the food?"
+                    className="mt-1.5 rounded-lg bg-[#f0f4f8] border-none focus-visible:ring-black/10 min-h-[100px] text-sm resize-none"
+                  />
+                  {errors.text && <p className="text-red-500 text-xs mt-1">{errors.text.message}</p>}
+                </div>
+
+                <div className="pt-2">
+                  <Button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full h-[48px] rounded-xl bg-black text-white font-bold"
+                  >
+                    {isSubmitting ? "Submitting..." : "Submit Review"}
+                  </Button>
+                </div>
+              </form>
+            </DialogContent>
+          </Dialog>
         </div>
         <Card className="p-0 rounded-[20px] shadow-[0_2px_15px_-3px_rgba(0,0,0,0.04)] border-gray-100 flex flex-col overflow-hidden">
           {reviews.length === 0 ? (
@@ -89,7 +213,7 @@ export default function ReviewsPage() {
                   {review.text}
                 </p>
                 <div className="text-gray-400 text-[13px]">
-                  For: {review.for} &bull; {review.time}
+                  For: {review.for} &bull; {review.time ? dayjs(review.time).fromNow() : "Just now"}
                 </div>
               </div>
             ))

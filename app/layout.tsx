@@ -22,6 +22,7 @@ export const metadata: Metadata = {
 };
 
 import { auth } from "@/auth";
+import { Providers } from "./providers";
 
 export default async function RootLayout({
   children,
@@ -36,7 +37,9 @@ export default async function RootLayout({
       className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, "font-sans", inter.variable)}
     >
       <body className="min-h-full flex flex-col">
-        <ReviewPage user={session?.user}>{children}</ReviewPage>
+        <Providers>
+          <ReviewPage user={session?.user}>{children}</ReviewPage>
+        </Providers>
       </body>
     </html>
   );
