@@ -1,12 +1,47 @@
 "use client";
 
 import { useState } from "react";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { Utensils, Eye, EyeOff, Mail, Lock } from "lucide-react";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  // Handle email + password sign in
+  async function handleCredentialsSignIn(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    try {
+      const res = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (res?.error) {
+        setError("Invalid email or password");
+      } else {
+        router.push("/");
+      }
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // Handle Google sign in
+  function handleGoogleSignIn() {
+    signIn("google", { callbackUrl: "/" });
+  }
 
   return (
     <div className="min-h-screen bg-[#f0f4f8] flex items-center justify-center px-4 font-sans">
@@ -31,7 +66,17 @@ export default function LoginPage() {
         </div>
 
         {/* Login Card */}
-        <div className="bg-white rounded-[20px] shadow-[0_8px_30px_-6px_rgba(0,0,0,0.06)] border border-gray-100 p-8">
+        <form
+          onSubmit={handleCredentialsSignIn}
+          className="bg-white rounded-[20px] shadow-[0_8px_30px_-6px_rgba(0,0,0,0.06)] border border-gray-100 p-8"
+        >
+          {/* Error Message */}
+          {error && (
+            <div className="mb-5 p-3 rounded-xl bg-red-50 border border-red-100 text-red-600 text-sm text-center">
+              {error}
+            </div>
+          )}
+
           {/* Email Field */}
           <div className="mb-5">
             <label
@@ -48,6 +93,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@college.edu"
+                required
                 className="w-full pl-11 pr-4 py-3 rounded-xl bg-[#f0f4f8] border border-gray-200 focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-gray-300 text-sm text-gray-900 placeholder:text-gray-400 transition-all"
               />
             </div>
@@ -69,6 +115,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
+                required
                 className="w-full pl-11 pr-12 py-3 rounded-xl bg-[#f0f4f8] border border-gray-200 focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-gray-300 text-sm text-gray-900 placeholder:text-gray-400 transition-all"
               />
               <button
@@ -103,8 +150,12 @@ export default function LoginPage() {
           </div>
 
           {/* Sign In Button */}
-          <button className="w-full py-3 bg-black text-white font-semibold text-sm rounded-xl hover:bg-gray-900 active:scale-[0.98] transition-all shadow-lg shadow-black/10">
-            Sign In
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-3 bg-black text-white font-semibold text-sm rounded-xl hover:bg-gray-900 active:scale-[0.98] transition-all shadow-lg shadow-black/10 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {loading ? "Signing in..." : "Sign In"}
           </button>
 
           {/* Divider */}
@@ -117,7 +168,11 @@ export default function LoginPage() {
           </div>
 
           {/* Google Sign In */}
-          <button className="w-full py-3 bg-white border border-gray-200 text-gray-700 font-medium text-sm rounded-xl hover:bg-gray-50 active:scale-[0.98] transition-all flex items-center justify-center gap-3">
+          <button
+            type="button"
+            onClick={handleGoogleSignIn}
+            className="w-full py-3 bg-white border border-gray-200 text-gray-700 font-medium text-sm rounded-xl hover:bg-gray-50 active:scale-[0.98] transition-all flex items-center justify-center gap-3"
+          >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path
                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"
@@ -138,13 +193,13 @@ export default function LoginPage() {
             </svg>
             Continue with Google
           </button>
-        </div>
+        </form>
 
         {/* Footer */}
         <p className="text-center text-gray-400 text-[13px] mt-6">
           Don&apos;t have an account?{" "}
           <a
-            href="#"
+            href="/signup"
             className="text-indigo-500 hover:text-indigo-600 font-medium transition-colors"
           >
             Sign up

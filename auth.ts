@@ -3,6 +3,7 @@ import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
 import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import clientPromise from "@/app/lib/mongodb";
+import bcrypt from "bcryptjs";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: MongoDBAdapter(clientPromise),
@@ -50,8 +51,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           return null;
         }
 
-        // Compare passwords (install bcryptjs: npm install bcryptjs)
-        const bcrypt = (await import("bcryptjs")).default;
+        // Compare passwords
         const isValid = await bcrypt.compare(password, user.password);
 
         if (!isValid) {
