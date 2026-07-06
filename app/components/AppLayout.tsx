@@ -1,7 +1,9 @@
 "use client";
 
+import { useState, useRef, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { signOut } from "next-auth/react";
 import {
   Home,
   Utensils,
@@ -11,6 +13,7 @@ import {
   Settings,
   Search,
   Bell,
+  LogOut,
 } from "lucide-react";
 
 const menuItems = [
@@ -22,8 +25,21 @@ const menuItems = [
   { name: "Settings", icon: Settings, href: "/settings" },
 ];
 
-export default function AppLayout({ children }: { children: React.ReactNode }) {
+export default function AppLayout({ children, user }: { children: React.ReactNode, user?: any }) {
   const pathname = usePathname();
+  const [profileOpen, setProfileOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setProfileOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const authRoutes = ["/login", "/signup"];
   if (authRoutes.includes(pathname)) {
@@ -83,11 +99,45 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               <Bell className="w-5 h-5" />
               <span className="absolute top-2 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
             </button>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-indigo-500 text-white flex items-center justify-center font-semibold shadow-sm">
-                R
-              </div>
-              <span className="text-gray-700 font-medium text-sm">Rahul</span>
+
+            {/* Profile with Dropdown */}
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setProfileOpen(!profileOpen)}
+                className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity"
+              >
+                <div className="w-10 h-10 rounded-full bg-indigo-500 text-white flex items-center justify-center font-semibold shadow-sm">
+                  {user?.name?.[0]?.toUpperCase() || "U"}
+                </div>
+                <span className="text-gray-700 font-medium text-sm">
+                  {user?.name || "User"}
+                </span>
+              </button>
+
+              {/* Dropdown Menu */}
+              {profileOpen && (
+                <div className="absolute right-0 top-14 w-48 bg-white rounded-xl shadow-[0_8px_30px_-6px_rgba(0,0,0,0.12)] border border-gray-100 py-1.5 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                  <Link
+                    href="/settings"
+                    onClick={() => setProfileOpen(false)}
+                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+                  >
+                    <Settings className="w-4 h-4" />
+                    Settings
+                  </Link>
+                  <div className="mx-3 my-1 h-px bg-gray-100" />
+                  <button
+                    onClick={() => {
+                      setProfileOpen(false);
+                      signOut();
+                    }}
+                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors w-full"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Sign Out
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </header>
