@@ -53,7 +53,7 @@ MessCheck is a **college mess dashboard** built with Next.js (App Router). It le
 messcheck/
 │
 ├── app/                        # 🟢 Next.js App Router (all routes live here)
-│   ├── layout.tsx              #    Root layout — fonts, global CSS, wraps AppLayout
+│   ├── layout.tsx              #    Root layout — fonts, global CSS, wraps ReviewPage
 │   ├── page.tsx                #    Home / Dashboard page (Today's Menu, Charts)
 │   ├── globals.css             #    Global Tailwind CSS styles
 │   ├── favicon.ico             #    Site favicon
@@ -63,7 +63,7 @@ messcheck/
 │   │       └── route.js        #      GET /api/reviews — fetches reviews from MongoDB
 │   │
 │   ├── components/             # 🟡 App-level shared components
-│   │   └── AppLayout.tsx       #      Sidebar + Header shell (wraps all pages except auth)
+│   │   └── ReviewPage.tsx       #      Sidebar + Header shell (wraps all pages except auth)
 │   │
 │   ├── lib/                    # 🟠 App-level utilities & DB connection
 │   │   └── mongodb.js          #      MongoDB client singleton (connection pooling)
@@ -120,7 +120,7 @@ messcheck/
 │       └────────────┼────────────────┘            │
 │                    │                              │
 │            ┌───────▼────────┐                    │
-│            │  AppLayout     │                    │
+│            │  ReviewPage    │                    │
 │            │  (Sidebar +    │                    │
 │            │   Header)      │                    │
 │            └───────┬────────┘                    │
@@ -169,9 +169,9 @@ The central authentication configuration. Sets up:
 Root layout that:
 - Loads Google Fonts (Inter, Geist, Geist Mono)
 - Imports global CSS
-- Wraps all pages inside `<AppLayout>`
+- Wraps all pages inside `<ReviewPage>`
 
-### `app/components/AppLayout.tsx`
+### `app/components/ReviewPage.tsx`
 The main shell component with:
 - **Left sidebar** — navigation links (Dashboard, Today's Menu, Analytics, Reviews, etc.)
 - **Top header** — search bar, notifications bell, user avatar
@@ -225,7 +225,7 @@ Create a `.env` file in the project root:
 MONGODB_URI="mongodb://localhost:27017"
 
 # NextAuth secret (generate with: openssl rand -hex 32)
-BETTER_AUTH_SECRET=your_secret_here
+AUTH_SECRET=your_secret_here
 
 # Google OAuth (get from Google Cloud Console)
 GOOGLE_CLIENT_ID=your_google_client_id
@@ -265,7 +265,7 @@ npm run dev
 
 ### File Naming
 - **Pages**: `page.tsx` inside route folders (Next.js App Router convention)
-- **Components**: PascalCase (e.g., `AppLayout.tsx`)
+- **Components**: PascalCase (e.g., `ReviewPage.tsx`)
 - **Utilities / Libs**: camelCase (e.g., `mongodb.js`, `utils.ts`)
 - **API routes**: `route.js` or `route.ts` inside `app/api/` folders
 
@@ -303,7 +303,7 @@ app/
 ```
 
 ### 2. Add Navigation
-Update the `menuItems` array in `app/components/AppLayout.tsx`:
+Update the `menuItems` array in `app/components/ReviewPage.tsx`:
 ```tsx
 { name: "Your Feature", icon: SomeIcon, href: "/your-feature" },
 ```

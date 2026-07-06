@@ -25,7 +25,7 @@ const menuItems = [
   { name: "Settings", icon: Settings, href: "/settings" },
 ];
 
-export default function AppLayout({ children, user }: { children: React.ReactNode, user?: any }) {
+export default function ReviewPage({ children, user }: { children: React.ReactNode, user?: any }) {
   const pathname = usePathname();
   const [profileOpen, setProfileOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
