@@ -1,6 +1,7 @@
 version: '3.8'
 
 services:
+
   redis:
     image: redis:7-alpine
     container_name: pdf_redis
@@ -17,7 +18,16 @@ services:
       - .:/app
       - pdf_data:/tmp/pdf_uploads
     depends_on:
-      - redis
+      redis:
+        condition: service_started
+      worker:
+        condition: service_started
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8000/readyz" ]
+      interval: 15s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
 
   worker:
     build: .

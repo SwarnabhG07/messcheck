@@ -1,19 +1,57 @@
 import os
 import uuid
-from fastapi import FastAPI, UploadFile, File, HTTPException
+import asyncio
+from fastapi import FastAPI, UploadFile, File, HTTPException, status
 from fastapi.responses import Response
 from tasks import celery_app, process_pdf_task
 
-app = FastAPI(title="Async PDF Extractor")
+#App definitions follow
+
+app = FastAPI(title="Table OCR Service")
 UPLOAD_DIR = "/tmp/pdf_uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
+#Standard health endpoints for liveness and readiness follow
+
+@app.get('/healthz',status_code=status.HTTP_200_OK)
+async def liveness():
+    """Liveness probe that checks if the app is up"""
+    return {'status': 'healthy'}
+
+@app.get("/readyz")
+async def readiness():
+    """Readiness probe: Verifies backend worker and broker dependencies."""
+    try:
+        # Run Celery ping in a separate thread to prevent blocking the async loop
+        # Timeout ensures the endpoint responds quickly even if infrastructure is hanging
+        loop = asyncio.get_event_loop()
+        ping_result = await loop.run_in_executor(
+            None, lambda: celery_app.control.ping(timeout=1.0)
+        )
+        if not ping_result:
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail={"status": "unhealthy", "celery_workers": "no workers responding"}
+            )
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail={"status": "unhealthy", "error": str(e)}
+        )
+    return {
+        "status": "healthy",
+        "celery_workers": "connected",
+        "active_worker_count": len(ping_result)
+    }
+
+#Logical endpoints follow
 
 @app.post("/extract/", status_code=202)
 async def start_extraction(file: UploadFile = File(...)):
     """Accepts file, saves it to shared disk, and handsoff to Celery."""
     if not file.filename.lower().endswith(".pdf"):
-        raise HTTPException(status_code=400, detail="Only PDFs allowed.")
+        raise HTTPException(status_code=400, detail="Only PDFs allowed.") #Camelot works only with PDFs.
 
     # Save to a shared storage/volume
     task_id = str(uuid.uuid4())
