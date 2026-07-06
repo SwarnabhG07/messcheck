@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: pdf_redis
+    ports:
+      - "6379:6379"
+
+  web:
+    build: .
+    container_name: fastapi_app
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+      - pdf_data:/tmp/pdf_uploads
+    depends_on:
+      - redis
+
+  worker:
+    build: .
+    container_name: celery_worker
+    command: celery -A tasks.celery_app worker --loglevel=info --concurrency=2
+    volumes:
+      - .:/app
+      - pdf_data:/tmp/pdf_uploads
+    depends_on:
+      - redis
+
+volumes:
+  pdf_data:
