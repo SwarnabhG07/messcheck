@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Utensils, Eye, EyeOff, Mail, Lock } from "lucide-react";
@@ -205,12 +206,12 @@ export default function LoginPage() {
         {/* Footer */}
         <p className="text-center text-gray-400 text-[13px] mt-4">
           Don&apos;t have an account?{" "}
-          <a
+          <Link
             href="/signup"
-            className="text-indigo-500 hover:text-indigo-600 font-medium transition-colors"
+            className="text-black font-semibold hover:underline transition-colors"
           >
             Sign up
-          </a>
+          </Link>
         </p>
       </div>
     </div>

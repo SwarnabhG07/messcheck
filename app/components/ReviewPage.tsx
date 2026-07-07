@@ -40,7 +40,7 @@ export default function ReviewPage({ children }: { children: React.ReactNode }) 
   const user = session?.user;
   const pathname = usePathname();
 
-  const authRoutes = ["/login", "/signup"];
+  const authRoutes = ["/login", "/signup", "/onboarding"];
   if (authRoutes.includes(pathname)) {
     return <>{children}</>;
   }
