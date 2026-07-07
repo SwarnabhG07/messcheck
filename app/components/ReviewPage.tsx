@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
+import dayjs from "dayjs";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -81,7 +82,7 @@ export default function ReviewPage({ children }: { children: React.ReactNode }) 
               MESS DASHBOARD
             </h1>
             <p className="text-gray-500 text-xs font-semibold tracking-wider uppercase mt-0.5">
-              WEDNESDAY, OCT 25
+              {dayjs().format('dddd, MMM D')}
             </p>
           </div>
           <div className="flex items-center gap-6 mt-1">
