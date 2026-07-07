@@ -16,9 +16,24 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  if (token && isPublicRoute) {
-    const dashboardUrl = new URL("/", req.nextUrl.origin);
-    return NextResponse.redirect(dashboardUrl);
+  if (token) {
+    const isOnboardingRoute = pathname === "/onboarding";
+    const isProfileApi = pathname === "/api/users/profile";
+
+    // Force non-onboarded users to the onboarding page
+    if (!token.onboarded && !isOnboardingRoute && !isProfileApi && !isAuthApi) {
+      return NextResponse.redirect(new URL("/onboarding", req.nextUrl.origin));
+    }
+
+    // Prevent onboarded users from going back to onboarding
+    if (token.onboarded && isOnboardingRoute) {
+      return NextResponse.redirect(new URL("/", req.nextUrl.origin));
+    }
+
+    // Redirect authenticated users away from public routes (like /login)
+    if (isPublicRoute) {
+      return NextResponse.redirect(new URL("/", req.nextUrl.origin));
+    }
   }
 
   return NextResponse.next();

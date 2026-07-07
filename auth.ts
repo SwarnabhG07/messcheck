@@ -68,16 +68,32 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   ],
 
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         token.id = user.id;
+        // Fetch user from DB to get their onboarded status on initial sign in
+        const client = await clientPromise;
+        const db = client.db("messcheck");
+        const dbUser = await db.collection("users").findOne({ email: user.email });
+        if (dbUser) {
+          token.onboarded = dbUser.onboarded || false;
+        }
       }
+
+      if (trigger === "update" && session) {
+        // Optimistically update the token from the client's update() call
+        if (session.onboarded !== undefined) {
+          token.onboarded = session.onboarded;
+        }
+      }
+
       return token;
     },
 
     async session({ session, token }) {
       if (session.user && token.id) {
         session.user.id = token.id as string;
+        (session.user as any).onboarded = token.onboarded;
       }
       return session;
     },

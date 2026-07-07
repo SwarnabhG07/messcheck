@@ -22,7 +22,8 @@ type OnboardingValues = z.infer<typeof onboardingSchema>;
 
 export default function OnboardingPage() {
   const router = useRouter();
-  const { data: session } = useSession();
+  const { data: session, update } = useSession();
+  const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
@@ -42,16 +43,28 @@ export default function OnboardingPage() {
 
   const onSubmit = async (data: OnboardingValues) => {
     setIsSubmitting(true);
+    setError("");
+
     try {
-      // Mock submit handler for now
-      console.log("Submitted Onboarding Data:", data);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      
-      // In the future, this will POST to /api/users/profile or similar
-      // After success, redirect to dashboard
-      router.push("/");
-    } catch (error) {
-      console.error("Failed to submit onboarding form", error);
+      const res = await fetch("/api/users/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      if (!res.ok) {
+        const result = await res.json();
+        throw new Error(result.error || "Failed to update profile");
+      }
+
+      // Update the client-side session so it knows we are onboarded
+      await update({ onboarded: true });
+
+      // Hard redirect to dashboard to ensure middleware runs fresh
+      window.location.href = "/";
+    } catch (err: any) {
+      console.error("Failed to submit onboarding form", err);
+      setError(err.message);
     } finally {
       setIsSubmitting(false);
     }
@@ -83,6 +96,12 @@ export default function OnboardingPage() {
         {/* The Form Card */}
         <div className="bg-white/80 backdrop-blur-xl border border-gray-100 p-8 rounded-[24px] shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+            {error && (
+              <div className="p-3 bg-red-50 text-red-600 text-sm font-medium rounded-xl border border-red-100 text-center">
+                {error}
+              </div>
+            )}
+
             {/* College */}
             <div>
               <Label htmlFor="college" className="text-xs font-bold text-gray-600 uppercase tracking-widest block mb-1.5">
