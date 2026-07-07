@@ -45,6 +45,17 @@ export default function ReviewPage({ children }: { children: React.ReactNode }) 
     return <>{children}</>;
   }
 
+  const activeMenuItem = menuItems.find(
+    (item) =>
+      pathname === item.href ||
+      (pathname === "/" && item.name === "Dashboard") ||
+      (pathname.startsWith("/reviews") && item.name === "View Reviews")
+  );
+
+  const headerTitle = activeMenuItem 
+    ? (activeMenuItem.name === "Dashboard" ? "MESS DASHBOARD" : activeMenuItem.name.toUpperCase())
+    : "MESS DASHBOARD";
+
   return (
     <div className="flex min-h-screen bg-[#f0f4f8] font-sans">
       {/* Sidebar */}
@@ -79,7 +90,7 @@ export default function ReviewPage({ children }: { children: React.ReactNode }) 
         <header className="flex justify-between items-start px-8 pt-6 pb-2">
           <div>
             <h1 className="text-2xl font-bold text-[#1e293b] tracking-tight leading-tight">
-              MESS DASHBOARD
+              {headerTitle}
             </h1>
             <p className="text-gray-500 text-xs font-semibold tracking-wider uppercase mt-0.5">
               {dayjs().format('dddd, MMM D')}
