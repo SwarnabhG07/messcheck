@@ -6,7 +6,7 @@ import clientPromise from "@/app/lib/mongodb";
 import bcrypt from "bcryptjs";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  adapter: MongoDBAdapter(clientPromise),
+  adapter: MongoDBAdapter(clientPromise, { databaseName: "messcheck" }),
 
   // Use JWT sessions (required when using Credentials provider)
   session: {
@@ -23,6 +23,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      allowDangerousEmailAccountLinking: true,
     }),
 
     // Email + Password
@@ -71,12 +72,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async jwt({ token, user, trigger, session }) {
       if (user) {
         token.id = user.id;
-        // Fetch user from DB to get their onboarded status on initial sign in
-        const client = await clientPromise;
-        const db = client.db("messcheck");
-        const dbUser = await db.collection("users").findOne({ email: user.email });
-        if (dbUser) {
-          token.onboarded = dbUser.onboarded || false;
+        try {
+          // Fetch user from DB to get their onboarded status on initial sign in
+          const client = await clientPromise;
+          const db = client.db("messcheck");
+          const dbUser = await db.collection("users").findOne({ email: user.email });
+          if (dbUser) {
+            token.onboarded = dbUser.onboarded || false;
+          }
+        } catch (error) {
+          console.error("Error in jwt callback db fetch:", error);
+          // Don't throw, just let them login without onboarded status
         }
       }
 
