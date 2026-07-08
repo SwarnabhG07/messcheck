@@ -110,6 +110,29 @@ export default function MenuManagerPage() {
     setTableData(newData);
   };
 
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSaveMenu = async () => {
+    setIsSaving(true);
+    setError("");
+    try {
+      const res = await fetch("/api/menu", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tableData }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Failed to save menu");
+      }
+      alert("Menu saved successfully!");
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
     <div className="p-8 max-w-6xl mx-auto space-y-6">
       <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center space-y-4">
@@ -167,9 +190,13 @@ export default function MenuManagerPage() {
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
           <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
             <h3 className="font-bold text-gray-800">Extracted Menu Data</h3>
-            <Button className="bg-green-600 hover:bg-green-700 text-white font-medium h-9 text-sm">
-              <Save className="w-4 h-4 mr-2" />
-              Save Menu
+            <Button 
+              onClick={handleSaveMenu}
+              disabled={isSaving}
+              className="bg-green-600 hover:bg-green-700 text-white font-medium h-9 text-sm"
+            >
+              {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+              {isSaving ? "Saving..." : "Save Menu"}
             </Button>
           </div>
           <div className="overflow-x-auto p-4 max-h-[600px] overflow-y-auto">
