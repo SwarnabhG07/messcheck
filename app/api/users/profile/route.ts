@@ -11,9 +11,9 @@ export async function PUT(req: Request) {
     }
 
     const data = await req.json();
-    const { college, yearOfStudy, rollNumber, graduationYear, hostel } = data;
+    const { name, college, yearOfStudy, rollNumber, graduationYear, hostel } = data;
 
-    if (!college || !yearOfStudy || !rollNumber || !graduationYear || !hostel) {
+    if (!name || !college || !yearOfStudy || !rollNumber || !graduationYear || !hostel) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
@@ -24,6 +24,7 @@ export async function PUT(req: Request) {
       { email: session.user.email },
       {
         $set: {
+          name,
           college,
           yearOfStudy,
           rollNumber,

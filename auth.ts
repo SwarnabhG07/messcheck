@@ -91,6 +91,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         if (session.onboarded !== undefined) {
           token.onboarded = session.onboarded;
         }
+        if (session.name !== undefined) {
+          token.name = session.name;
+        }
       }
 
       return token;
@@ -99,6 +102,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async session({ session, token }) {
       if (session.user && token.id) {
         session.user.id = token.id as string;
+        if (token.name) {
+          session.user.name = token.name;
+        }
         (session.user as any).onboarded = token.onboarded;
       }
       return session;

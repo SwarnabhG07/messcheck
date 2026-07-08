@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 
 const onboardingSchema = z.object({
+  name: z.string().min(2, "Name is required"),
   college: z.string().min(2, "College name is required"),
   yearOfStudy: z.string().min(1, "Year of study is required"),
   rollNumber: z.string().min(1, "Roll number is required"),
@@ -33,6 +34,7 @@ export default function OnboardingPage() {
   } = useForm<OnboardingValues>({
     resolver: zodResolver(onboardingSchema),
     defaultValues: {
+      name: session?.user?.name || "",
       college: "",
       yearOfStudy: "",
       rollNumber: "",
@@ -58,7 +60,7 @@ export default function OnboardingPage() {
       }
 
       // Update the client-side session so it knows we are onboarded
-      await update({ onboarded: true });
+      await update({ onboarded: true, name: data.name });
 
       // Hard redirect to dashboard to ensure middleware runs fresh
       window.location.href = "/";
@@ -101,6 +103,21 @@ export default function OnboardingPage() {
                 {error}
               </div>
             )}
+
+            {/* Name */}
+            <div>
+              <Label htmlFor="name" className="text-xs font-bold text-gray-600 uppercase tracking-widest block mb-1.5">
+                Full Name
+              </Label>
+              <Input
+                id="name"
+                type="text"
+                placeholder="e.g. John Doe"
+                {...register("name")}
+                className="w-full h-12 rounded-xl bg-[#f0f4f8] border-none focus-visible:ring-black/10 text-sm text-gray-900 placeholder:text-gray-400"
+              />
+              {errors.name && <p className="text-red-500 text-xs mt-1 font-medium">{errors.name.message}</p>}
+            </div>
 
             {/* College */}
             <div>
