@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Upload, FileText, Loader2, Save } from "lucide-react";
 
@@ -10,6 +10,26 @@ export default function MenuManagerPage() {
   const [error, setError] = useState("");
   const [tableData, setTableData] = useState<string[][]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isLoadingMenu, setIsLoadingMenu] = useState(true);
+
+  useEffect(() => {
+    async function loadMenu() {
+      try {
+        const res = await fetch("/api/menu");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.tableData && data.tableData.length > 0) {
+            setTableData(data.tableData);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to load existing menu:", error);
+      } finally {
+        setIsLoadingMenu(false);
+      }
+    }
+    loadMenu();
+  }, []);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -186,7 +206,11 @@ export default function MenuManagerPage() {
         )}
       </div>
 
-      {tableData.length > 0 && (
+      {isLoadingMenu ? (
+        <div className="flex justify-center p-8">
+          <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+        </div>
+      ) : tableData.length > 0 && (
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
           <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
             <h3 className="font-bold text-gray-800">Extracted Menu Data</h3>
