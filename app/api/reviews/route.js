@@ -2,13 +2,27 @@ import clientPromise from "../../lib/mongodb";
 import { NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import dayjs from "dayjs";
+import { auth } from "@/auth";
 
 export async function GET() {
   try {
+    const session = await auth();
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const client = await clientPromise;
     const db = client.db("messcheck");
     
-    const reviews = await db.collection("reviews").find({}).toArray();
+    const user = await db.collection("users").findOne({ email: session.user.email });
+    if (!user || !user.college || !user.hostel) {
+      return NextResponse.json([]);
+    }
+    
+    const reviews = await db.collection("reviews").find({
+      college: user.college,
+      hostel: user.hostel
+    }).toArray();
     
     return NextResponse.json(reviews);
   } catch (e) {
@@ -19,6 +33,11 @@ export async function GET() {
 
 export async function POST(req) {
   try {
+    const session = await auth();
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const data = await req.json();
     // Validate required fields
     if (!data.name || !data.rating || !data.text || !data.for || !data.day) {
@@ -28,9 +47,16 @@ export async function POST(req) {
     const client = await clientPromise;
     const db = client.db("messcheck");
     
+    const user = await db.collection("users").findOne({ email: session.user.email });
+    if (!user || !user.college || !user.hostel) {
+      return NextResponse.json({ error: "User profile incomplete" }, { status: 403 });
+    }
+    
     const newReview = {
       name: data.name,
-      email: data.email,
+      email: session.user.email,
+      college: user.college,
+      hostel: user.hostel,
       rating: data.rating.toString(),
       text: data.text,
       for: data.for,
@@ -50,8 +76,13 @@ export async function POST(req) {
 
 export async function PUT(req) {
   try {
+    const session = await auth();
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const data = await req.json();
-    if (!data._id || !data.email || !data.rating || !data.text || !data.for || !data.day) {
+    if (!data._id || !data.rating || !data.text || !data.for || !data.day) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
@@ -64,7 +95,7 @@ export async function PUT(req) {
       return NextResponse.json({ error: "Review not found" }, { status: 404 });
     }
     
-    if (existingReview.email !== data.email) {
+    if (existingReview.email !== session.user.email) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
