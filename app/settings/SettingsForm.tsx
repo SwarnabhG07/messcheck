@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/dialog";
 
 const settingsSchema = z.object({
+  name: z.string().min(2, "Please enter your name"),
   college: z.string().min(2, "Please enter your college name"),
   yearOfStudy: z.string().min(1, "Please select your year of study"),
   rollNumber: z.string().min(2, "Please enter your roll number"),
@@ -46,6 +47,8 @@ export default function SettingsForm({ initialData }: SettingsFormProps) {
   const [successMsg, setSuccessMsg] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const { update } = useSession();
 
   const {
     register,
@@ -75,8 +78,11 @@ export default function SettingsForm({ initialData }: SettingsFormProps) {
         throw new Error(result.error || "Failed to update profile");
       }
 
+      await update({ name: data.name });
       setSuccessMsg("Profile updated successfully!");
-      router.refresh();
+      
+      // Force a hard reload to ensure the session context and UI reflect the updated name immediately.
+      window.location.reload();
     } catch (err: any) {
       console.error("Failed to update profile", err);
       setError(err.message);
@@ -131,17 +137,32 @@ export default function SettingsForm({ initialData }: SettingsFormProps) {
             </div>
           )}
 
-          <div>
-            <Label htmlFor="college" className="text-xs font-bold text-gray-600 uppercase tracking-widest block mb-1.5">
-              College
-            </Label>
-            <Input
-              id="college"
-              placeholder="e.g. IIT Bombay"
-              {...register("college")}
-              className="w-full h-11 rounded-xl bg-gray-50 border-gray-200 focus-visible:ring-black/10 text-sm"
-            />
-            {errors.college && <p className="text-red-500 text-xs mt-1 font-medium">{errors.college.message}</p>}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+              <Label htmlFor="name" className="text-xs font-bold text-gray-600 uppercase tracking-widest block mb-1.5">
+                Full Name
+              </Label>
+              <Input
+                id="name"
+                placeholder="e.g. John Doe"
+                {...register("name")}
+                className="w-full h-11 rounded-xl bg-gray-50 border-gray-200 focus-visible:ring-black/10 text-sm"
+              />
+              {errors.name && <p className="text-red-500 text-xs mt-1 font-medium">{errors.name.message}</p>}
+            </div>
+
+            <div>
+              <Label htmlFor="college" className="text-xs font-bold text-gray-600 uppercase tracking-widest block mb-1.5">
+                College
+              </Label>
+              <Input
+                id="college"
+                placeholder="e.g. IIT Bombay"
+                {...register("college")}
+                className="w-full h-11 rounded-xl bg-gray-50 border-gray-200 focus-visible:ring-black/10 text-sm"
+              />
+              {errors.college && <p className="text-red-500 text-xs mt-1 font-medium">{errors.college.message}</p>}
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">

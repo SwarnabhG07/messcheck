@@ -20,6 +20,7 @@ export default async function SettingsPage() {
   }
 
   const profileData = {
+    name: user.name || session.user.name || "",
     college: user.college || "",
     yearOfStudy: user.yearOfStudy || "",
     rollNumber: user.rollNumber || "",
