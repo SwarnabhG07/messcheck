@@ -70,3 +70,31 @@ export async function GET() {
     return NextResponse.json({ error: "Failed to fetch menu" }, { status: 500 });
   }
 }
+
+export async function DELETE() {
+  try {
+    const session = await auth();
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const client = await clientPromise;
+    const db = client.db("messcheck");
+    
+    const user = await db.collection("users").findOne({ email: session.user.email });
+    if (!user || !user.college || !user.hostel) {
+      return NextResponse.json({ error: "User profile incomplete" }, { status: 403 });
+    }
+
+    await db.collection("menus").deleteOne({ 
+      college: user.college, 
+      hostel: user.hostel 
+    });
+
+    return NextResponse.json({ success: true, message: "Menu deleted successfully" });
+  } catch (error) {
+    console.error("Failed to delete menu:", error);
+    return NextResponse.json({ error: "Failed to delete menu" }, { status: 500 });
+  }
+}
+

@@ -2,7 +2,18 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Upload, FileText, Loader2, Save } from "lucide-react";
+import { Upload, FileText, Loader2, Save, Trash2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export default function MenuManagerPage() {
   const [file, setFile] = useState<File | null>(null);
@@ -157,8 +168,31 @@ export default function MenuManagerPage() {
     }
   };
 
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDeleteMenu = async () => {
+    setIsDeleting(true);
+    setError("");
+    try {
+      const res = await fetch("/api/menu", { method: "DELETE" });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Failed to delete menu");
+      }
+      setTableData([]);
+      setFile(null);
+      setHasChanges(false);
+      setStatus("IDLE");
+      alert("Menu deleted successfully!");
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   return (
-    <div className="p-8 max-w-6xl mx-auto space-y-6 flex flex-col h-[calc(100vh-80px)]">
+    <div className="p-8 max-w-6xl mx-auto space-y-6">
       <input 
         type="file" 
         accept="application/pdf" 
@@ -166,7 +200,7 @@ export default function MenuManagerPage() {
         ref={fileInputRef}
         onChange={handleFileChange}
       />
-      {(tableData.length === 0 || file !== null) && (
+      {tableData.length === 0 && (
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center space-y-4 shrink-0">
           <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mb-2">
             <Upload className="w-8 h-8 text-blue-500" />
@@ -216,11 +250,11 @@ export default function MenuManagerPage() {
           <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
         </div>
       ) : tableData.length > 0 && (
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col flex-1 min-h-0">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
           <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
             <h3 className="font-bold text-gray-800">Extracted Menu Data</h3>
             <div className="flex items-center gap-3">
-              {tableData.length > 0 && file === null && (
+              {tableData.length > 0 && (
                 <Button 
                   variant="outline" 
                   onClick={() => fileInputRef.current?.click()}
@@ -230,6 +264,36 @@ export default function MenuManagerPage() {
                   Upload PDF
                 </Button>
               )}
+              
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button 
+                    variant="outline" 
+                    className="font-medium h-9 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
+                  >
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Delete
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent className="bg-white rounded-xl">
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete your current mess menu for everyone in your hostel.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel className="rounded-lg">Cancel</AlertDialogCancel>
+                    <AlertDialogAction 
+                      onClick={handleDeleteMenu}
+                      className="bg-red-600 hover:bg-red-700 text-white rounded-lg"
+                    >
+                      {isDeleting ? "Deleting..." : "Delete Menu"}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+              
               <Button 
                 onClick={handleSaveMenu}
                 disabled={isSaving || !hasChanges}
@@ -244,7 +308,7 @@ export default function MenuManagerPage() {
               </Button>
             </div>
           </div>
-          <div className="overflow-x-auto p-4 overflow-y-auto flex-1 bg-white">
+          <div className="overflow-x-auto p-4 bg-white">
             <table className="w-full border-collapse min-w-max">
               <tbody>
                 {tableData.map((row, rowIndex) => (
