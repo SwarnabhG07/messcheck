@@ -11,6 +11,7 @@ export default function MenuManagerPage() {
   const [tableData, setTableData] = useState<string[][]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isLoadingMenu, setIsLoadingMenu] = useState(true);
+  const [hasChanges, setHasChanges] = useState(false);
 
   useEffect(() => {
     async function loadMenu() {
@@ -105,6 +106,7 @@ export default function MenuManagerPage() {
             const csvText = await downloadRes.text();
             
             setTableData(parseCSV(csvText));
+            setHasChanges(true);
             setStatus("COMPLETED");
           } else if (statusData.status === "FAILED") {
             clearInterval(pollInterval);
@@ -128,6 +130,7 @@ export default function MenuManagerPage() {
     const newData = [...tableData];
     newData[rowIndex][colIndex] = value;
     setTableData(newData);
+    setHasChanges(true);
   };
 
   const [isSaving, setIsSaving] = useState(false);
@@ -146,6 +149,7 @@ export default function MenuManagerPage() {
         throw new Error(data.error || "Failed to save menu");
       }
       alert("Menu saved successfully!");
+      setHasChanges(false);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -154,76 +158,93 @@ export default function MenuManagerPage() {
   };
 
   return (
-    <div className="p-8 max-w-6xl mx-auto space-y-6">
-      <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center space-y-4">
-        <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mb-2">
-          <Upload className="w-8 h-8 text-blue-500" />
-        </div>
-        <h2 className="text-xl font-bold text-gray-900">Upload Mess Menu PDF</h2>
-        <p className="text-sm text-gray-500 max-w-md">
-          Upload the PDF version of your mess menu. Our AI will automatically extract the tables so you can edit and publish them.
-        </p>
-        
-        <input 
-          type="file" 
-          accept="application/pdf" 
-          className="hidden" 
-          ref={fileInputRef}
-          onChange={handleFileChange}
-        />
-        
-        <div className="flex gap-3">
-          <Button 
-            variant="outline" 
-            onClick={() => fileInputRef.current?.click()}
-            className="font-medium"
-          >
-            Select PDF
-          </Button>
-          <Button 
-            onClick={handleUpload}
-            disabled={!file || status === "UPLOADING" || status === "PROCESSING"}
-            className="bg-black text-white hover:bg-gray-900 font-medium min-w-[160px]"
-          >
-            {status === "UPLOADING" && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-            {status === "PROCESSING" && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-            {status === "IDLE" || status === "COMPLETED" || status === "ERROR" ? "Start Extraction" : 
-             status === "UPLOADING" ? "Uploading..." : "Extracting Tables..."}
-          </Button>
-        </div>
-
-        {file && (
-          <div className="flex items-center gap-2 text-sm text-gray-600 bg-gray-50 px-3 py-1.5 rounded-lg mt-2">
-            <FileText className="w-4 h-4 text-gray-400" />
-            {file.name}
+    <div className="p-8 max-w-6xl mx-auto space-y-6 flex flex-col h-[calc(100vh-80px)]">
+      <input 
+        type="file" 
+        accept="application/pdf" 
+        className="hidden" 
+        ref={fileInputRef}
+        onChange={handleFileChange}
+      />
+      {(tableData.length === 0 || file !== null) && (
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center space-y-4 shrink-0">
+          <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mb-2">
+            <Upload className="w-8 h-8 text-blue-500" />
           </div>
-        )}
-
-        {error && (
-          <div className="text-red-500 text-sm font-medium bg-red-50 px-4 py-2 rounded-lg mt-2 border border-red-100">
-            {error}
+          <h2 className="text-xl font-bold text-gray-900">Upload Mess Menu PDF</h2>
+          <p className="text-sm text-gray-500 max-w-md">
+            Upload the PDF version of your mess menu. Our AI will automatically extract the tables so you can edit and publish them.
+          </p>
+          
+          <div className="flex gap-3">
+            <Button 
+              variant="outline" 
+              onClick={() => fileInputRef.current?.click()}
+              className="font-medium"
+            >
+              Select PDF
+            </Button>
+            <Button 
+              onClick={handleUpload}
+              disabled={!file || status === "UPLOADING" || status === "PROCESSING"}
+              className="bg-black text-white hover:bg-gray-900 font-medium min-w-[160px]"
+            >
+              {status === "UPLOADING" && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              {status === "PROCESSING" && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              {status === "IDLE" || status === "COMPLETED" || status === "ERROR" ? "Start Extraction" : 
+               status === "UPLOADING" ? "Uploading..." : "Extracting Tables..."}
+            </Button>
           </div>
-        )}
-      </div>
+
+          {file && (
+            <div className="flex items-center gap-2 text-sm text-gray-600 bg-gray-50 px-3 py-1.5 rounded-lg mt-2">
+              <FileText className="w-4 h-4 text-gray-400" />
+              {file.name}
+            </div>
+          )}
+
+          {error && (
+            <div className="text-red-500 text-sm font-medium bg-red-50 px-4 py-2 rounded-lg mt-2 border border-red-100">
+              {error}
+            </div>
+          )}
+        </div>
+      )}
 
       {isLoadingMenu ? (
-        <div className="flex justify-center p-8">
+        <div className="flex justify-center p-8 shrink-0">
           <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
         </div>
       ) : tableData.length > 0 && (
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col flex-1 min-h-0">
           <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
             <h3 className="font-bold text-gray-800">Extracted Menu Data</h3>
-            <Button 
-              onClick={handleSaveMenu}
-              disabled={isSaving}
-              className="bg-green-600 hover:bg-green-700 text-white font-medium h-9 text-sm"
-            >
-              {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-              {isSaving ? "Saving..." : "Save Menu"}
-            </Button>
+            <div className="flex items-center gap-3">
+              {tableData.length > 0 && file === null && (
+                <Button 
+                  variant="outline" 
+                  onClick={() => fileInputRef.current?.click()}
+                  className="font-medium h-9 text-sm text-gray-600 hover:text-gray-900 bg-white"
+                >
+                  <Upload className="w-4 h-4 mr-2" />
+                  Upload PDF
+                </Button>
+              )}
+              <Button 
+                onClick={handleSaveMenu}
+                disabled={isSaving || !hasChanges}
+                className={`font-medium h-9 text-sm ${
+                  (!hasChanges || isSaving)
+                    ? "bg-gray-200 text-gray-500 hover:bg-gray-200"
+                    : "bg-green-600 hover:bg-green-700 text-white"
+                }`}
+              >
+                {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+                {isSaving ? "Saving..." : "Save Menu"}
+              </Button>
+            </div>
           </div>
-          <div className="overflow-x-auto p-4 max-h-[600px] overflow-y-auto">
+          <div className="overflow-x-auto p-4 overflow-y-auto flex-1 bg-white">
             <table className="w-full border-collapse min-w-max">
               <tbody>
                 {tableData.map((row, rowIndex) => (
