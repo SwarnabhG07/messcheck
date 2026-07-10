@@ -154,7 +154,7 @@ export default function Dashboard() {
               key={item.type}
               className="p-0 rounded-xl shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] border-gray-50/50"
             >
-              <CardContent className="p-2.5 flex gap-3.5 items-center">
+              <CardContent className="p-2.5 flex gap-3.5 items-stretch">
               <div className="w-19 h-19 rounded-lg overflow-hidden shrink-0 relative">
                 <Image
                   src={item.image}
@@ -163,9 +163,9 @@ export default function Dashboard() {
                   className="object-cover"
                 />
               </div>
-              <div className="flex-1 flex flex-col justify-center">
+              <div className="flex-1 flex flex-col justify-between py-0.5">
                 <div className="flex justify-between items-start mb-0.5">
-                  <h3 className="font-bold text-gray-900 text-[15px]">
+                  <h3 className="font-bold text-gray-900 text-[17px]">
                     {item.type}
                   </h3>
                   <div className="text-right">
@@ -178,15 +178,17 @@ export default function Dashboard() {
                     </div>
                   </div>
                 </div>
-                <p className="text-gray-500 text-[11.5px] leading-snug line-clamp-2 max-w-[85%] pr-2 mb-1">
-                  {item.name}
-                </p>
-                <a
-                  href="#"
-                  className="text-blue-600 font-bold text-[11px] tracking-wider uppercase hover:text-blue-700 transition-colors"
-                >
-                  VIEW DETAILS
-                </a>
+                <div className="mt-auto">
+                  <p className="text-gray-500 text-[13px] leading-snug line-clamp-2 max-w-[90%] pr-2">
+                    {item.name}
+                  </p>
+                  <a
+                    href="#"
+                    className="text-blue-600 font-bold text-[13px] tracking-wider uppercase hover:text-blue-700 transition-colors inline-block mt-0.5"
+                  >
+                    VIEW DETAILS
+                  </a>
+                </div>
               </div>
               </CardContent>
             </Card>

@@ -107,7 +107,7 @@ export default function TodayMenuPage() {
       <div className="space-y-3">
         {menu.map((m, idx) => (
           <Card key={idx} className="bg-white border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden flex flex-col sm:flex-row rounded-2xl group">
-            <div className="relative sm:w-48 h-32 sm:h-auto shrink-0 overflow-hidden bg-gray-100">
+            <div className="relative sm:w-40 h-24 sm:h-auto shrink-0 overflow-hidden bg-gray-100">
               <Image 
                 src={getMealImage(m.meal)} 
                 alt={m.meal} 
@@ -116,9 +116,9 @@ export default function TodayMenuPage() {
               />
             </div>
             
-            <div className="p-4 sm:p-5 flex flex-col justify-start flex-1">
-              <div className="flex justify-between items-start mb-2">
-                <h3 className="text-lg font-bold text-gray-900 uppercase tracking-wider">
+            <div className="px-4 pb-2.5 pt-2 sm:px-5 sm:pb-3 sm:pt-2.5 flex flex-col justify-start flex-1">
+              <div className="flex justify-between items-start mb-1.5">
+                <h3 className="text-xl font-bold text-gray-900 uppercase tracking-wider">
                   {m.meal}
                 </h3>
                 
@@ -131,9 +131,15 @@ export default function TodayMenuPage() {
                 </div>
               </div>
               
-              <p className="text-gray-600 group-hover:text-gray-900 text-sm font-medium leading-relaxed transition-colors">
+              <p className="text-gray-600 group-hover:text-gray-900 text-base font-medium leading-relaxed transition-colors mt-1 mb-0.5">
                 {m.items}
               </p>
+              <a
+                href="#"
+                className="text-blue-600 font-bold text-[15px] tracking-wider uppercase hover:text-blue-700 transition-colors inline-block"
+              >
+                VIEW DETAILS
+              </a>
             </div>
           </Card>
         ))}
