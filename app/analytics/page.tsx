@@ -75,9 +75,7 @@ export default function AnalyticsPage() {
   };
   
   // Day stats (Only relevant for week/month)
-  const dayStats: Record<string, number> = {
-    "Monday": 0, "Tuesday": 0, "Wednesday": 0, "Thursday": 0, "Friday": 0, "Saturday": 0, "Sunday": 0
-  };
+  const dayStats: Record<string, number> = {};
 
   periodReviews.forEach(r => {
     const meal = r.for?.toUpperCase();
@@ -85,10 +83,14 @@ export default function AnalyticsPage() {
       mealStats[meal].total += parseFloat(r.rating) || 0;
       mealStats[meal].count += 1;
     }
-    const day = dayjs(r.createdAt).format("dddd");
-    if (dayStats[day] !== undefined) {
-      dayStats[day] += 1;
+    const day = timeframe === "month" 
+      ? dayjs(r.createdAt).format("MMM D")
+      : dayjs(r.createdAt).format("dddd");
+    
+    if (dayStats[day] === undefined) {
+      dayStats[day] = 0;
     }
+    dayStats[day] += 1;
   });
 
   let highestMeal = "N/A";
@@ -173,6 +175,19 @@ export default function AnalyticsPage() {
         </div>
         
         <div className="flex flex-wrap items-center gap-3">
+          {/* Date Picker */}
+          {timeframe === "day" && (
+            <div className="flex items-center gap-2 bg-gray-50 px-4 py-2 rounded-xl border border-gray-100">
+              <CalendarIcon className="w-5 h-5 text-gray-400" />
+              <input 
+                type="date" 
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                className="bg-transparent border-none outline-none text-sm font-medium text-gray-700 cursor-pointer"
+              />
+            </div>
+          )}
+
           {/* Timeframe Selector */}
           <div className="bg-gray-50 rounded-xl border border-gray-100 p-1 flex gap-1">
             {(["day", "week", "month"] as Timeframe[]).map((tf) => (
@@ -188,17 +203,6 @@ export default function AnalyticsPage() {
                 {tf}
               </button>
             ))}
-          </div>
-
-          {/* Date Picker */}
-          <div className="flex items-center gap-2 bg-gray-50 px-4 py-2 rounded-xl border border-gray-100">
-            <CalendarIcon className="w-5 h-5 text-gray-400" />
-            <input 
-              type="date" 
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
-              className="bg-transparent border-none outline-none text-sm font-medium text-gray-700 cursor-pointer"
-            />
           </div>
         </div>
       </div>
@@ -250,7 +254,9 @@ export default function AnalyticsPage() {
                 <div className="p-2 bg-purple-50 rounded-lg mb-3">
                   <Clock className="w-5 h-5 text-purple-600" />
                 </div>
-                <div className="text-gray-500 text-xs font-bold tracking-widest uppercase mb-1">Active Day</div>
+                <div className="text-gray-500 text-xs font-bold tracking-widest uppercase mb-1">
+                  {timeframe === 'month' ? 'Active Date' : 'Active Day'}
+                </div>
                 <div className="text-2xl font-bold text-gray-900 truncate w-full">
                   {timeframe === 'day' ? '-' : mostActiveDay}
                 </div>
