@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Star } from "lucide-react";
 import {
   BarChart,
@@ -182,12 +183,12 @@ export default function Dashboard() {
                   <p className="text-gray-500 text-[13px] leading-snug line-clamp-2 max-w-[90%] pr-2">
                     {item.name}
                   </p>
-                  <a
-                    href="#"
+                  <Link
+                    href={`/menu-today/${item.type.toLowerCase()}`}
                     className="text-blue-600 font-bold text-[13px] tracking-wider uppercase hover:text-blue-700 transition-colors inline-block mt-0.5"
                   >
                     VIEW DETAILS
-                  </a>
+                  </Link>
                 </div>
               </div>
               </CardContent>

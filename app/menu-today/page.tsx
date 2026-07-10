@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import Image from "next/image";
+import Link from "next/link";
 import { Loader2, Star } from "lucide-react";
 import { Card } from "@/components/ui/card";
 
@@ -134,12 +135,12 @@ export default function TodayMenuPage() {
               <p className="text-gray-600 group-hover:text-gray-900 text-base font-medium leading-relaxed transition-colors mt-1 mb-0.5">
                 {m.items}
               </p>
-              <a
-                href="#"
+              <Link
+                href={`/menu-today/${m.meal.toLowerCase()}`}
                 className="text-blue-600 font-bold text-[15px] tracking-wider uppercase hover:text-blue-700 transition-colors inline-block"
               >
                 VIEW DETAILS
-              </a>
+              </Link>
             </div>
           </Card>
         ))}
