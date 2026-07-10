@@ -5,12 +5,14 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import dayjs from "dayjs";
-import { ArrowLeft, Star, Loader2, MessageSquare, User } from "lucide-react";
+import isBetween from "dayjs/plugin/isBetween";
+dayjs.extend(isBetween);
+
+import { ArrowLeft, Star, Loader2, MessageSquare, User, Calendar as CalendarIcon } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip, Cell
-} from "recharts";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
+type Timeframe = "day" | "week" | "month" | "all-time";
 
 export default function MealDetailsPage(props: { params: Promise<{ meal: string }> }) {
   const params = use(props.params);
@@ -22,6 +24,9 @@ export default function MealDetailsPage(props: { params: Promise<{ meal: string 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const [selectedDate, setSelectedDate] = useState(dayjs().format("YYYY-MM-DD"));
+  const [timeframe, setTimeframe] = useState<Timeframe>("all-time");
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -30,14 +35,11 @@ export default function MealDetailsPage(props: { params: Promise<{ meal: string 
           fetch("/api/menu")
         ]);
 
-        let reviewsData: any[] = [];
         if (reviewsRes.ok) {
           const allReviews = await reviewsRes.json();
-          // Filter all-time reviews for this specific meal
-          reviewsData = allReviews.filter((r: any) => r.for?.toUpperCase() === mealName);
-          // Sort by newest first
-          reviewsData.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-          setReviews(reviewsData);
+          const mealReviews = allReviews.filter((r: any) => r.for?.toUpperCase() === mealName);
+          mealReviews.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+          setReviews(mealReviews);
         }
 
         if (menuRes.ok) {
@@ -97,10 +99,35 @@ export default function MealDetailsPage(props: { params: Promise<{ meal: string 
     );
   }
 
-  // Analytics Computation (All Time)
-  const totalReviews = reviews.length;
+  // Timeframe logic
+  const currentDate = dayjs(selectedDate);
+  let startOfPeriod = currentDate;
+  let endOfPeriod = currentDate;
+  
+  if (timeframe === "day") {
+    startOfPeriod = currentDate.startOf('day');
+    endOfPeriod = currentDate.endOf('day');
+  } else if (timeframe === "week") {
+    const dayOfWeek = currentDate.day(); 
+    startOfPeriod = dayOfWeek === 0 ? currentDate.subtract(6, 'day').startOf('day') : currentDate.startOf('week').add(1, 'day').startOf('day');
+    endOfPeriod = startOfPeriod.add(6, 'day').endOf('day');
+  } else if (timeframe === "month") {
+    startOfPeriod = currentDate.startOf('month');
+    endOfPeriod = currentDate.endOf('month');
+  }
+
+  const filteredReviews = timeframe === "all-time" 
+    ? reviews 
+    : reviews.filter(r => {
+        if (!r.createdAt) return false;
+        const reviewDate = dayjs(r.createdAt);
+        return reviewDate.isBetween(startOfPeriod, endOfPeriod, null, '[]');
+      });
+
+  // Analytics Computation
+  const totalReviews = filteredReviews.length;
   const avgRating = totalReviews > 0 
-    ? (reviews.reduce((acc, r) => acc + (parseFloat(r.rating) || 0), 0) / totalReviews).toFixed(1)
+    ? (filteredReviews.reduce((acc, r) => acc + (parseFloat(r.rating) || 0), 0) / totalReviews).toFixed(1)
     : "0.0";
 
   // Distribution
@@ -112,7 +139,7 @@ export default function MealDetailsPage(props: { params: Promise<{ meal: string 
     { stars: "1", count: 0 },
   ];
   
-  reviews.forEach(r => {
+  filteredReviews.forEach(r => {
     const rVal = Math.round(parseFloat(r.rating) || 0);
     if (rVal >= 1 && rVal <= 5) {
       const idx = 5 - rVal;
@@ -120,22 +147,50 @@ export default function MealDetailsPage(props: { params: Promise<{ meal: string 
     }
   });
 
-  // Calculate percentage for visual bars
-  const maxCount = Math.max(...distribution.map(d => d.count), 1);
-
-  // Reviews with feedback text
-  const textReviews = reviews.filter(r => r.feedback && r.feedback.trim() !== "");
-
   return (
     <div className="p-4 md:p-8 max-w-6xl mx-auto space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-4 mb-6">
-        <Link href="/menu-today" className="p-2 bg-white hover:bg-gray-50 text-gray-600 rounded-xl shadow-sm border border-gray-100 transition-colors">
-          <ArrowLeft className="w-5 h-5" />
-        </Link>
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 capitalize">{mealName.toLowerCase()}</h1>
-          <p className="text-gray-500 text-sm">Today's menu details and all-time analytics</p>
+      {/* Header and Controls */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <div className="flex items-center gap-4">
+          <Link href="/menu-today" className="p-2 bg-white hover:bg-gray-50 text-gray-600 rounded-xl shadow-sm border border-gray-100 transition-colors">
+            <ArrowLeft className="w-5 h-5" />
+          </Link>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 capitalize">{mealName.toLowerCase()}</h1>
+            <p className="text-gray-500 text-sm">Today's menu details and analytics</p>
+          </div>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-3">
+          {/* Date Picker (hidden unless 'day' is selected) */}
+          {timeframe === "day" && (
+            <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-xl border border-gray-100 shadow-sm">
+              <CalendarIcon className="w-5 h-5 text-gray-400" />
+              <input 
+                type="date" 
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                className="bg-transparent border-none outline-none text-sm font-medium text-gray-700 cursor-pointer"
+              />
+            </div>
+          )}
+
+          {/* Timeframe Selector */}
+          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-1 flex gap-1">
+            {(["day", "week", "month", "all-time"] as Timeframe[]).map((tf) => (
+              <button
+                key={tf}
+                onClick={() => setTimeframe(tf)}
+                className={`px-3 py-1.5 text-sm font-medium rounded-lg capitalize transition-colors ${
+                  timeframe === tf 
+                    ? "bg-blue-50 text-blue-700 shadow-sm font-bold" 
+                    : "text-gray-500 hover:text-gray-700"
+                }`}
+              >
+                {tf.replace("-", " ")}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -166,7 +221,7 @@ export default function MealDetailsPage(props: { params: Promise<{ meal: string 
           <Card className="rounded-2xl border-gray-100 shadow-sm">
             <CardContent className="p-6">
               <h2 className="text-gray-500 text-xs font-bold tracking-widest uppercase mb-6">
-                All-Time Analytics
+                {timeframe === "all-time" ? "All-Time Analytics" : "Period Analytics"}
               </h2>
               
               <div className="flex items-center gap-6 mb-8">
@@ -213,50 +268,53 @@ export default function MealDetailsPage(props: { params: Promise<{ meal: string 
                 Recent Reviews
               </h2>
               <span className="bg-blue-50 text-blue-600 text-xs font-bold px-2.5 py-1 rounded-full">
-                {textReviews.length} Written
+                {filteredReviews.length} Reviews
               </span>
             </div>
             
             <CardContent className="p-0 flex-1 overflow-y-auto" style={{ maxHeight: "calc(100vh - 250px)", minHeight: "400px" }}>
-              {textReviews.length === 0 ? (
+              {filteredReviews.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full p-8 text-center">
                   <MessageSquare className="w-12 h-12 text-gray-200 mb-3" />
-                  <p className="text-gray-500 font-medium">No written reviews yet.</p>
-                  <p className="text-gray-400 text-sm mt-1">Check back later for student feedback.</p>
+                  <p className="text-gray-500 font-medium">No reviews for this period.</p>
+                  <p className="text-gray-400 text-sm mt-1">Try selecting a different timeframe.</p>
                 </div>
               ) : (
                 <div className="divide-y divide-gray-50">
-                  {textReviews.map((review, i) => (
-                    <div key={i} className="p-6 hover:bg-gray-50/50 transition-colors">
-                      <div className="flex justify-between items-start mb-3">
-                        <div className="flex items-center gap-3">
-                          <Avatar className="w-10 h-10 border border-gray-100">
-                            <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${review.user?.name || "Student"}`} />
-                            <AvatarFallback className="bg-blue-50 text-blue-600 font-bold">
-                              <User className="w-5 h-5" />
-                            </AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <p className="font-bold text-gray-900 text-sm">
-                              {review.user?.name || "Anonymous Student"}
-                            </p>
-                            <p className="text-gray-400 text-xs">
-                              {dayjs(review.createdAt).format("MMM D, YYYY • h:mm A")}
-                            </p>
+                  {filteredReviews.map((review, i) => {
+                    const hasFeedback = review.text && review.text.trim() !== "";
+                    return (
+                      <div key={i} className="p-6 hover:bg-gray-50/50 transition-colors">
+                        <div className="flex justify-between items-start mb-3">
+                          <div className="flex items-center gap-3">
+                            <Avatar className="w-10 h-10 border border-gray-100">
+                              <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${review.name || "Student"}`} />
+                              <AvatarFallback className="bg-blue-50 text-blue-600 font-bold">
+                                <User className="w-5 h-5" />
+                              </AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <p className="font-bold text-gray-900 text-sm">
+                                {review.name || "Anonymous Student"}
+                              </p>
+                              <p className="text-gray-400 text-xs">
+                                {dayjs(review.createdAt).format("MMM D, YYYY • h:mm A")}
+                              </p>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center gap-1 bg-orange-50 px-2 py-1 rounded-lg">
+                            <span className="font-bold text-gray-900 text-sm">{parseFloat(review.rating).toFixed(1)}</span>
+                            <Star className="w-3.5 h-3.5 text-orange-400 fill-orange-400" />
                           </div>
                         </div>
                         
-                        <div className="flex items-center gap-1 bg-orange-50 px-2 py-1 rounded-lg">
-                          <span className="font-bold text-gray-900 text-sm">{parseFloat(review.rating).toFixed(1)}</span>
-                          <Star className="w-3.5 h-3.5 text-orange-400 fill-orange-400" />
-                        </div>
+                        <p className={`text-sm leading-relaxed ml-13 ${hasFeedback ? 'text-gray-600' : 'text-gray-400 italic'}`}>
+                          {hasFeedback ? `"${review.text}"` : "(No written feedback provided)"}
+                        </p>
                       </div>
-                      
-                      <p className="text-gray-600 text-sm leading-relaxed ml-13">
-                        "{review.feedback}"
-                      </p>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </CardContent>
