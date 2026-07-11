@@ -11,6 +11,10 @@ dayjs.extend(isBetween);
 import { ArrowLeft, Star, Loader2, MessageSquare, User, Calendar as CalendarIcon } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { useSession } from "next-auth/react";
 
 type Timeframe = "day" | "week" | "month" | "all-time";
 
@@ -19,6 +23,7 @@ export default function MealDetailsPage(props: { params: Promise<{ meal: string 
   const router = useRouter();
   const mealName = decodeURIComponent(params.meal).toUpperCase();
 
+  const { data: session } = useSession();
   const [items, setItems] = useState<string>("Loading menu...");
   const [reviews, setReviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -26,6 +31,41 @@ export default function MealDetailsPage(props: { params: Promise<{ meal: string 
 
   const [selectedDate, setSelectedDate] = useState(dayjs().format("YYYY-MM-DD"));
   const [timeframe, setTimeframe] = useState<Timeframe>("all-time");
+
+  const [isReviewOpen, setIsReviewOpen] = useState(false);
+  const [reviewRating, setReviewRating] = useState("5");
+  const [reviewText, setReviewText] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmitReview = async () => {
+    setIsSubmitting(true);
+    try {
+      const res = await fetch("/api/reviews", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: session?.user?.name || "Student",
+          rating: parseFloat(reviewRating),
+          text: reviewText,
+          for: mealName,
+          day: dayjs().format("dddd")
+        })
+      });
+      if (res.ok) {
+        const newReview = await res.json();
+        setReviews([newReview, ...reviews]);
+        setIsReviewOpen(false);
+        setReviewText("");
+        setReviewRating("5");
+      } else {
+        alert("Failed to submit review");
+      }
+    } catch (e) {
+      alert("An error occurred");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   useEffect(() => {
     async function fetchData() {
@@ -267,9 +307,61 @@ export default function MealDetailsPage(props: { params: Promise<{ meal: string 
                 <MessageSquare className="w-5 h-5 text-blue-500" />
                 Recent Reviews
               </h2>
-              <span className="bg-blue-50 text-blue-600 text-xs font-bold px-2.5 py-1 rounded-full">
-                {filteredReviews.length} Reviews
-              </span>
+              <div className="flex items-center gap-3">
+                <span className="bg-blue-50 text-blue-600 text-xs font-bold px-2.5 py-1 rounded-full">
+                  {filteredReviews.length} Reviews
+                </span>
+                <Dialog open={isReviewOpen} onOpenChange={setIsReviewOpen}>
+                  <DialogTrigger asChild>
+                    <Button variant="outline" size="sm" className="text-sm font-semibold rounded-lg bg-white border border-gray-200 shadow-sm text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer">
+                      Add Review
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-md rounded-2xl bg-white shadow-xl border-gray-100 p-6">
+                    <DialogHeader className="mb-4">
+                      <DialogTitle className="text-xl font-bold text-gray-900 tracking-tight">Write a Review</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-5">
+                      <div className="space-y-2">
+                        <label className="text-sm font-semibold text-gray-700 block">Rating</label>
+                        <div className="flex items-center gap-2">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <button
+                              key={star}
+                              onClick={() => setReviewRating(star.toString())}
+                              className="focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-full p-1 transition-transform hover:scale-110 cursor-pointer"
+                            >
+                              <Star
+                                className={`w-8 h-8 transition-colors ${
+                                  star <= parseInt(reviewRating)
+                                    ? "text-orange-400 fill-orange-400 drop-shadow-sm"
+                                    : "text-gray-200 fill-gray-200 hover:text-gray-300 hover:fill-gray-300"
+                                }`}
+                              />
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-semibold text-gray-700 block">Comments (Optional)</label>
+                        <Textarea 
+                          placeholder="How was the food?" 
+                          value={reviewText}
+                          onChange={(e) => setReviewText(e.target.value)}
+                          className="resize-none h-28 rounded-xl border-gray-200 focus:ring-blue-500 focus:border-blue-500 bg-gray-50/50 p-3 text-sm"
+                        />
+                      </div>
+                    </div>
+                    <DialogFooter className="mt-6 flex gap-3 sm:justify-end">
+                      <Button variant="outline" onClick={() => setIsReviewOpen(false)} className="rounded-xl border-gray-200 text-gray-600 hover:bg-gray-50 font-medium cursor-pointer">Cancel</Button>
+                      <Button onClick={handleSubmitReview} disabled={isSubmitting} className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium shadow-sm transition-colors cursor-pointer">
+                        {isSubmitting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
+                        Submit Review
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              </div>
             </div>
             
             <CardContent className="p-0 flex-1 overflow-y-auto" style={{ maxHeight: "calc(100vh - 250px)", minHeight: "400px" }}>

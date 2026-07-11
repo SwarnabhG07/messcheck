@@ -35,6 +35,12 @@ export async function PUT(req: Request) {
       }
     );
 
+    // Update the user's name across all their existing reviews
+    await db.collection("reviews").updateMany(
+      { email: session.user.email },
+      { $set: { name: name } }
+    );
+
     return NextResponse.json({ success: true, message: "Profile updated successfully" });
   } catch (error) {
     console.error("Failed to update profile:", error);
@@ -54,7 +60,7 @@ export async function DELETE(req: Request) {
     const db = client.db("messcheck");
 
     // 1. Delete all reviews authored by this user
-    await db.collection("reviews").deleteMany({ userEmail: session.user.email });
+    await db.collection("reviews").deleteMany({ email: session.user.email });
 
     // 2. Delete the user's account
     await db.collection("users").deleteOne({ email: session.user.email });
