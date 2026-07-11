@@ -97,7 +97,7 @@ export default function MenuManagerPage() {
         body: formData,
       });
 
-      if (!uploadRes.ok) throw new Error("Failed to upload file. Make sure Docker is running.");
+      if (!uploadRes.ok) throw new Error("Failed to upload file. Make sure Docker is running locally.");
       
       const { task_id } = await uploadRes.json();
       

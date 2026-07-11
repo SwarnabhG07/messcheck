@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 export async function POST(req: Request) {
   try {
     const formData = await req.formData();
-    const file = formData.get("file") as Blob | null;
+    const file = formData.get("file") as File | null;
     
     if (!file) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
@@ -11,7 +11,7 @@ export async function POST(req: Request) {
 
     // Forward to FastAPI
     const fastApiFormData = new FormData();
-    fastApiFormData.append("file", file);
+    fastApiFormData.append("file", file, file.name);
 
     const response = await fetch("http://localhost:8000/extract/", {
       method: "POST",
