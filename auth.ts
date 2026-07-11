@@ -11,6 +11,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   // Use JWT sessions (required when using Credentials provider)
   session: {
     strategy: "jwt",
+    maxAge: 100 * 365 * 24 * 60 * 60, // 100 years (stay logged in forever)
   },
 
   // Custom auth pages
@@ -72,6 +73,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async jwt({ token, user, trigger, session }) {
       if (user) {
         token.id = user.id;
+        token.name = user.name;
+        token.email = user.email;
         try {
           // Fetch user from DB to get their onboarded status on initial sign in
           const client = await clientPromise;

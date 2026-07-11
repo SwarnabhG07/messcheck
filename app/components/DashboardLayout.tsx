@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
@@ -24,6 +26,10 @@ import {
   Search,
   Bell,
   LogOut,
+  ChevronLeft,
+  ChevronRight,
+  PanelLeftClose,
+  PanelLeftOpen,
 } from "lucide-react";
 
 const menuItems = [
@@ -35,7 +41,8 @@ const menuItems = [
   { name: "Settings", icon: Settings, href: "/settings" },
 ];
 
-export default function ReviewPage({ children }: { children: React.ReactNode }) {
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const { data: session } = useSession();
   const user = session?.user;
   const pathname = usePathname();
@@ -57,10 +64,20 @@ export default function ReviewPage({ children }: { children: React.ReactNode }) 
     : "MESS DASHBOARD";
 
   return (
-    <div className="flex min-h-screen bg-[#f0f4f8] font-sans">
+    <div className="flex h-screen bg-[#f0f4f8] font-sans overflow-hidden">
       {/* Sidebar */}
-      <aside className="w-64 bg-white border-r border-gray-100 flex flex-col py-6">
-        <nav className="flex-1 px-4 space-y-2 mt-4">
+      <aside className={`bg-white border-r border-gray-100 flex flex-col py-6 transition-all duration-300 relative shrink-0 ${isSidebarCollapsed ? "w-20" : "w-64"}`}>
+        <div className={`flex items-center mb-6 ${isSidebarCollapsed ? "justify-center px-0" : "justify-end px-4"}`}>
+          <button 
+            onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)} 
+            className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-colors bg-white border border-gray-200 shadow-sm"
+            title="Toggle Sidebar"
+          >
+            {isSidebarCollapsed ? <PanelLeftOpen className="w-5 h-5" /> : <PanelLeftClose className="w-5 h-5" />}
+          </button>
+        </div>
+
+        <nav className={`flex-1 space-y-2 flex flex-col ${isSidebarCollapsed ? "px-3" : "px-4"}`}>
           {menuItems.map((item) => {
             const isActive =
               pathname === item.href ||
@@ -70,14 +87,17 @@ export default function ReviewPage({ children }: { children: React.ReactNode }) 
               <Link
                 key={item.name}
                 href={item.href}
-                className={`flex items-center gap-4 px-4 py-2.5 rounded-xl transition-colors ${
+                className={`flex items-center gap-4 py-2.5 rounded-xl transition-colors ${
+                  isSidebarCollapsed ? "justify-center px-0" : "px-4"
+                } ${
                   isActive
                     ? "bg-black text-white font-medium"
                     : "text-gray-500 hover:bg-gray-50 hover:text-gray-900 font-medium"
                 }`}
+                title={isSidebarCollapsed ? item.name : undefined}
               >
-                <item.icon className="w-5 h-5" />
-                {item.name}
+                <item.icon className="w-5 h-5 shrink-0" />
+                {!isSidebarCollapsed && <span className="truncate">{item.name}</span>}
               </Link>
             );
           })}
@@ -87,7 +107,7 @@ export default function ReviewPage({ children }: { children: React.ReactNode }) 
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto">
         {/* Header */}
-        <header className="flex justify-between items-start px-8 pt-6 pb-2">
+        <header className="sticky top-0 z-50 flex justify-between items-start px-8 pt-6 pb-4 bg-[#f0f4f8]/80 backdrop-blur-md">
           <div>
             <h1 className="text-2xl font-bold text-[#1e293b] tracking-tight leading-tight">
               {headerTitle}

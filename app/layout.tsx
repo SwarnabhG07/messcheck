@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
-import ReviewPage from "@/app/components/ReviewPage";
+import DashboardLayout from "@/app/components/DashboardLayout";
 
 const inter = Inter({subsets:['latin'],variable:'--font-sans'});
 
@@ -38,7 +38,7 @@ export default async function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <Providers>
-          <ReviewPage user={session?.user}>{children}</ReviewPage>
+          <DashboardLayout user={session?.user}>{children}</DashboardLayout>
         </Providers>
       </body>
     </html>

@@ -9,7 +9,12 @@ export async function middleware(req: NextRequest) {
   const isPublicRoute = publicRoutes.includes(pathname);
   const isAuthApi = pathname.startsWith("/api/auth");
 
-  const token = await getToken({ req, secret: process.env.AUTH_SECRET });
+  // Do not intercept NextAuth's own API routes
+  if (isAuthApi) {
+    return NextResponse.next();
+  }
+
+  const token = await getToken({ req, secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET });
 
   if (!token && !isPublicRoute && !isAuthApi) {
     const loginUrl = new URL("/login", req.nextUrl.origin);

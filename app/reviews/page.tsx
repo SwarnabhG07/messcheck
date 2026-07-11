@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { Star, Plus, Pencil } from "lucide-react";
+import { Star, Plus, Pencil, ThumbsUp, ThumbsDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
@@ -35,6 +35,8 @@ interface Review {
   for: string;
   day?: string;
   time: string;
+  likes?: string[];
+  dislikes?: string[];
 }
 
 export default function ReviewsPage() {
@@ -84,6 +86,50 @@ export default function ReviewsPage() {
       for: "BREAKFAST",
       text: "",
     });
+  };
+
+  const handleVote = async (reviewId: string | undefined, action: 'like' | 'dislike') => {
+    if (!reviewId || !session?.user?.email) return;
+    const userEmail = session.user.email;
+
+    // Optimistic UI update
+    setReviews(prevReviews => 
+      prevReviews.map(review => {
+        if (review._id !== reviewId) return review;
+        
+        let newLikes = [...(review.likes || [])];
+        let newDislikes = [...(review.dislikes || [])];
+
+        if (action === 'like') {
+          newDislikes = newDislikes.filter(email => email !== userEmail);
+          if (newLikes.includes(userEmail)) {
+            newLikes = newLikes.filter(email => email !== userEmail);
+          } else {
+            newLikes.push(userEmail);
+          }
+        } else {
+          newLikes = newLikes.filter(email => email !== userEmail);
+          if (newDislikes.includes(userEmail)) {
+            newDislikes = newDislikes.filter(email => email !== userEmail);
+          } else {
+            newDislikes.push(userEmail);
+          }
+        }
+
+        return { ...review, likes: newLikes, dislikes: newDislikes };
+      })
+    );
+
+    // API Call
+    try {
+      await fetch('/api/reviews/vote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reviewId, action })
+      });
+    } catch (error) {
+      console.error("Failed to vote:", error);
+    }
   };
 
   const onSubmit = async (data: ReviewFormValues) => {
@@ -306,15 +352,36 @@ export default function ReviewsPage() {
                 </p>
                 <div className="text-gray-400 text-[13px] flex items-center justify-between mt-1">
                   <div>For: {review.day ? `${review.day} - ` : ""}{review.for} &bull; {review.time ? dayjs(review.time).fromNow() : "Just now"}</div>
-                  {review.email && session?.user?.email && review.email === session.user.email && (
-                    <button 
-                      onClick={() => handleEditClick(review)}
-                      className="text-gray-400 hover:text-blue-500 transition-colors flex items-center gap-1"
-                      title="Edit Review"
-                    >
-                      <Pencil className="w-3.5 h-3.5" />
-                    </button>
-                  )}
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-1 border border-gray-100 rounded-full px-2 py-0.5 bg-gray-50/50">
+                      <button 
+                        onClick={() => handleVote(review._id, 'like')}
+                        className={`flex items-center gap-1.5 px-1 py-1 transition-colors ${review.likes?.includes(session?.user?.email || "") ? "text-green-500 font-bold" : "hover:text-green-500"}`}
+                        title="Like"
+                      >
+                        <ThumbsUp className="w-3.5 h-3.5" />
+                        <span className="text-xs">{review.likes?.length || 0}</span>
+                      </button>
+                      <div className="w-px h-3 bg-gray-200 mx-0.5"></div>
+                      <button 
+                        onClick={() => handleVote(review._id, 'dislike')}
+                        className={`flex items-center gap-1.5 px-1 py-1 transition-colors ${review.dislikes?.includes(session?.user?.email || "") ? "text-red-500 font-bold" : "hover:text-red-500"}`}
+                        title="Dislike"
+                      >
+                        <span className="text-xs">{review.dislikes?.length || 0}</span>
+                        <ThumbsDown className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                    {review.email && session?.user?.email && review.email === session.user.email && (
+                      <button 
+                        onClick={() => handleEditClick(review)}
+                        className="text-gray-400 hover:text-blue-500 transition-colors flex items-center gap-1 ml-1 bg-white border border-gray-100 p-1.5 rounded-full shadow-sm"
+                        title="Edit Review"
+                      >
+                        <Pencil className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             ))

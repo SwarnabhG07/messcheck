@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Star } from "lucide-react";
 import {
   BarChart,
@@ -15,31 +16,86 @@ import { Card, CardContent } from "@/components/ui/card";
 
 export default function Dashboard() {
   const [reviews, setReviews] = useState<any[]>([]);
+  const [menuData, setMenuData] = useState<string[][]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchReviews() {
+    async function fetchData() {
       try {
-        const res = await fetch("/api/reviews");
-        if (res.ok) {
-          const data = await res.json();
+        const [reviewsRes, menuRes] = await Promise.all([
+          fetch("/api/reviews"),
+          fetch("/api/menu")
+        ]);
+        
+        if (reviewsRes.ok) {
+          const data = await reviewsRes.json();
           setReviews(data);
         }
+
+        if (menuRes.ok) {
+          const mData = await menuRes.json();
+          if (mData.tableData && Array.isArray(mData.tableData)) {
+            setMenuData(mData.tableData);
+          }
+        }
       } catch (error) {
-        console.error("Failed to fetch reviews", error);
+        console.error("Failed to fetch data", error);
       } finally {
         setLoading(false);
       }
     }
-    fetchReviews();
+    fetchData();
   }, []);
 
+  // Helper to extract a meal for today from the parsed CSV menu
+  const getMealItems = (tableData: string[][], day: string, mealType: string, defaultItems: string) => {
+    if (!tableData || tableData.length === 0) return defaultItems;
+    
+    const targetDay = day.toUpperCase();
+    const targetMeal = mealType.toUpperCase();
+
+    let dayRowIdx = -1, dayColIdx = -1;
+    let mealRowIdx = -1, mealColIdx = -1;
+
+    for (let r = 0; r < tableData.length; r++) {
+      for (let c = 0; c < tableData[r].length; c++) {
+        const cell = (tableData[r][c] || "").toUpperCase().trim();
+        if (cell.includes(targetDay)) {
+          dayRowIdx = r;
+          dayColIdx = c;
+        }
+        if (cell.includes(targetMeal)) {
+          mealRowIdx = r;
+          mealColIdx = c;
+        }
+      }
+    }
+
+    if (dayRowIdx === -1 || mealRowIdx === -1) return defaultItems;
+
+    // The data cell is at the intersection of the RowHeader and ColumnHeader.
+    // The RowHeader will always be further to the left (smaller column index).
+    if (dayColIdx < mealColIdx) {
+      // Day is on the left, Meal is on top
+      const intersection = tableData[dayRowIdx]?.[mealColIdx];
+      return intersection && intersection.trim() !== "" ? intersection.trim() : defaultItems;
+    } else if (mealColIdx < dayColIdx) {
+      // Meal is on the left, Day is on top
+      const intersection = tableData[mealRowIdx]?.[dayColIdx];
+      return intersection && intersection.trim() !== "" ? intersection.trim() : defaultItems;
+    }
+
+    return defaultItems;
+  };
+
   // Compute Today's Menu
+  const currentDayStr = new Date().toLocaleDateString("en-US", { weekday: "long" });
+  
   const mealTypes = [
-    { type: "BREAKFAST", name: "Masala Dosa, Sambar, Coconut Chutney, Bread Omelette, Tea,...", image: "/breakfast.png" },
-    { type: "LUNCH", name: "Rice, Dal Tadka, Paneer Makhani, Roti, Salad, Fruit Salad, Buttermilk.", image: "/lunch.png" },
-    { type: "SNACKS", name: "Punjabi Samosa, Mint Chutney, Jalebi, Filter Coffee, Masala Chai.", image: "/snacks.png" },
-    { type: "DINNER", name: "Vegetable Biryani, Raita, Gulab Jamun, Papad, Naan, Fried Rice.", image: "/dinner.png" }
+    { type: "BREAKFAST", name: getMealItems(menuData, currentDayStr, "BREAKFAST", "Masala Dosa, Sambar, Coconut Chutney, Bread Omelette, Tea,..."), image: "/breakfast.png" },
+    { type: "LUNCH", name: getMealItems(menuData, currentDayStr, "LUNCH", "Rice, Dal Tadka, Paneer Makhani, Roti, Salad, Fruit Salad, Buttermilk."), image: "/lunch.png" },
+    { type: "SNACKS", name: getMealItems(menuData, currentDayStr, "SNACKS", "Punjabi Samosa, Mint Chutney, Jalebi, Filter Coffee, Masala Chai."), image: "/snacks.png" },
+    { type: "DINNER", name: getMealItems(menuData, currentDayStr, "DINNER", "Vegetable Biryani, Raita, Gulab Jamun, Papad, Naan, Fried Rice."), image: "/dinner.png" }
   ];
 
   const computedTodayMenu = mealTypes.map(meal => {
@@ -99,7 +155,7 @@ export default function Dashboard() {
               key={item.type}
               className="p-0 rounded-xl shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] border-gray-50/50"
             >
-              <CardContent className="p-2.5 flex gap-3.5 items-center">
+              <CardContent className="p-2.5 flex gap-3.5 items-stretch">
               <div className="w-19 h-19 rounded-lg overflow-hidden shrink-0 relative">
                 <Image
                   src={item.image}
@@ -108,9 +164,9 @@ export default function Dashboard() {
                   className="object-cover"
                 />
               </div>
-              <div className="flex-1 flex flex-col justify-center">
+              <div className="flex-1 flex flex-col justify-between py-0.5">
                 <div className="flex justify-between items-start mb-0.5">
-                  <h3 className="font-bold text-gray-900 text-[15px]">
+                  <h3 className="font-bold text-gray-900 text-[17px]">
                     {item.type}
                   </h3>
                   <div className="text-right">
@@ -123,15 +179,17 @@ export default function Dashboard() {
                     </div>
                   </div>
                 </div>
-                <p className="text-gray-500 text-[11.5px] leading-snug line-clamp-2 max-w-[85%] pr-2 mb-1">
-                  {item.name}
-                </p>
-                <a
-                  href="#"
-                  className="text-blue-600 font-bold text-[11px] tracking-wider uppercase hover:text-blue-700 transition-colors"
-                >
-                  VIEW DETAILS
-                </a>
+                <div className="mt-auto">
+                  <p className="text-gray-500 text-[13px] leading-snug line-clamp-2 max-w-[90%] pr-2">
+                    {item.name}
+                  </p>
+                  <Link
+                    href={`/menu-today/${item.type.toLowerCase()}`}
+                    className="text-blue-600 font-bold text-[13px] tracking-wider uppercase hover:text-blue-700 transition-colors inline-block mt-0.5"
+                  >
+                    VIEW DETAILS
+                  </Link>
+                </div>
               </div>
               </CardContent>
             </Card>
