@@ -32,21 +32,45 @@ export default function TodayMenuPage() {
             const headers = table[0];
             const today = dayjs().format("dddd"); // e.g., "Monday"
             
-            const colIndex = headers.findIndex((h: string) => h.toLowerCase().includes(today.toLowerCase()));
+            // Check if days are columns (Format A: headers = [Meal, Monday, Tuesday])
+            const dayColIndex = headers.findIndex((h: string) => h.toLowerCase().includes(today.toLowerCase()));
             
-            if (colIndex !== -1) {
-              const todayMenu = [];
+            const todayMenu = [];
+            
+            if (dayColIndex !== -1 && dayColIndex > 0) {
+              // Format A: Days are columns
               for (let i = 1; i < table.length; i++) {
                 const meal = (table[i][0] || `Meal ${i}`).trim();
-                const items = table[i][colIndex] || "Not specified";
+                const items = table[i][dayColIndex] || "Not specified";
+                if (!meal || meal.toLowerCase() === 'days') continue;
                 
-                // Calculate ratings
                 const mealReviews = reviewsData.filter(r => r.for?.toUpperCase() === meal.toUpperCase());
                 const totalRating = mealReviews.reduce((sum, r) => sum + parseFloat(r.rating || "0"), 0);
                 const avg = mealReviews.length > 0 ? (totalRating / mealReviews.length).toFixed(1) : "0.0";
                 
                 todayMenu.push({ meal, items, rating: avg, votes: mealReviews.length });
               }
+            } else {
+              // Format B: Days are rows (headers = [Days, Breakfast, Lunch])
+              const dayRowIndex = table.findIndex((row: string[]) => row[0]?.toLowerCase().includes(today.toLowerCase()));
+              
+              if (dayRowIndex !== -1) {
+                const todayRow = table[dayRowIndex];
+                for (let j = 1; j < headers.length; j++) {
+                  const meal = (headers[j] || `Meal ${j}`).trim();
+                  const items = todayRow[j] || "Not specified";
+                  if (!meal || meal.toLowerCase() === 'days') continue;
+                  
+                  const mealReviews = reviewsData.filter(r => r.for?.toUpperCase() === meal.toUpperCase());
+                  const totalRating = mealReviews.reduce((sum, r) => sum + parseFloat(r.rating || "0"), 0);
+                  const avg = mealReviews.length > 0 ? (totalRating / mealReviews.length).toFixed(1) : "0.0";
+                  
+                  todayMenu.push({ meal, items, rating: avg, votes: mealReviews.length });
+                }
+              }
+            }
+            
+            if (todayMenu.length > 0) {
               setMenu(todayMenu);
             } else {
               setError(`Could not find menu for ${today}`);
