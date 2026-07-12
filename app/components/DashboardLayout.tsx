@@ -35,7 +35,7 @@ import {
 const menuItems = [
   { name: "Dashboard", icon: Home, href: "/" },
   { name: "Today's Menu", icon: Utensils, href: "/menu-today" },
-  { name: "Weekly Analytics", icon: BarChart2, href: "/analytics" },
+  { name: "Analytics", icon: BarChart2, href: "/analytics" },
   { name: "View Reviews", icon: MessageSquare, href: "/reviews" },
   { name: "Mess Menu", icon: ImageIcon, href: "/menu" },
   { name: "Settings", icon: Settings, href: "/settings" },
