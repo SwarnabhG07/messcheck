@@ -13,7 +13,7 @@ export async function POST(req: Request) {
     const fastApiFormData = new FormData();
     fastApiFormData.append("file", file, file.name);
 
-    const response = await fetch("http://localhost:8000/extract/", {
+    const response = await fetch("https://messcheck-table-ocr.onrender.com/extract/", {
       method: "POST",
       body: fastApiFormData,
     });
@@ -43,7 +43,7 @@ export async function GET(req: Request) {
     }
 
     if (action === "download") {
-      const res = await fetch(`http://localhost:8000/download/${taskId}`);
+      const res = await fetch(`https://messcheck-table-ocr.onrender.com/download/${taskId}`);
       if (!res.ok) {
           const err = await res.text();
           throw new Error("Failed to download: " + err);
@@ -53,7 +53,7 @@ export async function GET(req: Request) {
         headers: { "Content-Type": "text/csv" }
       });
     } else {
-      const res = await fetch(`http://localhost:8000/status/${taskId}`);
+      const res = await fetch(`https://messcheck-table-ocr.onrender.com/status/${taskId}`);
       if (!res.ok) throw new Error("Failed to check status");
       const data = await res.json();
       return NextResponse.json(data);
