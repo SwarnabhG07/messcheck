@@ -223,7 +223,7 @@ export default function MealDetailsPage(props: { params: Promise<{ meal: string 
                 onClick={() => setTimeframe(tf)}
                 className={`px-3 py-1.5 text-sm font-medium rounded-lg capitalize transition-colors ${
                   timeframe === tf 
-                    ? "bg-blue-50 text-blue-700 shadow-sm font-bold" 
+                    ? "bg-violet-50 text-violet-700 shadow-sm font-bold" 
                     : "text-gray-500 hover:text-gray-700"
                 }`}
               >
@@ -308,7 +308,7 @@ export default function MealDetailsPage(props: { params: Promise<{ meal: string 
                 Recent Reviews
               </h2>
               <div className="flex items-center gap-3">
-                <span className="bg-blue-50 text-blue-600 text-xs font-bold px-2.5 py-1 rounded-full">
+                <span className="bg-violet-50 text-violet-600 text-xs font-bold px-2.5 py-1 rounded-full">
                   {filteredReviews.length} Reviews
                 </span>
                 <Dialog open={isReviewOpen} onOpenChange={setIsReviewOpen}>
@@ -354,7 +354,7 @@ export default function MealDetailsPage(props: { params: Promise<{ meal: string 
                     </div>
                     <DialogFooter className="mt-6 flex gap-3 sm:justify-end">
                       <Button variant="outline" onClick={() => setIsReviewOpen(false)} className="rounded-xl border-gray-200 text-gray-600 hover:bg-gray-50 font-medium cursor-pointer">Cancel</Button>
-                      <Button onClick={handleSubmitReview} disabled={isSubmitting} className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium shadow-sm transition-colors cursor-pointer">
+                      <Button onClick={handleSubmitReview} disabled={isSubmitting} className="rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-medium shadow-sm transition-colors cursor-pointer">
                         {isSubmitting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
                         Submit Review
                       </Button>
@@ -381,7 +381,7 @@ export default function MealDetailsPage(props: { params: Promise<{ meal: string 
                           <div className="flex items-center gap-3">
                             <Avatar className="w-10 h-10 border border-gray-100">
                               <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${review.name || "Student"}`} />
-                              <AvatarFallback className="bg-blue-50 text-blue-600 font-bold">
+                              <AvatarFallback className="bg-violet-50 text-violet-600 font-bold">
                                 <User className="w-5 h-5" />
                               </AvatarFallback>
                             </Avatar>

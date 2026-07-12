@@ -64,7 +64,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     : "MESS DASHBOARD";
 
   return (
-    <div className="flex h-screen bg-[#f0f4f8] font-sans overflow-hidden">
+    <div className="flex h-screen bg-slate-50 font-sans overflow-hidden">
       {/* Sidebar */}
       <aside className={`bg-white border-r border-gray-100 flex flex-col py-6 transition-all duration-300 relative shrink-0 ${isSidebarCollapsed ? "w-20" : "w-64"}`}>
         <div className={`flex items-center mb-6 ${isSidebarCollapsed ? "justify-center px-0" : "justify-end px-4"}`}>
@@ -107,7 +107,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto">
         {/* Header */}
-        <header className="sticky top-0 z-50 flex justify-between items-start px-8 pt-6 pb-4 bg-[#f0f4f8]/80 backdrop-blur-md">
+        <header className="sticky top-0 z-50 flex justify-between items-start px-8 pt-6 pb-4 bg-slate-50/80 backdrop-blur-md">
           <div>
             <h1 className="text-2xl font-bold text-[#1e293b] tracking-tight leading-tight">
               {headerTitle}
@@ -128,7 +128,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity outline-none">
                   <Avatar className="w-10 h-10 shadow-sm border border-gray-100">
-                    <AvatarFallback className="bg-indigo-500 text-white font-semibold">
+                    <AvatarFallback className="bg-violet-600 text-white font-semibold">
                       {user?.name?.[0]?.toUpperCase() || "U"}
                     </AvatarFallback>
                   </Avatar>

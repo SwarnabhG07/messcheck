@@ -80,8 +80,8 @@ export default function OnboardingPage() {
     <div className="min-h-screen bg-[#f0f4f8] flex items-center justify-center p-4 relative overflow-hidden font-sans">
       {/* Decorative background blobs (matching login page style but distinct colors) */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-125 h-125 rounded-full bg-blue-500/5 blur-3xl" />
-        <div className="absolute -bottom-40 -left-40 w-125 h-125 rounded-full bg-cyan-500/5 blur-3xl" />
+        <div className="absolute -top-40 -right-40 w-125 h-125 rounded-full bg-violet-500/5 blur-3xl" />
+        <div className="absolute -bottom-40 -left-40 w-125 h-125 rounded-full bg-fuchsia-500/5 blur-3xl" />
       </div>
 
       <div className="relative z-10 w-full max-w-[500px]">
@@ -215,7 +215,7 @@ export default function OnboardingPage() {
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full h-12 bg-black text-white font-semibold text-sm rounded-xl hover:bg-gray-900 transition-all shadow-lg shadow-black/10"
+                className="w-full h-12 bg-violet-600 text-white font-semibold text-sm rounded-xl hover:bg-violet-700 transition-all shadow-lg shadow-violet-600/20"
               >
                 {isSubmitting ? "Saving Profile..." : "Complete Setup"}
               </Button>

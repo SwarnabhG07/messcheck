@@ -313,7 +313,7 @@ export default function ReviewsPage() {
                   <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full h-12 rounded-xl bg-black text-white font-bold"
+                    className="w-full h-12 rounded-xl bg-violet-600 text-white font-bold hover:bg-violet-700"
                   >
                     {isSubmitting ? (editingReviewId ? "Saving..." : "Submitting...") : (editingReviewId ? "Save Changes" : "Submit Review")}
                   </Button>

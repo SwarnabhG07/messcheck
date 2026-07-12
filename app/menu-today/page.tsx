@@ -32,7 +32,7 @@ export default function TodayMenuPage() {
             const headers = table[0];
             const today = dayjs().format("dddd"); // e.g., "Monday"
             
-            const colIndex = headers.findIndex((h: string) => h.trim().toLowerCase() === today.toLowerCase());
+            const colIndex = headers.findIndex((h: string) => h.toLowerCase().includes(today.toLowerCase()));
             
             if (colIndex !== -1) {
               const todayMenu = [];
@@ -78,7 +78,7 @@ export default function TodayMenuPage() {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-full p-8">
-        <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+        <Loader2 className="w-8 h-8 text-violet-500 animate-spin" />
       </div>
     );
   }
@@ -137,7 +137,7 @@ export default function TodayMenuPage() {
               </p>
               <Link
                 href={`/menu-today/${m.meal.toLowerCase()}`}
-                className="text-blue-600 font-bold text-[15px] tracking-wider uppercase hover:text-blue-700 transition-colors inline-block"
+                className="text-violet-600 font-bold text-[15px] tracking-wider uppercase hover:text-violet-700 transition-colors inline-block"
               >
                 VIEW DETAILS
               </Link>

@@ -52,14 +52,14 @@ export default function LoginPage() {
     <div className="min-h-screen bg-[#f0f4f8] flex items-center justify-center px-4 font-sans">
       {/* Background subtle pattern */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-125 h-125 rounded-full bg-indigo-500/5 blur-3xl" />
-        <div className="absolute -bottom-40 -left-40 w-125 h-125 rounded-full bg-blue-500/5 blur-3xl" />
+        <div className="absolute -top-40 -right-40 w-125 h-125 rounded-full bg-fuchsia-500/5 blur-3xl" />
+        <div className="absolute -bottom-40 -left-40 w-125 h-125 rounded-full bg-violet-500/5 blur-3xl" />
       </div>
 
       <div className="relative w-full max-w-105">
         {/* Logo & Branding */}
         <div className="text-center mb-5">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-black text-white mb-3 shadow-lg shadow-black/10">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-violet-600 text-white mb-3 shadow-lg shadow-violet-600/20">
             <Utensils className="w-8 h-8" />
           </div>
           <h1 className="text-2xl font-bold text-[#1e293b] tracking-tight">
@@ -140,7 +140,7 @@ export default function LoginPage() {
           {/* Remember & Forgot */}
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-2">
-              <Checkbox id="remember" className="rounded border-gray-300 data-[state=checked]:bg-black data-[state=checked]:border-black" />
+              <Checkbox id="remember" className="rounded border-gray-300 data-[state=checked]:bg-violet-600 data-[state=checked]:border-violet-600" />
               <Label
                 htmlFor="remember"
                 className="text-gray-500 text-[13px] font-normal cursor-pointer leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -160,7 +160,7 @@ export default function LoginPage() {
           <Button
             type="submit"
             disabled={loading}
-            className="w-full h-12 bg-black text-white font-semibold text-sm rounded-xl hover:bg-gray-900 transition-all shadow-lg shadow-black/10"
+            className="w-full h-12 bg-violet-600 text-white font-semibold text-sm rounded-xl hover:bg-violet-700 transition-all shadow-lg shadow-violet-600/20"
           >
             {loading ? "Signing in..." : "Sign In"}
           </Button>
