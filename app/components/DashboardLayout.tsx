@@ -67,7 +67,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     <div className="flex h-screen bg-slate-50 font-sans overflow-hidden">
       {/* Sidebar */}
       <aside className={`bg-white border-r border-gray-100 flex flex-col py-6 transition-all duration-300 relative shrink-0 ${isSidebarCollapsed ? "w-20" : "w-64"}`}>
-        <div className={`flex items-center mb-6 ${isSidebarCollapsed ? "justify-center px-0" : "justify-end px-4"}`}>
+        <div className={`flex items-center mb-6 mt-2 ${isSidebarCollapsed ? "flex-col gap-4 justify-center px-0" : "justify-between px-4"}`}>
+          <div className="flex items-center gap-2">
+            <img src="/spoon-and-fork-stroke-rounded.svg" alt="MessCheck Logo" className="w-7 h-7" />
+            {!isSidebarCollapsed && (
+              <span className="text-xl font-bold text-gray-900 tracking-tight">MESSCHECK</span>
+            )}
+          </div>
           <button 
             onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)} 
             className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-colors bg-white border border-gray-200 shadow-sm"
