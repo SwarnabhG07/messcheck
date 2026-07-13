@@ -57,6 +57,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isAnnouncementOpen, setIsAnnouncementOpen] = useState(false);
   const [announcements, setAnnouncements] = useState<any[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [lastReadAt, setLastReadAt] = useState<Date | null>(null);
   const [newTitle, setNewTitle] = useState("");
   const [newContent, setNewContent] = useState("");
   const [isPosting, setIsPosting] = useState(false);
@@ -71,10 +73,20 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         .then((res) => res.json())
         .then((data) => {
           if (data.announcements) setAnnouncements(data.announcements);
+          if (data.unreadCount !== undefined) setUnreadCount(data.unreadCount);
+          if (data.lastReadAt) setLastReadAt(new Date(data.lastReadAt));
         })
         .catch(console.error);
     }
   }, [session?.user?.email]);
+
+  const handleDropdownOpenChange = (open: boolean) => {
+    if (open && unreadCount > 0) {
+      setUnreadCount(0);
+      setLastReadAt(new Date());
+      fetch("/api/announcements/read", { method: "POST" }).catch(console.error);
+    }
+  };
 
   const handlePostAnnouncement = async () => {
     if (!newTitle.trim() || !newContent.trim()) return;
@@ -211,12 +223,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </Dialog>
 
             {/* Notifications Dropdown */}
-            <DropdownMenu>
+            <DropdownMenu onOpenChange={handleDropdownOpenChange}>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="icon" className="relative w-10 h-10 rounded-full border-gray-100 text-gray-500 hover:text-gray-700 bg-white shadow-sm shrink-0 outline-none">
                   <Bell className="w-4.5 h-4.5" />
-                  {announcements.some(a => a.unread) && (
-                    <span className="absolute top-2 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+                  {unreadCount > 0 && (
+                    <span className="absolute top-0 right-0 w-4 h-4 bg-red-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-white transform translate-x-1/4 -translate-y-1/4">
+                      {unreadCount > 9 ? '9+' : unreadCount}
+                    </span>
                   )}
                 </Button>
               </DropdownMenuTrigger>
@@ -224,22 +238,26 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <div className="px-4 py-3 border-b border-gray-100 bg-slate-50/50 flex justify-between items-center">
                   <h3 className="font-semibold text-gray-800">Announcements</h3>
                   <span className="text-xs bg-violet-100 text-violet-700 font-medium px-2 py-0.5 rounded-full">
-                    {announcements.filter(a => a.unread).length} New
+                    {announcements.filter(a => !lastReadAt || new Date(a.createdAt) > lastReadAt).length} New
                   </span>
                 </div>
                 <div className="flex flex-col max-h-[300px] overflow-y-auto">
                   {announcements.length === 0 ? (
                     <div className="p-4 text-center text-sm text-gray-500">No announcements yet</div>
-                  ) : announcements.slice(0, 3).map((announcement) => (
-                    <Link key={announcement._id} href="/announcements" className="block">
-                      <div className="px-4 py-3 border-b border-gray-50 flex flex-col gap-1 hover:bg-slate-50 transition-colors cursor-pointer">
-                        <div className="flex justify-between items-start">
-                          <span className="text-sm font-medium text-gray-900">{announcement.title}</span>
+                  ) : announcements.slice(0, 3).map((announcement) => {
+                    const isUnread = !lastReadAt || new Date(announcement.createdAt) > lastReadAt;
+                    return (
+                      <Link key={announcement._id} href="/announcements" className="block">
+                        <div className={`px-4 py-3 border-b border-gray-50 flex flex-col gap-1 cursor-pointer transition-colors ${isUnread ? 'bg-violet-50/30 hover:bg-violet-50/50' : 'hover:bg-slate-50'}`}>
+                          <div className="flex justify-between items-start">
+                            <span className={`text-sm font-medium ${isUnread ? 'text-gray-900' : 'text-gray-700'}`}>{announcement.title}</span>
+                            {isUnread && <span className="w-1.5 h-1.5 rounded-full bg-violet-600 mt-1.5 shrink-0" />}
+                          </div>
+                          <span className="text-xs text-gray-500">{dayjs(announcement.createdAt).format('MMM D, h:mm A')}</span>
                         </div>
-                        <span className="text-xs text-gray-500">{dayjs(announcement.createdAt).format('MMM D, h:mm A')}</span>
-                      </div>
-                    </Link>
-                  ))}
+                      </Link>
+                    );
+                  })}
                 </div>
                 <div className="p-2 bg-slate-50 border-t border-gray-100 flex justify-center">
                   <Link href="/announcements" className="w-full">

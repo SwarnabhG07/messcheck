@@ -25,10 +25,15 @@ export async function GET(req: Request) {
       .limit(50)
       .toArray();
 
+    const lastReadAt = user.lastReadAnnouncementsAt || new Date(0);
+    const unreadCount = announcements.filter((a) => new Date(a.createdAt) > lastReadAt).length;
+
     return NextResponse.json({ 
       announcements,
       hostel: user.hostel,
-      college: user.college
+      college: user.college,
+      unreadCount,
+      lastReadAt
     });
   } catch (error) {
     console.error("Failed to fetch announcements:", error);
