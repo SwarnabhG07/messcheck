@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
@@ -56,14 +56,48 @@ const menuItems = [
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isAnnouncementOpen, setIsAnnouncementOpen] = useState(false);
-  const [announcements] = useState([
-    { id: 1, title: "Mess Timings Changed", date: "10 mins ago", unread: true },
-    { id: 2, title: "Special Dinner Tonight", date: "2 hours ago", unread: true },
-    { id: 3, title: "Menu Updated for Next Week", date: "1 day ago", unread: false },
-  ]);
+  const [announcements, setAnnouncements] = useState<any[]>([]);
+  const [newTitle, setNewTitle] = useState("");
+  const [newContent, setNewContent] = useState("");
+  const [isPosting, setIsPosting] = useState(false);
+  
   const { data: session } = useSession();
   const user = session?.user;
   const pathname = usePathname();
+
+  useEffect(() => {
+    if (session?.user?.email) {
+      fetch("/api/announcements")
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.announcements) setAnnouncements(data.announcements);
+        })
+        .catch(console.error);
+    }
+  }, [session?.user?.email]);
+
+  const handlePostAnnouncement = async () => {
+    if (!newTitle.trim() || !newContent.trim()) return;
+    setIsPosting(true);
+    try {
+      const res = await fetch("/api/announcements", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title: newTitle, content: newContent }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setAnnouncements([data.announcement, ...announcements]);
+        setNewTitle("");
+        setNewContent("");
+        setIsAnnouncementOpen(false);
+      }
+    } catch (error) {
+      console.error("Failed to post", error);
+    } finally {
+      setIsPosting(false);
+    }
+  };
 
   const authRoutes = ["/login", "/signup", "/onboarding"];
   if (authRoutes.includes(pathname)) {
@@ -160,16 +194,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <div className="grid gap-4 py-4">
                   <div className="flex flex-col gap-2">
                     <Label htmlFor="title" className="text-sm font-medium text-gray-700">Title</Label>
-                    <Input id="title" placeholder="e.g. Special Dinner Tonight" className="rounded-lg border-gray-200 focus-visible:ring-violet-500" />
+                    <Input id="title" placeholder="e.g. Special Dinner Tonight" className="rounded-lg border-gray-200 focus-visible:ring-violet-500" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} />
                   </div>
                   <div className="flex flex-col gap-2">
                     <Label htmlFor="content" className="text-sm font-medium text-gray-700">Content</Label>
-                    <Textarea id="content" placeholder="Write your announcement here..." className="rounded-lg border-gray-200 min-h-[100px] focus-visible:ring-violet-500" />
+                    <Textarea id="content" placeholder="Write your announcement here..." className="rounded-lg border-gray-200 min-h-[100px] focus-visible:ring-violet-500" value={newContent} onChange={(e) => setNewContent(e.target.value)} />
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button variant="outline" onClick={() => setIsAnnouncementOpen(false)} className="rounded-xl border-gray-200 text-gray-600 hover:bg-gray-50">Cancel</Button>
-                  <Button className="rounded-xl bg-violet-600 hover:bg-violet-700 text-white" onClick={() => setIsAnnouncementOpen(false)}>Post Announcement</Button>
+                  <Button variant="outline" onClick={() => setIsAnnouncementOpen(false)} className="rounded-xl border-gray-200 text-gray-600 hover:bg-gray-50" disabled={isPosting}>Cancel</Button>
+                  <Button className="rounded-xl bg-violet-600 hover:bg-violet-700 text-white" onClick={handlePostAnnouncement} disabled={isPosting || !newTitle.trim() || !newContent.trim()}>{isPosting ? "Posting..." : "Post Announcement"}</Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>
@@ -192,13 +226,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   </span>
                 </div>
                 <div className="flex flex-col max-h-[300px] overflow-y-auto">
-                  {announcements.slice(0, 3).map((announcement) => (
-                    <div key={announcement.id} className={`px-4 py-3 border-b border-gray-50 flex flex-col gap-1 cursor-pointer hover:bg-slate-50 transition-colors ${announcement.unread ? 'bg-violet-50/30' : ''}`}>
+                  {announcements.length === 0 ? (
+                    <div className="p-4 text-center text-sm text-gray-500">No announcements yet</div>
+                  ) : announcements.slice(0, 3).map((announcement) => (
+                    <div key={announcement._id} className="px-4 py-3 border-b border-gray-50 flex flex-col gap-1 cursor-pointer hover:bg-slate-50 transition-colors">
                       <div className="flex justify-between items-start">
-                        <span className={`text-sm font-medium ${announcement.unread ? 'text-gray-900' : 'text-gray-700'}`}>{announcement.title}</span>
-                        {announcement.unread && <span className="w-1.5 h-1.5 rounded-full bg-violet-600 mt-1.5 shrink-0" />}
+                        <span className="text-sm font-medium text-gray-900">{announcement.title}</span>
                       </div>
-                      <span className="text-xs text-gray-500">{announcement.date}</span>
+                      <span className="text-xs text-gray-500">{dayjs(announcement.createdAt).format('MMM D, h:mm A')}</span>
                     </div>
                   ))}
                 </div>
