@@ -21,14 +21,17 @@ export async function POST(req: Request) {
     if (!response.ok) {
       const errText = await response.text();
       console.error("FastAPI Error:", errText);
-      throw new Error(`FastAPI returned ${response.status}`);
+      return NextResponse.json(
+        { error: `OCR Service Error (${response.status}): ${errText}` },
+        { status: response.status === 413 ? 413 : response.status } // In case of size limit or other
+      );
     }
 
     const data = await response.json();
     return NextResponse.json(data);
-  } catch (error) {
+  } catch (error: any) {
     console.error("OCR API POST error:", error);
-    return NextResponse.json({ error: "Failed to upload to OCR service" }, { status: 500 });
+    return NextResponse.json({ error: `Internal Server Error: ${error.message}` }, { status: 500 });
   }
 }
 

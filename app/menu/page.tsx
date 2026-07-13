@@ -97,7 +97,21 @@ export default function MenuManagerPage() {
         body: formData,
       });
 
-      if (!uploadRes.ok) throw new Error("Failed to upload file to OCR service.");
+      if (!uploadRes.ok) {
+        let errorMessage = `Upload failed with status ${uploadRes.status}`;
+        const errorText = await uploadRes.text();
+        try {
+          const errorData = JSON.parse(errorText);
+          if (errorData.error) {
+            errorMessage = errorData.error;
+          } else {
+            errorMessage = `${errorMessage}: ${errorText}`;
+          }
+        } catch (e) {
+          if (errorText) errorMessage = `${errorMessage}: ${errorText}`;
+        }
+        throw new Error(errorMessage);
+      }
       
       const { task_id } = await uploadRes.json();
       
