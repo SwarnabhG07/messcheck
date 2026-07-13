@@ -111,9 +111,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       (pathname.startsWith("/reviews") && item.name === "View Reviews")
   );
 
-  const headerTitle = activeMenuItem 
-    ? (activeMenuItem.name === "Dashboard" ? "MESS DASHBOARD" : activeMenuItem.name.toUpperCase())
-    : "MESS DASHBOARD";
+  const headerTitle = pathname.startsWith("/announcements") 
+    ? "ANNOUNCEMENTS" 
+    : (activeMenuItem 
+      ? (activeMenuItem.name === "Dashboard" ? "MESS DASHBOARD" : activeMenuItem.name.toUpperCase())
+      : "MESS DASHBOARD");
 
   return (
     <div className="flex h-screen bg-slate-50 font-sans overflow-hidden">
@@ -229,18 +231,22 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   {announcements.length === 0 ? (
                     <div className="p-4 text-center text-sm text-gray-500">No announcements yet</div>
                   ) : announcements.slice(0, 3).map((announcement) => (
-                    <div key={announcement._id} className="px-4 py-3 border-b border-gray-50 flex flex-col gap-1 cursor-pointer hover:bg-slate-50 transition-colors">
-                      <div className="flex justify-between items-start">
-                        <span className="text-sm font-medium text-gray-900">{announcement.title}</span>
+                    <Link key={announcement._id} href="/announcements" className="block">
+                      <div className="px-4 py-3 border-b border-gray-50 flex flex-col gap-1 hover:bg-slate-50 transition-colors cursor-pointer">
+                        <div className="flex justify-between items-start">
+                          <span className="text-sm font-medium text-gray-900">{announcement.title}</span>
+                        </div>
+                        <span className="text-xs text-gray-500">{dayjs(announcement.createdAt).format('MMM D, h:mm A')}</span>
                       </div>
-                      <span className="text-xs text-gray-500">{dayjs(announcement.createdAt).format('MMM D, h:mm A')}</span>
-                    </div>
+                    </Link>
                   ))}
                 </div>
-                <div className="p-2 bg-slate-50 border-t border-gray-100">
-                  <Button variant="ghost" className="w-full text-sm text-violet-600 hover:text-violet-700 hover:bg-violet-50 rounded-lg h-9">
-                    View all announcements
-                  </Button>
+                <div className="p-2 bg-slate-50 border-t border-gray-100 flex justify-center">
+                  <Link href="/announcements" className="w-full">
+                    <Button variant="ghost" className="w-full text-sm text-violet-600 hover:text-violet-700 hover:bg-violet-50 rounded-lg h-9">
+                      View all announcements
+                    </Button>
+                  </Link>
                 </div>
               </DropdownMenuContent>
             </DropdownMenu>

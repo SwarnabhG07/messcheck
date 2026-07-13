@@ -22,10 +22,14 @@ export async function GET(req: Request) {
     const announcements = await db.collection("announcements")
       .find({ college: user.college, hostel: user.hostel })
       .sort({ createdAt: -1 })
-      .limit(10)
+      .limit(50)
       .toArray();
 
-    return NextResponse.json({ announcements });
+    return NextResponse.json({ 
+      announcements,
+      hostel: user.hostel,
+      college: user.college
+    });
   } catch (error) {
     console.error("Failed to fetch announcements:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
