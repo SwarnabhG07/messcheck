@@ -17,14 +17,16 @@ import { Card, CardContent } from "@/components/ui/card";
 export default function Dashboard() {
   const [reviews, setReviews] = useState<any[]>([]);
   const [menuData, setMenuData] = useState<string[][]>([]);
+  const [notifications, setNotifications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const [reviewsRes, menuRes] = await Promise.all([
+        const [reviewsRes, menuRes, notificationsRes] = await Promise.all([
           fetch("/api/reviews"),
-          fetch("/api/menu")
+          fetch("/api/menu"),
+          fetch("/api/announcements")
         ]);
         
         if (reviewsRes.ok) {
@@ -36,6 +38,13 @@ export default function Dashboard() {
           const mData = await menuRes.json();
           if (mData.tableData && Array.isArray(mData.tableData)) {
             setMenuData(mData.tableData);
+          }
+        }
+
+        if (notificationsRes && notificationsRes.ok) {
+          const nData = await notificationsRes.json();
+          if (nData.announcements) {
+            setNotifications(nData.announcements);
           }
         }
       } catch (error) {
@@ -116,7 +125,7 @@ export default function Dashboard() {
 
   const computedOverviewData = [
     { title: "Overall Rating", value: globalAvg, suffix: <Star className="w-4.5 h-4.5 text-amber-400 fill-amber-400 inline mb-1" />, subtitle: `${totalReviews} Ratings` },
-    { title: "Menu Updates", value: "6", subtitle: "This Week" }, // Hardcoded for now
+    { title: "Notifications", value: (notifications?.length || 0).toString(), subtitle: "Total Announcements" },
     { title: "Feedback Volume", value: totalReviews.toString(), subtitle: "total reviews" },
   ];
 
