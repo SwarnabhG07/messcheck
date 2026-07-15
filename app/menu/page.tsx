@@ -280,7 +280,7 @@ export default function MenuManagerPage() {
       ) : tableData.length > 0 && (
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
           <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-            <h3 className="font-bold text-gray-800">Extracted Menu Data</h3>
+            <h3 className="font-bold text-gray-800">Mess Menu</h3>
             <div className="flex items-center gap-3">
               {tableData.length > 0 && userRole === "mess_secretary" && (
                 <Button 
@@ -347,12 +347,11 @@ export default function MenuManagerPage() {
                   <tr key={rowIndex} className="border-b border-gray-100 last:border-0 hover:bg-gray-50/50 transition-colors">
                     {row.map((cell, colIndex) => (
                       <td key={colIndex} className="p-1 border border-gray-100 min-w-[120px]">
-                        <input
-                          type="text"
+                        <textarea
                           value={cell}
                           readOnly={userRole !== "mess_secretary"}
                           onChange={(e) => updateCell(rowIndex, colIndex, e.target.value)}
-                          className={`w-full h-full px-2 py-2 text-sm bg-transparent border-transparent ${userRole === "mess_secretary" ? "focus:border-blue-500 focus:ring-1 focus:ring-blue-500" : ""} rounded outline-none text-gray-700 font-medium transition-all`}
+                          className={`w-full min-h-[100px] px-2 py-2 text-sm bg-transparent border-transparent ${userRole === "mess_secretary" ? "focus:border-orange-500 focus:ring-1 focus:ring-orange-500" : ""} rounded outline-none text-gray-700 font-medium transition-all resize-y`}
                         />
                       </td>
                     ))}
