@@ -80,14 +80,14 @@ export default function SignupPage() {
     <div className="min-h-screen bg-[#f0f4f8] flex items-center justify-center p-4 relative overflow-hidden font-sans">
       {/* Decorative background blobs */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-125 h-125 rounded-full bg-fuchsia-500/5 blur-3xl" />
-        <div className="absolute -bottom-40 -left-40 w-125 h-125 rounded-full bg-violet-500/5 blur-3xl" />
+        <div className="absolute -top-40 -right-40 w-125 h-125 rounded-full bg-amber-500/5 blur-3xl" />
+        <div className="absolute -bottom-40 -left-40 w-125 h-125 rounded-full bg-amber-500/5 blur-3xl" />
       </div>
 
       <div className="relative z-10 w-full max-w-[420px]">
         {/* Header/Logo */}
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-violet-600 rounded-2xl mx-auto mb-6 flex items-center justify-center shadow-xl shadow-violet-600/20 transform rotate-3">
+          <div className="w-16 h-16 bg-amber-600 rounded-2xl mx-auto mb-6 flex items-center justify-center shadow-xl shadow-amber-600/20 transform rotate-3">
             <span className="text-white font-bold text-2xl -rotate-3">MC</span>
           </div>
           <h1 className="text-3xl font-bold tracking-tight text-gray-900 mb-2">
@@ -153,7 +153,7 @@ export default function SignupPage() {
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full h-12 bg-violet-600 text-white font-semibold text-sm rounded-xl hover:bg-violet-700 transition-all shadow-lg shadow-violet-600/20"
+                className="w-full h-12 bg-amber-600 text-white font-semibold text-sm rounded-xl hover:bg-amber-700 transition-all shadow-lg shadow-amber-600/20"
               >
                 {isSubmitting ? "Creating Account..." : "Sign Up"}
               </Button>

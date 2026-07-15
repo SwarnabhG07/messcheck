@@ -223,7 +223,7 @@ export default function MealDetailsPage(props: { params: Promise<{ meal: string 
                 onClick={() => setTimeframe(tf)}
                 className={`px-3 py-1.5 text-sm font-medium rounded-lg capitalize transition-colors ${
                   timeframe === tf 
-                    ? "bg-violet-50 text-violet-700 shadow-sm font-bold" 
+                    ? "bg-amber-50 text-amber-700 shadow-sm font-bold" 
                     : "text-gray-500 hover:text-gray-700"
                 }`}
               >
@@ -271,7 +271,7 @@ export default function MealDetailsPage(props: { params: Promise<{ meal: string 
                     {[1,2,3,4,5].map((star) => (
                       <Star 
                         key={star} 
-                        className={`w-4 h-4 ${star <= Math.round(parseFloat(avgRating)) ? 'text-orange-400 fill-orange-400' : 'text-gray-200 fill-gray-200'}`} 
+                        className={`w-4 h-4 ${star <= Math.round(parseFloat(avgRating)) ? 'text-amber-400 fill-amber-400' : 'text-gray-200 fill-gray-200'}`} 
                       />
                     ))}
                   </div>
@@ -285,7 +285,7 @@ export default function MealDetailsPage(props: { params: Promise<{ meal: string 
                       <Star className="w-3.5 h-3.5 text-gray-400" />
                       <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
                         <div 
-                          className="h-full bg-orange-400 rounded-full" 
+                          className="h-full bg-amber-400 rounded-full" 
                           style={{ width: `${(d.count / totalReviews) * 100 || 0}%` }}
                         />
                       </div>
@@ -308,7 +308,7 @@ export default function MealDetailsPage(props: { params: Promise<{ meal: string 
                 Recent Reviews
               </h2>
               <div className="flex items-center gap-3">
-                <span className="bg-violet-50 text-violet-600 text-xs font-bold px-2.5 py-1 rounded-full">
+                <span className="bg-amber-50 text-amber-600 text-xs font-bold px-2.5 py-1 rounded-full">
                   {filteredReviews.length} Reviews
                 </span>
                 <Dialog open={isReviewOpen} onOpenChange={setIsReviewOpen}>
@@ -334,7 +334,7 @@ export default function MealDetailsPage(props: { params: Promise<{ meal: string 
                               <Star
                                 className={`w-8 h-8 transition-colors ${
                                   star <= parseInt(reviewRating)
-                                    ? "text-orange-400 fill-orange-400 drop-shadow-sm"
+                                    ? "text-amber-400 fill-amber-400 drop-shadow-sm"
                                     : "text-gray-200 fill-gray-200 hover:text-gray-300 hover:fill-gray-300"
                                 }`}
                               />
@@ -354,7 +354,7 @@ export default function MealDetailsPage(props: { params: Promise<{ meal: string 
                     </div>
                     <DialogFooter className="mt-6 flex gap-3 sm:justify-end">
                       <Button variant="outline" onClick={() => setIsReviewOpen(false)} className="rounded-xl border-gray-200 text-gray-600 hover:bg-gray-50 font-medium cursor-pointer">Cancel</Button>
-                      <Button onClick={handleSubmitReview} disabled={isSubmitting} className="rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-medium shadow-sm transition-colors cursor-pointer">
+                      <Button onClick={handleSubmitReview} disabled={isSubmitting} className="rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-medium shadow-sm transition-colors cursor-pointer">
                         {isSubmitting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
                         Submit Review
                       </Button>
@@ -381,7 +381,7 @@ export default function MealDetailsPage(props: { params: Promise<{ meal: string 
                           <div className="flex items-center gap-3">
                             <Avatar className="w-10 h-10 border border-gray-100">
                               <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${review.name || "Student"}`} />
-                              <AvatarFallback className="bg-violet-50 text-violet-600 font-bold">
+                              <AvatarFallback className="bg-amber-50 text-amber-600 font-bold">
                                 <User className="w-5 h-5" />
                               </AvatarFallback>
                             </Avatar>
@@ -395,9 +395,9 @@ export default function MealDetailsPage(props: { params: Promise<{ meal: string 
                             </div>
                           </div>
                           
-                          <div className="flex items-center gap-1 bg-orange-50 px-2 py-1 rounded-lg">
+                          <div className="flex items-center gap-1 bg-amber-50 px-2 py-1 rounded-lg">
                             <span className="font-bold text-gray-900 text-sm">{parseFloat(review.rating).toFixed(1)}</span>
-                            <Star className="w-3.5 h-3.5 text-orange-400 fill-orange-400" />
+                            <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
                           </div>
                         </div>
                         

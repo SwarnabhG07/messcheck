@@ -249,7 +249,7 @@ export default function SettingsForm({ initialData }: SettingsFormProps) {
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="h-11 px-8 bg-violet-600 text-white font-semibold text-sm rounded-xl hover:bg-violet-700 transition-all shadow-sm"
+              className="h-11 px-8 bg-amber-600 text-white font-semibold text-sm rounded-xl hover:bg-amber-700 transition-all shadow-sm"
             >
               {isSubmitting ? "Saving..." : "Save Changes"}
             </Button>

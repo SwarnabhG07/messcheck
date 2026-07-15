@@ -115,7 +115,7 @@ export default function Dashboard() {
   const globalAvg = totalReviews > 0 ? (globalTotalRating / totalReviews).toFixed(1) : "0.0";
 
   const computedOverviewData = [
-    { title: "Overall Rating", value: globalAvg, suffix: <Star className="w-4.5 h-4.5 text-orange-400 fill-orange-400 inline mb-1" />, subtitle: `${totalReviews} Ratings` },
+    { title: "Overall Rating", value: globalAvg, suffix: <Star className="w-4.5 h-4.5 text-amber-400 fill-amber-400 inline mb-1" />, subtitle: `${totalReviews} Ratings` },
     { title: "Menu Updates", value: "6", subtitle: "This Week" }, // Hardcoded for now
     { title: "Feedback Volume", value: totalReviews.toString(), subtitle: "total reviews" },
   ];
@@ -172,7 +172,7 @@ export default function Dashboard() {
                   <div className="text-right">
                     <div className="font-bold text-gray-900 text-[15px] flex items-center gap-1 justify-end leading-none">
                       {item.rating}
-                      <Star className="w-3.25 h-3.25 text-orange-400 fill-orange-400" />
+                      <Star className="w-3.25 h-3.25 text-amber-400 fill-amber-400" />
                     </div>
                     <div className="text-gray-400 text-[10px] mt-0.5 leading-none">
                       {item.votes} votes
@@ -185,7 +185,7 @@ export default function Dashboard() {
                   </p>
                   <Link
                     href={`/menu-today/${item.type.toLowerCase()}`}
-                    className="text-blue-600 font-bold text-[13px] tracking-wider uppercase hover:text-blue-700 transition-colors inline-block mt-0.5"
+                    className="text-amber-500 font-bold text-[13px] tracking-wider uppercase hover:text-amber-600 transition-colors inline-block mt-0.5"
                   >
                     VIEW DETAILS
                   </Link>
@@ -258,7 +258,7 @@ export default function Dashboard() {
               />
               <Bar
                 dataKey="value"
-                fill="#3b82f6"
+                fill="#f59e0b"
                 radius={[2, 2, 0, 0]}
                 barSize={32}
               />

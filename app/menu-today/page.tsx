@@ -102,7 +102,7 @@ export default function TodayMenuPage() {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-full p-8">
-        <Loader2 className="w-8 h-8 text-violet-500 animate-spin" />
+        <Loader2 className="w-8 h-8 text-amber-500 animate-spin" />
       </div>
     );
   }
@@ -148,9 +148,9 @@ export default function TodayMenuPage() {
                 </h3>
                 
                 <div className="flex flex-col items-end">
-                  <div className="flex items-center gap-1 font-bold text-gray-900 bg-orange-50 px-1.5 py-0.5 rounded-md">
+                  <div className="flex items-center gap-1 font-bold text-gray-900 bg-amber-50 px-1.5 py-0.5 rounded-md">
                     <span className="text-base leading-none">{m.rating}</span>
-                    <Star className="w-3.5 h-3.5 text-orange-400 fill-orange-400" />
+                    <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
                   </div>
                   <span className="text-gray-400 text-xs font-medium mt-1">{m.votes} reviews</span>
                 </div>
@@ -161,7 +161,7 @@ export default function TodayMenuPage() {
               </p>
               <Link
                 href={`/menu-today/${m.meal.toLowerCase()}`}
-                className="text-violet-600 font-bold text-[15px] tracking-wider uppercase hover:text-violet-700 transition-colors inline-block"
+                className="text-amber-500 font-bold text-[15px] tracking-wider uppercase hover:text-amber-600 transition-colors inline-block"
               >
                 VIEW DETAILS
               </Link>

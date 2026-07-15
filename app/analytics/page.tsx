@@ -209,7 +209,7 @@ export default function AnalyticsPage() {
 
       {loading ? (
         <div className="h-64 flex items-center justify-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-violet-600"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-600"></div>
         </div>
       ) : (
         <>
@@ -217,8 +217,8 @@ export default function AnalyticsPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Card className="rounded-2xl border-gray-100 shadow-sm hover:shadow-md transition-shadow">
               <CardContent className="p-5 flex flex-col items-start">
-                <div className="p-2 bg-violet-50 rounded-lg mb-3">
-                  <Users className="w-5 h-5 text-violet-600" />
+                <div className="p-2 bg-amber-50 rounded-lg mb-3">
+                  <Users className="w-5 h-5 text-amber-600" />
                 </div>
                 <div className="text-gray-500 text-xs font-bold tracking-widest uppercase mb-1">Total Reviews</div>
                 <div className="text-2xl font-bold text-gray-900">{totalReviews}</div>
@@ -227,20 +227,20 @@ export default function AnalyticsPage() {
 
             <Card className="rounded-2xl border-gray-100 shadow-sm hover:shadow-md transition-shadow">
               <CardContent className="p-5 flex flex-col items-start">
-                <div className="p-2 bg-fuchsia-50 rounded-lg mb-3">
-                  <Star className="w-5 h-5 text-fuchsia-500" />
+                <div className="p-2 bg-amber-50 rounded-lg mb-3">
+                  <Star className="w-5 h-5 text-amber-500" />
                 </div>
                 <div className="text-gray-500 text-xs font-bold tracking-widest uppercase mb-1">Avg Rating</div>
                 <div className="text-2xl font-bold text-gray-900 flex items-center gap-1">
-                  {avgRating} <Star className="w-4 h-4 text-fuchsia-400 fill-fuchsia-400" />
+                  {avgRating} <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
                 </div>
               </CardContent>
             </Card>
 
             <Card className="rounded-2xl border-gray-100 shadow-sm hover:shadow-md transition-shadow">
               <CardContent className="p-5 flex flex-col items-start">
-                <div className="p-2 bg-purple-50 rounded-lg mb-3">
-                  <Award className="w-5 h-5 text-purple-600" />
+                <div className="p-2 bg-amber-50 rounded-lg mb-3">
+                  <Award className="w-5 h-5 text-amber-600" />
                 </div>
                 <div className="text-gray-500 text-xs font-bold tracking-widest uppercase mb-1">Top Meal</div>
                 <div className="text-2xl font-bold text-gray-900 capitalize">
@@ -251,8 +251,8 @@ export default function AnalyticsPage() {
 
             <Card className={`rounded-2xl border-gray-100 shadow-sm hover:shadow-md transition-shadow ${timeframe === 'day' ? 'opacity-50 grayscale' : ''}`}>
               <CardContent className="p-5 flex flex-col items-start">
-                <div className="p-2 bg-purple-50 rounded-lg mb-3">
-                  <Clock className="w-5 h-5 text-purple-600" />
+                <div className="p-2 bg-amber-50 rounded-lg mb-3">
+                  <Clock className="w-5 h-5 text-amber-600" />
                 </div>
                 <div className="text-gray-500 text-xs font-bold tracking-widest uppercase mb-1">
                   {timeframe === 'month' ? 'Active Date' : 'Active Day'}
@@ -270,7 +270,7 @@ export default function AnalyticsPage() {
             <Card className="rounded-2xl border-gray-100 shadow-sm flex flex-col">
               <div className="p-6 pb-2">
                 <h2 className="text-gray-900 font-bold text-lg flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5 text-violet-500" />
+                  <TrendingUp className="w-5 h-5 text-amber-500" />
                   Satisfaction Trend
                 </h2>
                 <p className="text-gray-500 text-sm mt-1">
@@ -300,7 +300,7 @@ export default function AnalyticsPage() {
                       cursor={{ fill: '#f8fafc' }}
                       contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                     />
-                    <Bar dataKey="value" fill="#8b5cf6" radius={[4, 4, 0, 0]} maxBarSize={40} />
+                    <Bar dataKey="value" fill="#f59e0b" radius={[4, 4, 0, 0]} maxBarSize={40} />
                   </BarChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -310,7 +310,7 @@ export default function AnalyticsPage() {
             <Card className="rounded-2xl border-gray-100 shadow-sm flex flex-col">
               <div className="p-6 pb-2">
                 <h2 className="text-gray-900 font-bold text-lg flex items-center gap-2">
-                  <Award className="w-5 h-5 text-violet-500" />
+                  <Award className="w-5 h-5 text-amber-500" />
                   Meal Breakdown
                 </h2>
                 <p className="text-gray-500 text-sm mt-1">Performance by meal type</p>
@@ -324,8 +324,8 @@ export default function AnalyticsPage() {
                     <Radar 
                       name="Rating" 
                       dataKey="rating" 
-                      stroke="#7c3aed" 
-                      fill="#a78bfa" 
+                      stroke="#d97706" 
+                      fill="#fbbf24" 
                       fillOpacity={0.5} 
                     />
                     <Tooltip 

@@ -193,7 +193,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             {/* Write Announcement Dialog */}
             <Dialog open={isAnnouncementOpen} onOpenChange={setIsAnnouncementOpen}>
               <DialogTrigger asChild>
-                <Button className="bg-violet-600 hover:bg-violet-700 text-white gap-2 shadow-sm rounded-full px-5 h-10 transition-all font-medium border-0">
+                <Button className="bg-amber-600 hover:bg-amber-700 text-white gap-2 shadow-sm rounded-full px-5 h-10 transition-all font-medium border-0">
                   <Megaphone className="w-4 h-4" />
                   <span className="text-sm">Write Announcement</span>
                 </Button>
@@ -208,16 +208,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <div className="grid gap-4 py-4">
                   <div className="flex flex-col gap-2">
                     <Label htmlFor="title" className="text-sm font-medium text-gray-700">Title</Label>
-                    <Input id="title" placeholder="e.g. Special Dinner Tonight" className="rounded-lg border-gray-200 focus-visible:ring-violet-500" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} />
+                    <Input id="title" placeholder="e.g. Special Dinner Tonight" className="rounded-lg border-gray-200 focus-visible:ring-amber-500" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} />
                   </div>
                   <div className="flex flex-col gap-2">
                     <Label htmlFor="content" className="text-sm font-medium text-gray-700">Content</Label>
-                    <Textarea id="content" placeholder="Write your announcement here..." className="rounded-lg border-gray-200 min-h-[100px] focus-visible:ring-violet-500" value={newContent} onChange={(e) => setNewContent(e.target.value)} />
+                    <Textarea id="content" placeholder="Write your announcement here..." className="rounded-lg border-gray-200 min-h-[100px] focus-visible:ring-amber-500" value={newContent} onChange={(e) => setNewContent(e.target.value)} />
                   </div>
                 </div>
                 <DialogFooter>
                   <Button variant="outline" onClick={() => setIsAnnouncementOpen(false)} className="rounded-xl border-gray-200 text-gray-600 hover:bg-gray-50" disabled={isPosting}>Cancel</Button>
-                  <Button className="rounded-xl bg-violet-600 hover:bg-violet-700 text-white" onClick={handlePostAnnouncement} disabled={isPosting || !newTitle.trim() || !newContent.trim()}>{isPosting ? "Posting..." : "Post Announcement"}</Button>
+                  <Button className="rounded-xl bg-amber-600 hover:bg-amber-700 text-white" onClick={handlePostAnnouncement} disabled={isPosting || !newTitle.trim() || !newContent.trim()}>{isPosting ? "Posting..." : "Post Announcement"}</Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>
@@ -237,7 +237,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <DropdownMenuContent align="end" className="w-80 rounded-xl p-0 shadow-[0_8px_30px_-6px_rgba(0,0,0,0.12)] border-gray-100 overflow-hidden mt-2">
                 <div className="px-4 py-3 border-b border-gray-100 bg-slate-50/50 flex justify-between items-center">
                   <h3 className="font-semibold text-gray-800">Announcements</h3>
-                  <span className="text-xs bg-violet-100 text-violet-700 font-medium px-2 py-0.5 rounded-full">
+                  <span className="text-xs bg-amber-100 text-amber-700 font-medium px-2 py-0.5 rounded-full">
                     {announcements.filter(a => !lastReadAt || new Date(a.createdAt) > lastReadAt).length} New
                   </span>
                 </div>
@@ -248,10 +248,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     const isUnread = !lastReadAt || new Date(announcement.createdAt) > lastReadAt;
                     return (
                       <Link key={announcement._id} href="/announcements" className="block">
-                        <div className={`px-4 py-3 border-b border-gray-50 flex flex-col gap-1 cursor-pointer transition-colors ${isUnread ? 'bg-violet-50/30 hover:bg-violet-50/50' : 'hover:bg-slate-50'}`}>
+                        <div className={`px-4 py-3 border-b border-gray-50 flex flex-col gap-1 cursor-pointer transition-colors ${isUnread ? 'bg-amber-50/30 hover:bg-amber-50/50' : 'hover:bg-slate-50'}`}>
                           <div className="flex justify-between items-start">
                             <span className={`text-sm font-medium ${isUnread ? 'text-gray-900' : 'text-gray-700'}`}>{announcement.title}</span>
-                            {isUnread && <span className="w-1.5 h-1.5 rounded-full bg-violet-600 mt-1.5 shrink-0" />}
+                            {isUnread && <span className="w-1.5 h-1.5 rounded-full bg-amber-600 mt-1.5 shrink-0" />}
                           </div>
                           <span className="text-xs text-gray-500">{dayjs(announcement.createdAt).format('MMM D, h:mm A')}</span>
                         </div>
@@ -261,7 +261,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 </div>
                 <div className="p-2 bg-slate-50 border-t border-gray-100 flex justify-center">
                   <Link href="/announcements" className="w-full">
-                    <Button variant="ghost" className="w-full text-sm text-violet-600 hover:text-violet-700 hover:bg-violet-50 rounded-lg h-9">
+                    <Button variant="ghost" className="w-full text-sm text-amber-600 hover:text-amber-700 hover:bg-amber-50 rounded-lg h-9">
                       View all announcements
                     </Button>
                   </Link>
@@ -274,7 +274,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity outline-none">
                   <Avatar className="w-10 h-10 shadow-sm border border-gray-100">
-                    <AvatarFallback className="bg-violet-600 text-white font-semibold">
+                    <AvatarFallback className="bg-amber-600 text-white font-semibold">
                       {user?.name?.[0]?.toUpperCase() || "U"}
                     </AvatarFallback>
                   </Avatar>

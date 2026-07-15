@@ -30,7 +30,7 @@ export default function AnnouncementsPage() {
 
       {isLoading ? (
         <div className="flex justify-center items-center h-64">
-          <div className="w-10 h-10 border-4 border-violet-600 border-t-transparent rounded-full animate-spin"></div>
+          <div className="w-10 h-10 border-4 border-amber-600 border-t-transparent rounded-full animate-spin"></div>
         </div>
       ) : announcements.length === 0 ? (
         <div className="bg-white rounded-[24px] border border-gray-100 p-16 text-center shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
@@ -45,7 +45,7 @@ export default function AnnouncementsPage() {
           {announcements.map((announcement) => (
             <div key={announcement._id} className="bg-white rounded-[24px] border border-gray-100 p-7 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-lg transition-all duration-300 group">
               <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4 mb-5">
-                <h2 className="text-xl font-bold text-gray-900 group-hover:text-violet-600 transition-colors">{announcement.title}</h2>
+                <h2 className="text-xl font-bold text-gray-900 group-hover:text-amber-600 transition-colors">{announcement.title}</h2>
                 <span className="flex items-center gap-2 text-xs font-semibold text-gray-500 bg-slate-50 px-3 py-1.5 rounded-full shrink-0 border border-gray-100">
                   <Clock className="w-3.5 h-3.5 text-gray-400" />
                   {dayjs(announcement.createdAt).format('MMMM D, YYYY • h:mm A')}
@@ -56,7 +56,7 @@ export default function AnnouncementsPage() {
               </p>
               <div className="flex flex-wrap items-center gap-x-6 gap-y-3 pt-5 border-t border-gray-50 text-sm text-gray-500">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-7 h-7 rounded-full bg-violet-100 text-violet-700 flex items-center justify-center font-bold text-xs shadow-sm">
+                  <div className="w-7 h-7 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-xs shadow-sm">
                     {announcement.authorName?.[0]?.toUpperCase() || "A"}
                   </div>
                   <span className="font-semibold text-gray-700">{announcement.authorName || "Admin"}</span>
