@@ -9,6 +9,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    if ((session.user as any).role !== "mess_secretary") {
+      return NextResponse.json({ error: "Forbidden: Only mess secretaries can update the menu" }, { status: 403 });
+    }
+
     const { tableData } = await req.json();
     if (!tableData || !Array.isArray(tableData)) {
       return NextResponse.json({ error: "Invalid tableData" }, { status: 400 });
@@ -76,6 +80,10 @@ export async function DELETE() {
     const session = await auth();
     if (!session?.user?.email) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if ((session.user as any).role !== "mess_secretary") {
+      return NextResponse.json({ error: "Forbidden: Only mess secretaries can delete the menu" }, { status: 403 });
     }
 
     const client = await clientPromise;

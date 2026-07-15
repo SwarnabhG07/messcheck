@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Upload, FileText, Loader2, Save, Trash2 } from "lucide-react";
 import {
@@ -16,6 +17,8 @@ import {
 } from "@/components/ui/alert-dialog";
 
 export default function MenuManagerPage() {
+  const { data: session } = useSession();
+  const userRole = (session?.user as any)?.role;
   const [file, setFile] = useState<File | null>(null);
   const [status, setStatus] = useState<"IDLE" | "UPLOADING" | "PROCESSING" | "COMPLETED" | "ERROR">("IDLE");
   const [error, setError] = useState("");
@@ -214,7 +217,18 @@ export default function MenuManagerPage() {
         ref={fileInputRef}
         onChange={handleFileChange}
       />
-      {tableData.length === 0 && (
+      
+      {tableData.length === 0 && userRole !== "mess_secretary" && !isLoadingMenu && (
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center space-y-4 shrink-0">
+          <FileText className="w-12 h-12 text-gray-300" />
+          <h2 className="text-xl font-bold text-gray-900">No Menu Available</h2>
+          <p className="text-sm text-gray-500 max-w-md">
+            The mess menu has not been uploaded yet. Please ask your mess secretary to upload it.
+          </p>
+        </div>
+      )}
+
+      {tableData.length === 0 && userRole === "mess_secretary" && !isLoadingMenu && (
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center space-y-4 shrink-0">
           <div className="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center mb-2">
             <Upload className="w-8 h-8 text-amber-500" />
@@ -268,7 +282,7 @@ export default function MenuManagerPage() {
           <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
             <h3 className="font-bold text-gray-800">Extracted Menu Data</h3>
             <div className="flex items-center gap-3">
-              {tableData.length > 0 && (
+              {tableData.length > 0 && userRole === "mess_secretary" && (
                 <Button 
                   variant="outline" 
                   onClick={() => fileInputRef.current?.click()}
@@ -279,7 +293,8 @@ export default function MenuManagerPage() {
                 </Button>
               )}
               
-              <AlertDialog>
+              {userRole === "mess_secretary" && (
+                <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button 
                     variant="outline" 
@@ -307,8 +322,10 @@ export default function MenuManagerPage() {
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
+              )}
               
-              <Button 
+              {userRole === "mess_secretary" && (
+                <Button 
                 onClick={handleSaveMenu}
                 disabled={isSaving || !hasChanges}
                 className={`font-medium h-9 text-sm ${
@@ -320,6 +337,7 @@ export default function MenuManagerPage() {
                 {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
                 {isSaving ? "Saving..." : "Save Menu"}
               </Button>
+              )}
             </div>
           </div>
           <div className="overflow-x-auto p-4 bg-white">
@@ -332,8 +350,9 @@ export default function MenuManagerPage() {
                         <input
                           type="text"
                           value={cell}
+                          readOnly={userRole !== "mess_secretary"}
                           onChange={(e) => updateCell(rowIndex, colIndex, e.target.value)}
-                          className="w-full h-full px-2 py-2 text-sm bg-transparent border-transparent focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded outline-none text-gray-700 font-medium transition-all"
+                          className={`w-full h-full px-2 py-2 text-sm bg-transparent border-transparent ${userRole === "mess_secretary" ? "focus:border-blue-500 focus:ring-1 focus:ring-blue-500" : ""} rounded outline-none text-gray-700 font-medium transition-all`}
                         />
                       </td>
                     ))}

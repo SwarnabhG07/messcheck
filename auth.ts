@@ -82,6 +82,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           const dbUser = await db.collection("users").findOne({ email: user.email });
           if (dbUser) {
             token.onboarded = dbUser.onboarded || false;
+            token.role = dbUser.role || "student";
           }
         } catch (error) {
           console.error("Error in jwt callback db fetch:", error);
@@ -109,6 +110,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           session.user.name = token.name;
         }
         (session.user as any).onboarded = token.onboarded;
+        (session.user as any).role = token.role || "student";
       }
       return session;
     },

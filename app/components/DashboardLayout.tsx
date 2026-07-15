@@ -191,36 +191,38 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div className="flex items-center gap-4 mt-1">
 
             {/* Write Announcement Dialog */}
-            <Dialog open={isAnnouncementOpen} onOpenChange={setIsAnnouncementOpen}>
-              <DialogTrigger asChild>
-                <Button className="bg-amber-600 hover:bg-amber-700 text-white gap-2 shadow-sm rounded-full px-5 h-10 transition-all font-medium border-0">
-                  <Megaphone className="w-4 h-4" />
-                  <span className="text-sm">Write Announcement</span>
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px] rounded-2xl border-gray-100 shadow-[0_8px_30px_-6px_rgba(0,0,0,0.12)]">
-                <DialogHeader>
-                  <DialogTitle className="text-xl font-bold text-gray-900">New Announcement</DialogTitle>
-                  <DialogDescription className="text-gray-500">
-                    Write an announcement that will be visible to all users.
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="grid gap-4 py-4">
-                  <div className="flex flex-col gap-2">
-                    <Label htmlFor="title" className="text-sm font-medium text-gray-700">Title</Label>
-                    <Input id="title" placeholder="e.g. Special Dinner Tonight" className="rounded-lg border-gray-200 focus-visible:ring-amber-500" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} />
+            {(user as any)?.role === "mess_secretary" && (
+              <Dialog open={isAnnouncementOpen} onOpenChange={setIsAnnouncementOpen}>
+                <DialogTrigger asChild>
+                  <Button className="bg-amber-600 hover:bg-amber-700 text-white gap-2 shadow-sm rounded-full px-5 h-10 transition-all font-medium border-0">
+                    <Megaphone className="w-4 h-4" />
+                    <span className="text-sm">Write Announcement</span>
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px] rounded-2xl border-gray-100 shadow-[0_8px_30px_-6px_rgba(0,0,0,0.12)]">
+                  <DialogHeader>
+                    <DialogTitle className="text-xl font-bold text-gray-900">New Announcement</DialogTitle>
+                    <DialogDescription className="text-gray-500">
+                      Write an announcement that will be visible to all users.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="grid gap-4 py-4">
+                    <div className="flex flex-col gap-2">
+                      <Label htmlFor="title" className="text-sm font-medium text-gray-700">Title</Label>
+                      <Input id="title" placeholder="e.g. Special Dinner Tonight" className="rounded-lg border-gray-200 focus-visible:ring-amber-500" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} />
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <Label htmlFor="content" className="text-sm font-medium text-gray-700">Content</Label>
+                      <Textarea id="content" placeholder="Write your announcement here..." className="rounded-lg border-gray-200 min-h-[100px] focus-visible:ring-amber-500" value={newContent} onChange={(e) => setNewContent(e.target.value)} />
+                    </div>
                   </div>
-                  <div className="flex flex-col gap-2">
-                    <Label htmlFor="content" className="text-sm font-medium text-gray-700">Content</Label>
-                    <Textarea id="content" placeholder="Write your announcement here..." className="rounded-lg border-gray-200 min-h-[100px] focus-visible:ring-amber-500" value={newContent} onChange={(e) => setNewContent(e.target.value)} />
-                  </div>
-                </div>
-                <DialogFooter>
-                  <Button variant="outline" onClick={() => setIsAnnouncementOpen(false)} className="rounded-xl border-gray-200 text-gray-600 hover:bg-gray-50" disabled={isPosting}>Cancel</Button>
-                  <Button className="rounded-xl bg-amber-600 hover:bg-amber-700 text-white" onClick={handlePostAnnouncement} disabled={isPosting || !newTitle.trim() || !newContent.trim()}>{isPosting ? "Posting..." : "Post Announcement"}</Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
+                  <DialogFooter>
+                    <Button variant="outline" onClick={() => setIsAnnouncementOpen(false)} className="rounded-xl border-gray-200 text-gray-600 hover:bg-gray-50" disabled={isPosting}>Cancel</Button>
+                    <Button className="rounded-xl bg-amber-600 hover:bg-amber-700 text-white" onClick={handlePostAnnouncement} disabled={isPosting || !newTitle.trim() || !newContent.trim()}>{isPosting ? "Posting..." : "Post Announcement"}</Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            )}
 
             {/* Notifications Dropdown */}
             <DropdownMenu onOpenChange={handleDropdownOpenChange}>
