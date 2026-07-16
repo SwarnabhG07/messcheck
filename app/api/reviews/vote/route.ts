@@ -56,7 +56,13 @@ export async function POST(req: Request) {
       { $set: { likes, dislikes } }
     );
 
-    return NextResponse.json({ success: true, likes, dislikes }, { status: 200 });
+    return NextResponse.json({ 
+      success: true, 
+      likesCount: likes.length, 
+      dislikesCount: dislikes.length,
+      hasLiked: likes.includes(userEmail),
+      hasDisliked: dislikes.includes(userEmail)
+    }, { status: 200 });
   } catch (error) {
     console.error("Voting error:", error);
     return NextResponse.json({ error: "Failed to process vote" }, { status: 500 });

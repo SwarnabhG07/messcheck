@@ -35,8 +35,10 @@ interface Review {
   for: string;
   day?: string;
   time: string;
-  likes?: string[];
-  dislikes?: string[];
+  likesCount?: number;
+  dislikesCount?: number;
+  hasLiked?: boolean;
+  hasDisliked?: boolean;
 }
 
 export default function ReviewsPage() {
@@ -96,27 +98,44 @@ export default function ReviewsPage() {
     setReviews(prevReviews => 
       prevReviews.map(review => {
         if (review._id !== reviewId) return review;
-        
-        let newLikes = [...(review.likes || [])];
-        let newDislikes = [...(review.dislikes || [])];
+        let newLikesCount = review.likesCount || 0;
+        let newDislikesCount = review.dislikesCount || 0;
+        let newHasLiked = review.hasLiked || false;
+        let newHasDisliked = review.hasDisliked || false;
 
         if (action === 'like') {
-          newDislikes = newDislikes.filter(email => email !== userEmail);
-          if (newLikes.includes(userEmail)) {
-            newLikes = newLikes.filter(email => email !== userEmail);
+          if (newHasDisliked) {
+            newHasDisliked = false;
+            newDislikesCount = Math.max(0, newDislikesCount - 1);
+          }
+          if (newHasLiked) {
+            newHasLiked = false;
+            newLikesCount = Math.max(0, newLikesCount - 1);
           } else {
-            newLikes.push(userEmail);
+            newHasLiked = true;
+            newLikesCount += 1;
           }
         } else {
-          newLikes = newLikes.filter(email => email !== userEmail);
-          if (newDislikes.includes(userEmail)) {
-            newDislikes = newDislikes.filter(email => email !== userEmail);
+          if (newHasLiked) {
+            newHasLiked = false;
+            newLikesCount = Math.max(0, newLikesCount - 1);
+          }
+          if (newHasDisliked) {
+            newHasDisliked = false;
+            newDislikesCount = Math.max(0, newDislikesCount - 1);
           } else {
-            newDislikes.push(userEmail);
+            newHasDisliked = true;
+            newDislikesCount += 1;
           }
         }
 
-        return { ...review, likes: newLikes, dislikes: newDislikes };
+        return { 
+          ...review, 
+          likesCount: newLikesCount, 
+          dislikesCount: newDislikesCount,
+          hasLiked: newHasLiked,
+          hasDisliked: newHasDisliked
+        };
       })
     );
 
@@ -356,19 +375,19 @@ export default function ReviewsPage() {
                     <div className="flex items-center gap-1 border border-gray-100 rounded-full px-2 py-0.5 bg-gray-50/50">
                       <button 
                         onClick={() => handleVote(review._id, 'like')}
-                        className={`flex items-center gap-1.5 px-1 py-1 transition-colors ${review.likes?.includes(session?.user?.email || "") ? "text-green-500 font-bold" : "hover:text-green-500"}`}
+                        className={`flex items-center gap-1.5 px-1 py-1 transition-colors ${review.hasLiked ? "text-green-500 font-bold" : "hover:text-green-500"}`}
                         title="Like"
                       >
                         <ThumbsUp className="w-3.5 h-3.5" />
-                        <span className="text-xs">{review.likes?.length || 0}</span>
+                        <span className="text-xs">{review.likesCount || 0}</span>
                       </button>
                       <div className="w-px h-3 bg-gray-200 mx-0.5"></div>
                       <button 
                         onClick={() => handleVote(review._id, 'dislike')}
-                        className={`flex items-center gap-1.5 px-1 py-1 transition-colors ${review.dislikes?.includes(session?.user?.email || "") ? "text-red-500 font-bold" : "hover:text-red-500"}`}
+                        className={`flex items-center gap-1.5 px-1 py-1 transition-colors ${review.hasDisliked ? "text-red-500 font-bold" : "hover:text-red-500"}`}
                         title="Dislike"
                       >
-                        <span className="text-xs">{review.dislikes?.length || 0}</span>
+                        <span className="text-xs">{review.dislikesCount || 0}</span>
                         <ThumbsDown className="w-3.5 h-3.5" />
                       </button>
                     </div>

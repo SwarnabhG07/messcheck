@@ -24,7 +24,25 @@ export async function GET() {
       hostel: user.hostel
     }).toArray();
     
-    return NextResponse.json(reviews);
+    const sanitizedReviews = reviews.map(review => {
+      const likes = review.likes || [];
+      const dislikes = review.dislikes || [];
+      
+      const sanitized = {
+        ...review,
+        likesCount: likes.length,
+        dislikesCount: dislikes.length,
+        hasLiked: likes.includes(session.user.email),
+        hasDisliked: dislikes.includes(session.user.email)
+      };
+      
+      delete sanitized.likes;
+      delete sanitized.dislikes;
+      
+      return sanitized;
+    });
+    
+    return NextResponse.json(sanitizedReviews);
   } catch (e) {
     console.error(e);
     return NextResponse.json({ error: "Failed to fetch reviews" }, { status: 500 });
@@ -67,7 +85,16 @@ export async function POST(req) {
     
     const result = await db.collection("reviews").insertOne(newReview);
     
-    return NextResponse.json({ ...newReview, _id: result.insertedId }, { status: 201 });
+    const responseReview = { 
+      ...newReview, 
+      _id: result.insertedId,
+      likesCount: 0,
+      dislikesCount: 0,
+      hasLiked: false,
+      hasDisliked: false
+    };
+    
+    return NextResponse.json(responseReview, { status: 201 });
   } catch (e) {
     console.error("Failed to post review:", e);
     return NextResponse.json({ error: "Failed to post review" }, { status: 500 });
