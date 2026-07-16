@@ -89,13 +89,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
       }
 
-      if (trigger === "update" && session) {
-        // Optimistically update the token from the client's update() call
-        if (session.onboarded !== undefined) {
-          token.onboarded = session.onboarded;
-        }
-        if (session.name !== undefined) {
-          token.name = session.name;
+      if (trigger === "update") {
+        // Securely fetch the latest data from the DB instead of trusting client payload
+        try {
+          const client = await clientPromise;
+          const db = client.db("messcheck");
+          const dbUser = await db.collection("users").findOne({ email: token.email });
+          if (dbUser) {
+            token.onboarded = dbUser.onboarded || false;
+            token.name = dbUser.name || token.name;
+            token.role = dbUser.role || "student";
+          }
+        } catch (error) {
+          console.error("Error verifying update from DB:", error);
         }
       }
 
