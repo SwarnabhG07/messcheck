@@ -8,10 +8,9 @@ export async function middleware(req: NextRequest) {
   const publicRoutes = ["/login", "/signup"];
   const isPublicRoute = publicRoutes.includes(pathname);
   const isAuthApi = pathname.startsWith("/api/auth");
-  const isDevApi = pathname.startsWith("/api/dev");
 
-  // Do not intercept NextAuth's own API routes or Dev utility routes
-  if (isAuthApi || isDevApi) {
+  // Do not intercept NextAuth's own API routes
+  if (isAuthApi) {
     return NextResponse.next();
   }
 
