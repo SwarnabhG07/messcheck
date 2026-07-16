@@ -108,8 +108,24 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         if (token.name) {
           session.user.name = token.name;
         }
-        (session.user as any).onboarded = token.onboarded;
-        (session.user as any).role = token.role || "student";
+        
+        // Freshly fetch role from DB to ensure privileges haven't been revoked
+        try {
+          const client = await clientPromise;
+          const db = client.db("messcheck");
+          const dbUser = await db.collection("users").findOne({ email: session.user.email });
+          if (dbUser) {
+            (session.user as any).role = dbUser.role || "student";
+            (session.user as any).onboarded = dbUser.onboarded || false;
+          } else {
+            (session.user as any).role = token.role || "student";
+            (session.user as any).onboarded = token.onboarded || false;
+          }
+        } catch (error) {
+          console.error("Error refreshing role in session callback:", error);
+          (session.user as any).role = token.role || "student";
+          (session.user as any).onboarded = token.onboarded || false;
+        }
       }
       return session;
     },
