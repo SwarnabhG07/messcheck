@@ -21,40 +21,54 @@ export async function POST(req: Request) {
     const client = await clientPromise;
     const db = client.db("messcheck");
     
-    const review = await db.collection("reviews").findOne({ _id: new ObjectId(reviewId) });
-    if (!review) {
+    const collection = db.collection("reviews");
+    
+    // First, verify the review actually exists
+    const reviewExists = await collection.findOne({ _id: new ObjectId(reviewId) }, { projection: { _id: 1 } });
+    if (!reviewExists) {
       return NextResponse.json({ error: "Review not found" }, { status: 404 });
     }
 
-    let likes = review.likes || [];
-    let dislikes = review.dislikes || [];
-
     if (action === 'like') {
-      // Remove from dislikes
-      dislikes = dislikes.filter((email: string) => email !== userEmail);
+      // Try to toggle off (unlike)
+      const result = await collection.updateOne(
+        { _id: new ObjectId(reviewId), likes: userEmail },
+        { $pull: { likes: userEmail } } as any
+      );
       
-      // Toggle like
-      if (likes.includes(userEmail)) {
-        likes = likes.filter((email: string) => email !== userEmail);
-      } else {
-        likes.push(userEmail);
+      // If we didn't unlike, it means we need to like
+      if (result.modifiedCount === 0) {
+        await collection.updateOne(
+          { _id: new ObjectId(reviewId) },
+          { 
+            $addToSet: { likes: userEmail },
+            $pull: { dislikes: userEmail }
+          } as any
+        );
       }
     } else if (action === 'dislike') {
-      // Remove from likes
-      likes = likes.filter((email: string) => email !== userEmail);
+      // Try to toggle off (undislike)
+      const result = await collection.updateOne(
+        { _id: new ObjectId(reviewId), dislikes: userEmail },
+        { $pull: { dislikes: userEmail } } as any
+      );
       
-      // Toggle dislike
-      if (dislikes.includes(userEmail)) {
-        dislikes = dislikes.filter((email: string) => email !== userEmail);
-      } else {
-        dislikes.push(userEmail);
+      // If we didn't undislike, it means we need to dislike
+      if (result.modifiedCount === 0) {
+        await collection.updateOne(
+          { _id: new ObjectId(reviewId) },
+          { 
+            $addToSet: { dislikes: userEmail },
+            $pull: { likes: userEmail }
+          } as any
+        );
       }
     }
 
-    await db.collection("reviews").updateOne(
-      { _id: new ObjectId(reviewId) },
-      { $set: { likes, dislikes } }
-    );
+    // Fetch the updated document to return accurate safe counts
+    const updatedReview = await collection.findOne({ _id: new ObjectId(reviewId) });
+    const likes = updatedReview?.likes || [];
+    const dislikes = updatedReview?.dislikes || [];
 
     return NextResponse.json({ 
       success: true, 
