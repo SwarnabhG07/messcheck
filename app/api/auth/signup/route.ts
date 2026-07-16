@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 
 export async function POST(req: Request) {
   try {
-    const { name, email, password, role, college, hostel, rollNumber, yearOfStudy, graduationYear } = await req.json();
+    const { name, email, password, college, hostel, rollNumber, yearOfStudy, graduationYear } = await req.json();
 
     if (!name || !email || !password) {
       return NextResponse.json(
