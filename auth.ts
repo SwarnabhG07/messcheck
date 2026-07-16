@@ -11,7 +11,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   // Use JWT sessions (required when using Credentials provider)
   session: {
     strategy: "jwt",
-    maxAge: 100 * 365 * 24 * 60 * 60, // 100 years (stay logged in forever)
+    maxAge: 30 * 24 * 60 * 60, // 30 days
   },
 
   // Custom auth pages
