@@ -31,7 +31,7 @@ export async function POST(req: Request) {
       name,
       email,
       password: hashedPassword,
-      role: role === "mess_secretary" ? "mess_secretary" : "student",
+      role: "student",
       college: college || null,
       hostel: hostel || null,
       rollNumber: rollNumber || null,

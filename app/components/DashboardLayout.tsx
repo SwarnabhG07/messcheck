@@ -42,6 +42,7 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   Megaphone,
+  ShieldAlert,
 } from "lucide-react";
 
 const menuItems = [
@@ -65,7 +66,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   
   const { data: session } = useSession();
   const user = session?.user;
+  const userRole = (user as any)?.role;
   const pathname = usePathname();
+
+  const filteredMenuItems = userRole === "supreme_leader" 
+    ? [...menuItems, { name: "Admin", icon: ShieldAlert, href: "/admin" }]
+    : menuItems;
 
   useEffect(() => {
     if (session?.user?.email) {
@@ -116,7 +122,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     return <>{children}</>;
   }
 
-  const activeMenuItem = menuItems.find(
+  const activeMenuItem = filteredMenuItems.find(
     (item) =>
       pathname === item.href ||
       (pathname === "/" && item.name === "Dashboard") ||
@@ -150,7 +156,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
 
         <nav className={`flex-1 space-y-2 flex flex-col ${isSidebarCollapsed ? "px-3" : "px-4"}`}>
-          {menuItems.map((item) => {
+          {filteredMenuItems.map((item) => {
             const isActive =
               pathname === item.href ||
               (pathname === "/" && item.name === "Dashboard") ||
@@ -191,7 +197,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div className="flex items-center gap-4 mt-1">
 
             {/* Write Announcement Dialog */}
-            {(user as any)?.role === "mess_secretary" && (
+            {(userRole === "mess_secretary" || userRole === "supreme_leader") && (
               <Dialog open={isAnnouncementOpen} onOpenChange={setIsAnnouncementOpen}>
                 <DialogTrigger asChild>
                   <Button className="bg-amber-600 hover:bg-amber-700 text-white gap-2 shadow-sm rounded-full px-5 h-10 transition-all font-medium border-0">

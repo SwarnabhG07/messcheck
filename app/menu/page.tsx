@@ -18,7 +18,8 @@ import {
 
 export default function MenuManagerPage() {
   const { data: session } = useSession();
-  const userRole = (session?.user as any)?.role;
+  const actualUserRole = (session?.user as any)?.role;
+  const userRole = actualUserRole === "supreme_leader" ? "mess_secretary" : actualUserRole;
   const [file, setFile] = useState<File | null>(null);
   const [status, setStatus] = useState<"IDLE" | "UPLOADING" | "PROCESSING" | "COMPLETED" | "ERROR">("IDLE");
   const [error, setError] = useState("");

@@ -48,8 +48,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    if ((session.user as any).role !== "mess_secretary") {
-      return NextResponse.json({ error: "Forbidden: Only mess secretaries can post announcements" }, { status: 403 });
+    const userRole = (session.user as any).role;
+    if (userRole !== "mess_secretary" && userRole !== "supreme_leader") {
+      return NextResponse.json({ error: "Forbidden: Only mess secretaries or supreme leaders can post announcements" }, { status: 403 });
     }
 
     const { title, content } = await req.json();

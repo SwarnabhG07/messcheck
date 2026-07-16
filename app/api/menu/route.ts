@@ -9,8 +9,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    if ((session.user as any).role !== "mess_secretary") {
-      return NextResponse.json({ error: "Forbidden: Only mess secretaries can update the menu" }, { status: 403 });
+    const userRole = (session.user as any).role;
+    if (userRole !== "mess_secretary" && userRole !== "supreme_leader") {
+      return NextResponse.json({ error: "Forbidden: Only mess secretaries or supreme leaders can update the menu" }, { status: 403 });
     }
 
     const { tableData } = await req.json();
@@ -82,8 +83,9 @@ export async function DELETE() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    if ((session.user as any).role !== "mess_secretary") {
-      return NextResponse.json({ error: "Forbidden: Only mess secretaries can delete the menu" }, { status: 403 });
+    const userRole = (session.user as any).role;
+    if (userRole !== "mess_secretary" && userRole !== "supreme_leader") {
+      return NextResponse.json({ error: "Forbidden: Only mess secretaries or supreme leaders can delete the menu" }, { status: 403 });
     }
 
     const client = await clientPromise;
