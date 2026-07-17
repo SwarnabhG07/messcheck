@@ -57,6 +57,12 @@ export async function POST(req: Request) {
     if (!title || !content) {
       return NextResponse.json({ error: "Title and content are required" }, { status: 400 });
     }
+    if (typeof title !== "string" || title.length > 100) {
+      return NextResponse.json({ error: "Title must be a string up to 100 characters" }, { status: 400 });
+    }
+    if (typeof content !== "string" || content.length > 500) {
+      return NextResponse.json({ error: "Content must be a string up to 500 characters" }, { status: 400 });
+    }
 
     const client = await clientPromise;
     const db = client.db("messcheck");

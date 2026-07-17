@@ -12,6 +12,21 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
+    if (typeof name !== "string" || name.length > 50) {
+      return NextResponse.json({ error: "Name must be a string up to 50 characters" }, { status: 400 });
+    }
+    if (typeof email !== "string" || email.length > 50 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return NextResponse.json({ error: "Invalid email format or length exceeds 50 characters" }, { status: 400 });
+    }
+    if (typeof password !== "string" || password.length < 3 || password.length > 100) {
+      return NextResponse.json({ error: "Password must be between 3 and 100 characters" }, { status: 400 });
+    }
+    if (college && (typeof college !== "string" || college.length > 100)) {
+      return NextResponse.json({ error: "College must be a string up to 100 characters" }, { status: 400 });
+    }
+    if (hostel && (typeof hostel !== "string" || hostel.length > 100)) {
+      return NextResponse.json({ error: "Hostel must be a string up to 100 characters" }, { status: 400 });
+    }
 
     const client = await clientPromise;
     const db = client.db("messcheck");

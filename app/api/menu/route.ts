@@ -15,8 +15,18 @@ export async function POST(req: Request) {
     }
 
     const { tableData } = await req.json();
-    if (!tableData || !Array.isArray(tableData)) {
-      return NextResponse.json({ error: "Invalid tableData" }, { status: 400 });
+    if (!tableData || !Array.isArray(tableData) || tableData.length > 20) {
+      return NextResponse.json({ error: "Invalid tableData: too many rows or not an array" }, { status: 400 });
+    }
+    for (const row of tableData) {
+      if (!Array.isArray(row) || row.length > 10) {
+        return NextResponse.json({ error: "Invalid table row format or too many columns" }, { status: 400 });
+      }
+      for (const cell of row) {
+        if (typeof cell !== "string" || cell.length > 500) {
+          return NextResponse.json({ error: "Invalid cell content: must be string up to 500 characters" }, { status: 400 });
+        }
+      }
     }
 
     const client = await clientPromise;

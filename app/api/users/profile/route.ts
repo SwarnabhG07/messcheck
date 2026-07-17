@@ -16,6 +16,15 @@ export async function PUT(req: Request) {
     if (!name || !college || !yearOfStudy || !rollNumber || !graduationYear || !hostel) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
+    if (typeof name !== "string" || name.length > 50) {
+      return NextResponse.json({ error: "Name must be a string up to 50 characters" }, { status: 400 });
+    }
+    if (typeof college !== "string" || college.length > 100) {
+      return NextResponse.json({ error: "College must be a string up to 100 characters" }, { status: 400 });
+    }
+    if (typeof hostel !== "string" || hostel.length > 100) {
+      return NextResponse.json({ error: "Hostel must be a string up to 100 characters" }, { status: 400 });
+    }
 
     const client = await clientPromise;
     const db = client.db("messcheck");

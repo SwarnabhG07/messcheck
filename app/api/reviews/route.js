@@ -61,6 +61,13 @@ export async function POST(req) {
     if (!data.name || !data.rating || !data.text || !data.for || !data.day) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
+    const parsedRating = Number(data.rating);
+    if (isNaN(parsedRating) || parsedRating < 1 || parsedRating > 5) {
+      return NextResponse.json({ error: "Rating must be between 1 and 5" }, { status: 400 });
+    }
+    if (typeof data.text !== "string" || data.text.length > 500) {
+      return NextResponse.json({ error: "Review text must be a string up to 500 characters" }, { status: 400 });
+    }
 
     const client = await clientPromise;
     const db = client.db("messcheck");
@@ -111,6 +118,13 @@ export async function PUT(req) {
     const data = await req.json();
     if (!data._id || !data.rating || !data.text || !data.for || !data.day) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    }
+    const parsedRating = Number(data.rating);
+    if (isNaN(parsedRating) || parsedRating < 1 || parsedRating > 5) {
+      return NextResponse.json({ error: "Rating must be between 1 and 5" }, { status: 400 });
+    }
+    if (typeof data.text !== "string" || data.text.length > 500) {
+      return NextResponse.json({ error: "Review text must be a string up to 500 characters" }, { status: 400 });
     }
 
     const client = await clientPromise;
