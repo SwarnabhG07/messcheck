@@ -98,7 +98,7 @@ export async function POST(req: Request) {
       hasDisliked: dislikes.includes(userEmail)
     }, { status: 200 });
   } catch (error) {
-    console.error("Voting error:", error);
+    console.error("Voting error:", error instanceof Error ? error.message : String(error));
     return NextResponse.json({ error: "Failed to process vote" }, { status: 500 });
   }
 }

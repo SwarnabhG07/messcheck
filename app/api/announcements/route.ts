@@ -40,7 +40,7 @@ export async function GET(req: Request) {
       lastReadAt
     });
   } catch (error) {
-    console.error("Failed to fetch announcements:", error);
+    console.error("Failed to fetch announcements:", error instanceof Error ? error.message : String(error));
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
@@ -100,7 +100,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true, announcement: responseAnnouncement });
   } catch (error) {
-    console.error("Failed to post announcement:", error);
+    console.error("Failed to post announcement:", error instanceof Error ? error.message : String(error));
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

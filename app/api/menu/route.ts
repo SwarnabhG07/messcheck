@@ -60,7 +60,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true, message: "Menu saved successfully" });
   } catch (error) {
-    console.error("Failed to save menu:", error);
+    console.error("Failed to save menu:", error instanceof Error ? error.message : String(error));
     return NextResponse.json({ error: "Failed to save menu" }, { status: 500 });
   }
 }
@@ -87,7 +87,7 @@ export async function GET() {
 
     return NextResponse.json(menu || { tableData: [] });
   } catch (error) {
-    console.error("Failed to fetch menu:", error);
+    console.error("Failed to fetch menu:", error instanceof Error ? error.message : String(error));
     return NextResponse.json({ error: "Failed to fetch menu" }, { status: 500 });
   }
 }
@@ -124,7 +124,7 @@ export async function DELETE(req: Request) {
 
     return NextResponse.json({ success: true, message: "Menu deleted successfully" });
   } catch (error) {
-    console.error("Failed to delete menu:", error);
+    console.error("Failed to delete menu:", error instanceof Error ? error.message : String(error));
     return NextResponse.json({ error: "Failed to delete menu" }, { status: 500 });
   }
 }

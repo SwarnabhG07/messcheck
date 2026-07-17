@@ -45,7 +45,7 @@ export async function GET() {
     
     return NextResponse.json(sanitizedReviews);
   } catch (e) {
-    console.error(e);
+    console.error(e instanceof Error ? e.message : String(e));
     return NextResponse.json({ error: "Failed to fetch reviews" }, { status: 500 });
   }
 }
@@ -118,7 +118,7 @@ export async function POST(req) {
     
     return NextResponse.json(responseReview, { status: 201 });
   } catch (e) {
-    console.error("Failed to post review:", e);
+    console.error("Failed to post review:", e instanceof Error ? e.message : String(e));
     return NextResponse.json({ error: "Failed to post review" }, { status: 500 });
   }
 }
@@ -175,7 +175,7 @@ export async function PUT(req) {
     
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (e) {
-    console.error("Failed to update review:", e);
+    console.error("Failed to update review:", e instanceof Error ? e.message : String(e));
     return NextResponse.json({ error: "Failed to update review" }, { status: 500 });
   }
 }

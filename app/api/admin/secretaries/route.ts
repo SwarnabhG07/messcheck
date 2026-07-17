@@ -29,7 +29,7 @@ export async function GET(req: Request) {
 
     return NextResponse.json({ secretaries });
   } catch (error) {
-    console.error("Failed to fetch secretaries:", error);
+    console.error("Failed to fetch secretaries:", error instanceof Error ? error.message : String(error));
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
@@ -69,7 +69,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true, message: `Successfully assigned 'mess_secretary' to ${email}` });
   } catch (error) {
-    console.error("Failed to assign role:", error);
+    console.error("Failed to assign role:", error instanceof Error ? error.message : String(error));
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
@@ -111,7 +111,7 @@ export async function DELETE(req: Request) {
 
     return NextResponse.json({ success: true, message: `Successfully removed 'mess_secretary' role from ${email}` });
   } catch (error) {
-    console.error("Failed to remove role:", error);
+    console.error("Failed to remove role:", error instanceof Error ? error.message : String(error));
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

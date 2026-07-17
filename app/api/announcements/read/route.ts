@@ -19,7 +19,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Failed to mark announcements as read:", error);
+    console.error("Failed to mark announcements as read:", error instanceof Error ? error.message : String(error));
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

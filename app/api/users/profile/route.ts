@@ -67,7 +67,7 @@ export async function PUT(req: Request) {
 
     return NextResponse.json({ success: true, message: "Profile updated successfully" });
   } catch (error) {
-    console.error("Failed to update profile:", error);
+    console.error("Failed to update profile:", error instanceof Error ? error.message : String(error));
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
@@ -96,7 +96,7 @@ export async function DELETE(req: Request) {
 
     return NextResponse.json({ success: true, message: "Account deleted successfully" });
   } catch (error) {
-    console.error("Failed to delete account:", error);
+    console.error("Failed to delete account:", error instanceof Error ? error.message : String(error));
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
