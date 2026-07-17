@@ -1,8 +1,14 @@
 import { NextResponse } from "next/server";
+import { auth } from "@/auth";
 import { checkRateLimit } from "@/app/lib/rateLimit";
 
 export async function POST(req: Request) {
   try {
+    const session = await auth();
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const ip = req.headers.get("x-forwarded-for") || "unknown";
     if (!checkRateLimit(`ocr_${ip}`, 5, 15 * 60 * 1000)) {
       return NextResponse.json({ error: "Too many OCR requests. Please try again later." }, { status: 429 });
@@ -47,6 +53,11 @@ export async function POST(req: Request) {
 
 export async function GET(req: Request) {
   try {
+    const session = await auth();
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { searchParams } = new URL(req.url);
     const taskId = searchParams.get("taskId");
     const action = searchParams.get("action"); // 'status' or 'download'
