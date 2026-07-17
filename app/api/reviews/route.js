@@ -74,6 +74,12 @@ export async function POST(req) {
     if (typeof data.text !== "string" || data.text.length > 500) {
       return NextResponse.json({ error: "Review text must be a string up to 500 characters" }, { status: 400 });
     }
+    if (typeof data.for !== "string" || data.for.length > 50) {
+      return NextResponse.json({ error: "Review for must be a string up to 50 characters" }, { status: 400 });
+    }
+    if (typeof data.day !== "string" || data.day.length > 20) {
+      return NextResponse.json({ error: "Review day must be a string up to 20 characters" }, { status: 400 });
+    }
 
     const client = await clientPromise;
     const db = client.db("messcheck");
@@ -134,6 +140,12 @@ export async function PUT(req) {
     }
     if (typeof data.text !== "string" || data.text.length > 500) {
       return NextResponse.json({ error: "Review text must be a string up to 500 characters" }, { status: 400 });
+    }
+    if (typeof data.for !== "string" || data.for.length > 50) {
+      return NextResponse.json({ error: "Review for must be a string up to 50 characters" }, { status: 400 });
+    }
+    if (typeof data.day !== "string" || data.day.length > 20) {
+      return NextResponse.json({ error: "Review day must be a string up to 20 characters" }, { status: 400 });
     }
 
     const client = await clientPromise;
