@@ -13,7 +13,10 @@ export async function POST(req: Request) {
     const fastApiFormData = new FormData();
     fastApiFormData.append("file", file, file.name);
 
-    const baseUrl = process.env.FASTAPI_HOST || "https://messcheck-table-ocr.onrender.com";
+    const baseUrl = process.env.FASTAPI_HOST;
+    if (!baseUrl) {
+      return NextResponse.json({ error: "OCR service is not configured (missing FASTAPI_HOST)" }, { status: 500 });
+    }
     const response = await fetch(`${baseUrl}/extract/`, {
       method: "POST",
       body: fastApiFormData,
@@ -47,7 +50,8 @@ export async function GET(req: Request) {
     }
 
     if (action === "download") {
-      const baseUrl = process.env.FASTAPI_HOST || "https://messcheck-table-ocr.onrender.com";
+      const baseUrl = process.env.FASTAPI_HOST;
+      if (!baseUrl) throw new Error("OCR service is not configured");
       const res = await fetch(`${baseUrl}/download/${taskId}`);
       if (!res.ok) {
           const err = await res.text();
@@ -59,7 +63,8 @@ export async function GET(req: Request) {
         headers: { "Content-Type": "text/csv" }
       });
     } else {
-      const baseUrl = process.env.FASTAPI_HOST || "https://messcheck-table-ocr.onrender.com";
+      const baseUrl = process.env.FASTAPI_HOST;
+      if (!baseUrl) throw new Error("OCR service is not configured");
       const res = await fetch(`${baseUrl}/status/${taskId}`);
       if (!res.ok) throw new Error("Failed to check status");
       const data = await res.json();
