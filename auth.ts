@@ -4,6 +4,7 @@ import Credentials from "next-auth/providers/credentials";
 import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import clientPromise from "@/app/lib/mongodb";
 import bcrypt from "bcryptjs";
+import { checkRateLimit } from "@/app/lib/rateLimit";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: MongoDBAdapter(clientPromise, { databaseName: "messcheck" }),
@@ -41,6 +42,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         if (!email || !password) {
           return null;
+        }
+
+        // Rate limit failed login attempts (10 per 15 minutes per email)
+        if (!checkRateLimit(`login_${email}`, 10, 15 * 60 * 1000)) {
+          throw new Error("Too many login attempts. Please try again later.");
         }
 
         // Look up the user in MongoDB

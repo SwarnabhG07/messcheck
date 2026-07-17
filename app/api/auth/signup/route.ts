@@ -1,9 +1,15 @@
 import clientPromise from "@/app/lib/mongodb";
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
+import { checkRateLimit } from "@/app/lib/rateLimit";
 
 export async function POST(req: Request) {
   try {
+    const ip = req.headers.get("x-forwarded-for") || "unknown";
+    if (!checkRateLimit(`signup_${ip}`, 5, 15 * 60 * 1000)) {
+      return NextResponse.json({ error: "Too many signup attempts. Please try again later." }, { status: 429 });
+    }
+
     const { name, email, password, college, hostel, rollNumber, yearOfStudy, graduationYear } = await req.json();
 
     if (!name || !email || !password) {

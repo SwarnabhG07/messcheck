@@ -1,7 +1,13 @@
 import { NextResponse } from "next/server";
+import { checkRateLimit } from "@/app/lib/rateLimit";
 
 export async function POST(req: Request) {
   try {
+    const ip = req.headers.get("x-forwarded-for") || "unknown";
+    if (!checkRateLimit(`ocr_${ip}`, 5, 15 * 60 * 1000)) {
+      return NextResponse.json({ error: "Too many OCR requests. Please try again later." }, { status: 429 });
+    }
+
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
     

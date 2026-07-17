@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import dayjs from "dayjs";
 import { auth } from "@/auth";
+import { checkRateLimit } from "@/app/lib/rateLimit";
 
 export async function GET() {
   try {
@@ -51,6 +52,11 @@ export async function GET() {
 
 export async function POST(req) {
   try {
+    const ip = req.headers.get("x-forwarded-for") || "unknown";
+    if (!checkRateLimit(`reviews_${ip}`, 10, 10 * 60 * 1000)) {
+      return NextResponse.json({ error: "Too many reviews submitted. Please try again later." }, { status: 429 });
+    }
+
     const session = await auth();
     if (!session?.user?.email) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

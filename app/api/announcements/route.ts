@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import clientPromise from "@/app/lib/mongodb";
+import { checkRateLimit } from "@/app/lib/rateLimit";
 
 export async function GET(req: Request) {
   try {
@@ -46,6 +47,11 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
+    const ip = req.headers.get("x-forwarded-for") || "unknown";
+    if (!checkRateLimit(`announcements_${ip}`, 5, 10 * 60 * 1000)) {
+      return NextResponse.json({ error: "Too many announcements posted. Please try again later." }, { status: 429 });
+    }
+
     const session = await auth();
     if (!session?.user?.email) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
