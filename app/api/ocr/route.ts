@@ -21,6 +21,18 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
+    // Validate file size (e.g., max 10MB)
+    const MAX_FILE_SIZE = 10 * 1024 * 1024;
+    if (file.size > MAX_FILE_SIZE) {
+      return NextResponse.json({ error: "File size exceeds the 10MB limit" }, { status: 400 });
+    }
+
+    // Validate file type (allow only PDFs and common image formats)
+    const allowedTypes = ["application/pdf", "image/jpeg", "image/png", "image/webp"];
+    if (!allowedTypes.includes(file.type)) {
+      return NextResponse.json({ error: "Invalid file type. Only PDF, JPEG, PNG, and WebP are allowed." }, { status: 400 });
+    }
+
     // Forward to FastAPI
     const fastApiFormData = new FormData();
     fastApiFormData.append("file", file, file.name);
