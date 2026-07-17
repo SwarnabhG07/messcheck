@@ -2,9 +2,15 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import clientPromise from "@/app/lib/mongodb";
 import { ObjectId } from "mongodb";
+import { checkRateLimit } from "@/app/lib/rateLimit";
 
 export async function POST(req: Request) {
   try {
+    const ip = req.headers.get("x-forwarded-for") || "unknown";
+    if (!checkRateLimit(`vote_${ip}`, 20, 5 * 60 * 1000)) {
+      return NextResponse.json({ error: "Too many votes. Please try again later." }, { status: 429 });
+    }
+
     const session = await auth();
     if (!session?.user?.email) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

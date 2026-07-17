@@ -1,9 +1,15 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import clientPromise from "@/app/lib/mongodb";
+import { checkRateLimit } from "@/app/lib/rateLimit";
 
 export async function POST(req: Request) {
   try {
+    const ip = req.headers.get("x-forwarded-for") || "unknown";
+    if (!checkRateLimit(`menu_${ip}`, 5, 15 * 60 * 1000)) {
+      return NextResponse.json({ error: "Too many menu updates. Please try again later." }, { status: 429 });
+    }
+
     const session = await auth();
     if (!session?.user?.email) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -86,8 +92,13 @@ export async function GET() {
   }
 }
 
-export async function DELETE() {
+export async function DELETE(req: Request) {
   try {
+    const ip = req.headers.get("x-forwarded-for") || "unknown";
+    if (!checkRateLimit(`menu_${ip}`, 5, 15 * 60 * 1000)) {
+      return NextResponse.json({ error: "Too many menu updates. Please try again later." }, { status: 429 });
+    }
+
     const session = await auth();
     if (!session?.user?.email) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
