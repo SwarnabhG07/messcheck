@@ -74,10 +74,10 @@ export async function GET() {
       return NextResponse.json({ error: "User profile incomplete" }, { status: 403 });
     }
 
-    const menu = await db.collection("menus").findOne({ 
-      college: user.college, 
-      hostel: user.hostel 
-    });
+    const menu = await db.collection("menus").findOne(
+      { college: user.college, hostel: user.hostel },
+      { projection: { _id: 0, updatedBy: 0 } }
+    );
 
     return NextResponse.json(menu || { tableData: [] });
   } catch (error) {

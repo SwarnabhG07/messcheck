@@ -101,6 +101,9 @@ export async function POST(req) {
       hasDisliked: false
     };
     
+    // Omit email before returning
+    delete responseReview.email;
+    
     return NextResponse.json(responseReview, { status: 201 });
   } catch (e) {
     console.error("Failed to post review:", e);

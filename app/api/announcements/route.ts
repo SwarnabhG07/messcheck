@@ -18,9 +18,12 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Fetch announcements for their college and hostel
+    // Fetch announcements for their college and hostel, hiding internal fields
     const announcements = await db.collection("announcements")
-      .find({ college: user.college, hostel: user.hostel })
+      .find(
+        { college: user.college, hostel: user.hostel },
+        { projection: { authorEmail: 0 } }
+      )
       .sort({ createdAt: -1 })
       .limit(50)
       .toArray();
@@ -85,7 +88,11 @@ export async function POST(req: Request) {
 
     const result = await db.collection("announcements").insertOne(newAnnouncement);
 
-    return NextResponse.json({ success: true, announcement: { ...newAnnouncement, _id: result.insertedId } });
+    // Omit authorEmail before returning to the frontend
+    const responseAnnouncement = { ...newAnnouncement, _id: result.insertedId };
+    delete (responseAnnouncement as any).authorEmail;
+
+    return NextResponse.json({ success: true, announcement: responseAnnouncement });
   } catch (error) {
     console.error("Failed to post announcement:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

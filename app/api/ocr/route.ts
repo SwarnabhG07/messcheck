@@ -22,7 +22,7 @@ export async function POST(req: Request) {
       const errText = await response.text();
       console.error("FastAPI Error:", errText);
       return NextResponse.json(
-        { error: `OCR Service Error (${response.status}): ${errText}` },
+        { error: "An error occurred while communicating with the OCR service" },
         { status: response.status === 413 ? 413 : response.status } // In case of size limit or other
       );
     }
@@ -31,7 +31,7 @@ export async function POST(req: Request) {
     return NextResponse.json(data);
   } catch (error: any) {
     console.error("OCR API POST error:", error);
-    return NextResponse.json({ error: `Internal Server Error: ${error.message}` }, { status: 500 });
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
 
@@ -49,7 +49,8 @@ export async function GET(req: Request) {
       const res = await fetch(`https://messcheck-table-ocr.onrender.com/download/${taskId}`);
       if (!res.ok) {
           const err = await res.text();
-          throw new Error("Failed to download: " + err);
+          console.error("Failed to download OCR CSV:", err);
+          throw new Error("Failed to download document");
       }
       const csvText = await res.text();
       return new NextResponse(csvText, {
