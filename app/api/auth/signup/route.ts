@@ -33,10 +33,8 @@ export async function POST(req: Request) {
 
     const existingUser = await db.collection("users").findOne({ email });
     if (existingUser) {
-      return NextResponse.json(
-        { error: "User with this email already exists" },
-        { status: 409 }
-      );
+      // Prevent user enumeration by returning a generic success message
+      return NextResponse.json({ message: "User created successfully" }, { status: 201 });
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
