@@ -66,6 +66,10 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Missing taskId" }, { status: 400 });
     }
 
+    if (!/^[a-zA-Z0-9_-]+$/.test(taskId)) {
+      return NextResponse.json({ error: "Invalid taskId" }, { status: 400 });
+    }
+
     if (action === "download") {
       const baseUrl = process.env.FASTAPI_HOST;
       if (!baseUrl) throw new Error("OCR service is not configured");
