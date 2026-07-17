@@ -29,10 +29,24 @@ export async function POST(req: Request) {
     
     const collection = db.collection("reviews");
     
-    // First, verify the review actually exists
-    const reviewExists = await collection.findOne({ _id: new ObjectId(reviewId) }, { projection: { _id: 1 } });
+    // Get the user's college and hostel
+    const user = await db.collection("users").findOne({ email: userEmail });
+    if (!user || !user.college || !user.hostel) {
+      return NextResponse.json({ error: "User profile incomplete" }, { status: 403 });
+    }
+    
+    // First, verify the review actually exists AND belongs to the user's college and hostel
+    const reviewExists = await collection.findOne(
+      { 
+        _id: new ObjectId(reviewId),
+        college: user.college,
+        hostel: user.hostel
+      }, 
+      { projection: { _id: 1 } }
+    );
+    
     if (!reviewExists) {
-      return NextResponse.json({ error: "Review not found" }, { status: 404 });
+      return NextResponse.json({ error: "Review not found or does not belong to your college/hostel" }, { status: 404 });
     }
 
     if (action === 'like') {
