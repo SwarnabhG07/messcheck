@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { signIn } from "next-auth/react";
+import { signIn, getCsrfToken } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Utensils, Eye, EyeOff, Mail, Lock } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -17,6 +17,11 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [csrfToken, setCsrfToken] = useState<string | undefined>("");
+
+  useEffect(() => {
+    getCsrfToken().then(setCsrfToken);
+  }, []);
 
   // Handle email + password sign in
   async function handleCredentialsSignIn(e: React.FormEvent) {
@@ -75,6 +80,9 @@ export default function LoginPage() {
           onSubmit={handleCredentialsSignIn}
           className="bg-white rounded-[20px] shadow-[0_8px_30px_-6px_rgba(0,0,0,0.06)] border border-gray-100 p-6"
         >
+          {/* CSRF Token */}
+          <input type="hidden" name="csrfToken" defaultValue={csrfToken} />
+
           {/* Error Message */}
           {error && (
             <div className="mb-4 p-3 rounded-xl bg-red-50 border border-red-100 text-red-600 text-sm text-center">
