@@ -84,7 +84,7 @@ export async function POST(req) {
     }
     
     const newReview = {
-      name: data.name,
+      name: user.name || session.user.name,
       email: session.user.email,
       college: user.college,
       hostel: user.hostel,
