@@ -13,7 +13,8 @@ export async function POST(req: Request) {
     const fastApiFormData = new FormData();
     fastApiFormData.append("file", file, file.name);
 
-    const response = await fetch("https://messcheck-table-ocr.onrender.com/extract/", {
+    const baseUrl = process.env.FASTAPI_HOST || "https://messcheck-table-ocr.onrender.com";
+    const response = await fetch(`${baseUrl}/extract/`, {
       method: "POST",
       body: fastApiFormData,
     });
@@ -46,7 +47,8 @@ export async function GET(req: Request) {
     }
 
     if (action === "download") {
-      const res = await fetch(`https://messcheck-table-ocr.onrender.com/download/${taskId}`);
+      const baseUrl = process.env.FASTAPI_HOST || "https://messcheck-table-ocr.onrender.com";
+      const res = await fetch(`${baseUrl}/download/${taskId}`);
       if (!res.ok) {
           const err = await res.text();
           console.error("Failed to download OCR CSV:", err);
@@ -57,7 +59,8 @@ export async function GET(req: Request) {
         headers: { "Content-Type": "text/csv" }
       });
     } else {
-      const res = await fetch(`https://messcheck-table-ocr.onrender.com/status/${taskId}`);
+      const baseUrl = process.env.FASTAPI_HOST || "https://messcheck-table-ocr.onrender.com";
+      const res = await fetch(`${baseUrl}/status/${taskId}`);
       if (!res.ok) throw new Error("Failed to check status");
       const data = await res.json();
       return NextResponse.json(data);
