@@ -6,7 +6,11 @@ if (!uri) {
   throw new Error("Add Mongo URI to .env");
 }
 
-const options = {};
+const options = {
+  tls: true,
+  serverSelectionTimeoutMS: 30000,
+  connectTimeoutMS: 30000,
+};
 
 let clientPromise: Promise<MongoClient>;
 
