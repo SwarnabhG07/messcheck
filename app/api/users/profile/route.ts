@@ -31,6 +31,15 @@ export async function PUT(req: Request) {
     if (typeof hostel !== "string" || hostel.length > 100) {
       return NextResponse.json({ error: "Hostel must be a string up to 100 characters" }, { status: 400 });
     }
+    if (typeof yearOfStudy !== "string" || yearOfStudy.length > 50) {
+      return NextResponse.json({ error: "Year of study must be a string up to 50 characters" }, { status: 400 });
+    }
+    if (typeof rollNumber !== "string" || rollNumber.length > 50) {
+      return NextResponse.json({ error: "Roll number must be a string up to 50 characters" }, { status: 400 });
+    }
+    if (typeof graduationYear !== "string" || graduationYear.length > 50) {
+      return NextResponse.json({ error: "Graduation year must be a string up to 50 characters" }, { status: 400 });
+    }
 
     const client = await clientPromise;
     const db = client.db("messcheck");
