@@ -216,13 +216,23 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     </DialogDescription>
                   </DialogHeader>
                   <div className="grid gap-4 py-4">
-                    <div className="flex flex-col gap-2">
-                      <Label htmlFor="title" className="text-sm font-medium text-gray-700">Title</Label>
-                      <Input id="title" placeholder="e.g. Special Dinner Tonight" className="rounded-lg border-gray-200 focus-visible:ring-amber-500" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} />
+                    <div className="flex flex-col gap-2 min-w-0 w-full">
+                      <div className="flex justify-between items-center">
+                        <Label htmlFor="title" className="text-sm font-medium text-gray-700">Title</Label>
+                        <span className={`text-xs ${newTitle.length > 90 ? 'text-red-500 font-medium' : 'text-gray-400'}`}>
+                          {newTitle.length}/100
+                        </span>
+                      </div>
+                      <Input id="title" placeholder="e.g. Special Dinner Tonight" className="rounded-lg border-gray-200 focus-visible:ring-amber-500 w-full max-w-full overflow-hidden text-ellipsis" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} maxLength={100} />
                     </div>
-                    <div className="flex flex-col gap-2">
-                      <Label htmlFor="content" className="text-sm font-medium text-gray-700">Content</Label>
-                      <Textarea id="content" placeholder="Write your announcement here..." className="rounded-lg border-gray-200 min-h-[100px] focus-visible:ring-amber-500" value={newContent} onChange={(e) => setNewContent(e.target.value)} />
+                    <div className="flex flex-col gap-2 min-w-0 w-full">
+                      <div className="flex justify-between items-center">
+                        <Label htmlFor="content" className="text-sm font-medium text-gray-700">Content</Label>
+                        <span className={`text-xs ${newContent.length > 450 ? 'text-red-500 font-medium' : 'text-gray-400'}`}>
+                          {newContent.length}/500
+                        </span>
+                      </div>
+                      <Textarea id="content" placeholder="Write your announcement here..." className="rounded-lg border-gray-200 min-h-[100px] max-h-[150px] overflow-y-auto focus-visible:ring-amber-500 w-full max-w-full break-words break-all" value={newContent} onChange={(e) => setNewContent(e.target.value)} maxLength={500} style={{ fieldSizing: 'fixed' } as any} />
                     </div>
                   </div>
                   <DialogFooter>
