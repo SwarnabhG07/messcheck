@@ -104,14 +104,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         body: JSON.stringify({ title: newTitle, content: newContent }),
       });
       const data = await res.json();
-      if (data.success) {
-        setAnnouncements([data.announcement, ...announcements]);
-        setNewTitle("");
-        setNewContent("");
-        setIsAnnouncementOpen(false);
+      if (!res.ok || !data.success) {
+        alert(data.error || "Failed to post announcement");
+        return;
       }
+      setAnnouncements([data.announcement, ...announcements]);
+      setNewTitle("");
+      setNewContent("");
+      setIsAnnouncementOpen(false);
     } catch (error) {
       console.error("Failed to post", error);
+      alert("An unexpected error occurred while posting.");
     } finally {
       setIsPosting(false);
     }

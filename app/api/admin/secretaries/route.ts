@@ -50,9 +50,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Forbidden: Only supreme leaders can access this" }, { status: 403 });
     }
 
-    const { email } = await req.json();
+    const { email, college, hostel } = await req.json();
     if (!email) {
       return NextResponse.json({ error: "Email is required" }, { status: 400 });
+    }
+    if (!college || !hostel) {
+      return NextResponse.json({ error: "College and hostel are required to assign a mess secretary" }, { status: 400 });
     }
 
     const client = await clientPromise;
@@ -60,7 +63,7 @@ export async function POST(req: Request) {
 
     const result = await db.collection("users").updateOne(
       { email },
-      { $set: { role: "mess_secretary" } }
+      { $set: { role: "mess_secretary", secretaryForCollege: college, secretaryForHostel: hostel } }
     );
 
     if (result.matchedCount === 0) {

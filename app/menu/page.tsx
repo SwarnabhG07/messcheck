@@ -180,7 +180,7 @@ export default function MenuManagerPage() {
       alert("Menu saved successfully!");
       setHasChanges(false);
     } catch (err: any) {
-      setError(err.message);
+      alert(err.message);
     } finally {
       setIsSaving(false);
     }
@@ -203,7 +203,7 @@ export default function MenuManagerPage() {
       setStatus("IDLE");
       alert("Menu deleted successfully!");
     } catch (err: any) {
-      setError(err.message);
+      alert(err.message);
     } finally {
       setIsDeleting(false);
     }

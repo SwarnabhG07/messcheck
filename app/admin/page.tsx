@@ -21,6 +21,8 @@ import {
 export default function AdminPage() {
   const { data: session } = useSession();
   const [email, setEmail] = useState("");
+  const [college, setCollege] = useState("");
+  const [hostel, setHostel] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
   
@@ -91,7 +93,7 @@ export default function AdminPage() {
       const res = await fetch("/api/admin/secretaries", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, college, hostel }),
       });
 
       const data = await res.json();
@@ -99,6 +101,8 @@ export default function AdminPage() {
       if (res.ok) {
         setMessage({ type: 'success', text: data.message || `Successfully assigned 'mess_secretary' role to ${email}` });
         setEmail("");
+        setCollege("");
+        setHostel("");
         // Refresh the list
         fetchSecretaries();
       } else {
@@ -142,6 +146,36 @@ export default function AdminPage() {
             <p className="text-xs text-gray-500">
               The user must already have created an account before you can assign them this role.
             </p>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="college" className="text-sm font-semibold text-gray-700 uppercase tracking-wider">
+              College Name
+            </Label>
+            <Input
+              id="college"
+              type="text"
+              placeholder="e.g., University of Technology"
+              value={college}
+              onChange={(e) => setCollege(e.target.value)}
+              required
+              className="h-12 bg-gray-50/50 border-gray-200 focus-visible:ring-amber-500 rounded-xl"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="hostel" className="text-sm font-semibold text-gray-700 uppercase tracking-wider">
+              Hostel Name
+            </Label>
+            <Input
+              id="hostel"
+              type="text"
+              placeholder="e.g., Boys Hostel A"
+              value={hostel}
+              onChange={(e) => setHostel(e.target.value)}
+              required
+              className="h-12 bg-gray-50/50 border-gray-200 focus-visible:ring-amber-500 rounded-xl"
+            />
           </div>
 
           {message && (

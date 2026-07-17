@@ -43,6 +43,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "User profile incomplete" }, { status: 403 });
     }
 
+    if (userRole === "mess_secretary") {
+      if (user.college !== user.secretaryForCollege || user.hostel !== user.secretaryForHostel) {
+        return NextResponse.json({ error: "You can only edit the menu for your assigned college and hostel." }, { status: 403 });
+      }
+    }
+
     // Upsert the menu for this specific college and hostel
     await db.collection("menus").updateOne(
       { college: user.college, hostel: user.hostel },
@@ -115,6 +121,12 @@ export async function DELETE(req: Request) {
     const user = await db.collection("users").findOne({ email: session.user.email });
     if (!user || !user.college || !user.hostel) {
       return NextResponse.json({ error: "User profile incomplete" }, { status: 403 });
+    }
+
+    if (userRole === "mess_secretary") {
+      if (user.college !== user.secretaryForCollege || user.hostel !== user.secretaryForHostel) {
+        return NextResponse.json({ error: "You can only delete the menu for your assigned college and hostel." }, { status: 403 });
+      }
     }
 
     await db.collection("menus").deleteOne({ 

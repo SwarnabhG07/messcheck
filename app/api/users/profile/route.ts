@@ -44,19 +44,24 @@ export async function PUT(req: Request) {
     const client = await clientPromise;
     const db = client.db("messcheck");
 
+    const user = await db.collection("users").findOne({ email: session.user.email });
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    const updatePayload: any = {
+      name,
+      college,
+      yearOfStudy,
+      rollNumber,
+      graduationYear,
+      hostel,
+      onboarded: true,
+    };
+
     await db.collection("users").updateOne(
       { email: session.user.email },
-      {
-        $set: {
-          name,
-          college,
-          yearOfStudy,
-          rollNumber,
-          graduationYear,
-          hostel,
-          onboarded: true,
-        },
-      }
+      { $set: updatePayload }
     );
 
     // Update the user's name across all their existing reviews

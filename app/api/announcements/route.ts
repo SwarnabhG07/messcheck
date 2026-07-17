@@ -82,6 +82,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
+    if (userRole === "mess_secretary") {
+      if (user.college !== user.secretaryForCollege || user.hostel !== user.secretaryForHostel) {
+        return NextResponse.json({ error: "You can only post announcements for your assigned college and hostel." }, { status: 403 });
+      }
+    }
+
     const newAnnouncement = {
       title,
       content,
