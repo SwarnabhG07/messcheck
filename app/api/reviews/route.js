@@ -23,7 +23,7 @@ export async function GET() {
     const reviews = await db.collection("reviews").find({
       college: user.college,
       hostel: user.hostel
-    }).toArray();
+    }).sort({ createdAt: -1 }).limit(200).toArray();
     
     const sanitizedReviews = reviews.map(review => {
       const likes = review.likes || [];
