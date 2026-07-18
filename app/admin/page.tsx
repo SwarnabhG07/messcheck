@@ -39,7 +39,7 @@ export default function AdminPage() {
         setSecretaries(data.secretaries || []);
       }
     } catch (error) {
-      console.error("Failed to fetch secretaries:", error);
+      console.error("Failed to fetch secretaries:");
     } finally {
       setIsLoadingSecretaries(false);
     }
@@ -64,7 +64,7 @@ export default function AdminPage() {
         alert(data.error || "Failed to remove role");
       }
     } catch (error) {
-      console.error("Failed to remove role:", error);
+      console.error("Failed to remove role:");
       alert("Network error while trying to remove role");
     }
   };

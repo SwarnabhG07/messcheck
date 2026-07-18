@@ -113,7 +113,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       setNewContent("");
       setIsAnnouncementOpen(false);
     } catch (error) {
-      console.error("Failed to post", error);
+      console.error("Failed to post");
       alert("An unexpected error occurred while posting.");
     } finally {
       setIsPosting(false);
