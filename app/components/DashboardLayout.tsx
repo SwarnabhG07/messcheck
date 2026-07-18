@@ -188,24 +188,24 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto">
         {/* Header */}
-        <header className="sticky top-0 z-50 flex justify-between items-start px-8 pt-6 pb-4 bg-slate-50/80 backdrop-blur-md">
-          <div>
-            <h1 className="text-2xl font-bold text-[#1e293b] tracking-tight leading-tight">
+        <header className="sticky top-0 z-50 flex justify-between items-start px-4 md:px-8 pt-6 pb-4 bg-slate-50/80 backdrop-blur-md">
+          <div className="shrink min-w-0 pr-2">
+            <h1 className="text-xl md:text-2xl font-bold text-[#1e293b] tracking-tight leading-tight truncate">
               {headerTitle}
             </h1>
-            <p className="text-gray-500 text-xs font-semibold tracking-wider uppercase mt-0.5">
+            <p className="text-gray-500 text-[10px] md:text-xs font-semibold tracking-wider uppercase mt-0.5 truncate">
               {dayjs().format('dddd, MMM D')}
             </p>
           </div>
-          <div className="flex items-center gap-4 mt-1">
+          <div className="flex items-center gap-2 md:gap-4 mt-1 shrink-0">
 
             {/* Write Announcement Dialog */}
             {(userRole === "mess_secretary" || userRole === "supreme_leader") && (
               <Dialog open={isAnnouncementOpen} onOpenChange={setIsAnnouncementOpen}>
                 <DialogTrigger asChild>
-                  <Button className="bg-amber-600 hover:bg-amber-700 text-white gap-2 shadow-sm rounded-full px-5 h-10 transition-all font-medium border-0">
+                  <Button className="bg-amber-600 hover:bg-amber-700 text-white gap-2 shadow-sm rounded-full px-3 md:px-5 h-10 transition-all font-medium border-0">
                     <Megaphone className="w-4 h-4" />
-                    <span className="text-sm">Write Announcement</span>
+                    <span className="hidden md:inline text-sm">Write Announcement</span>
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px] rounded-2xl border-gray-100 shadow-[0_8px_30px_-6px_rgba(0,0,0,0.12)]">
@@ -299,7 +299,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                       {user?.name?.[0]?.toUpperCase() || "U"}
                     </AvatarFallback>
                   </Avatar>
-                  <span className="text-gray-700 font-medium text-sm">
+                  <span className="hidden md:inline text-gray-700 font-medium text-sm">
                     {user?.name || "User"}
                   </span>
                 </button>

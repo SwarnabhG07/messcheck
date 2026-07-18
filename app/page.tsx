@@ -211,21 +211,21 @@ export default function Dashboard() {
         <h2 className="text-gray-600 text-xs font-bold tracking-widest uppercase mb-3">
           WEEKLY OVERVIEW
         </h2>
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-3 gap-2 md:gap-4">
           {computedOverviewData.map((stat, i) => (
             <Card
               key={i}
               className="p-0 rounded-xl shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] border-gray-50/50"
             >
-              <CardContent className="p-4 flex flex-col items-center justify-center text-center">
-              <div className="text-gray-500 text-[13px] font-medium mb-1">
+              <CardContent className="p-2.5 md:p-4 flex flex-col items-center justify-center text-center h-full">
+              <div className="text-gray-500 text-[11px] md:text-[13px] font-medium mb-1 leading-tight min-h-[32px] md:min-h-0 flex items-center justify-center">
                 {stat.title}
               </div>
-              <div className="font-bold text-2xl text-gray-900 mb-0.5 flex items-center gap-1 justify-center">
+              <div className="font-bold text-xl md:text-2xl text-gray-900 mb-0.5 flex items-center gap-0.5 md:gap-1 justify-center">
                 {stat.value}
                 {stat.suffix && <span>{stat.suffix}</span>}
               </div>
-              <div className="text-gray-400 text-[11px] h-3.5">
+              <div className="text-gray-400 text-[10px] md:text-[11px] leading-tight mt-1">
                 {stat.subtitle}
               </div>
               </CardContent>
