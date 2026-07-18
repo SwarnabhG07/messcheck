@@ -127,6 +127,11 @@ export async function POST(req) {
 
 export async function PUT(req) {
   try {
+    const ip = req.headers.get("x-forwarded-for") || "unknown";
+    if (!checkRateLimit(`reviews_edit_${ip}`, 10, 10 * 60 * 1000)) {
+      return NextResponse.json({ error: "Too many edits submitted. Please try again later." }, { status: 429 });
+    }
+
     const session = await auth();
     if (!session?.user?.email) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
