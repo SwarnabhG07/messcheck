@@ -357,13 +357,20 @@ export default function MealDetailsPage(props: { params: Promise<{ meal: string 
                           ))}
                         </div>
                       </div>
-                      <div className="space-y-2">
-                        <label className="text-sm font-semibold text-gray-700 block">Comments (Optional)</label>
+                      <div className="space-y-2 min-w-0 w-full">
+                        <div className="flex justify-between items-center">
+                          <label className="text-sm font-semibold text-gray-700 block">Comments (Optional)</label>
+                          <span className={`text-xs ${reviewText.length > 450 ? 'text-red-500 font-medium' : 'text-gray-400'}`}>
+                            {reviewText.length}/500
+                          </span>
+                        </div>
                         <Textarea 
                           placeholder="How was the food?" 
                           value={reviewText}
                           onChange={(e) => setReviewText(e.target.value)}
-                          className="resize-none h-28 rounded-xl border-gray-200 focus:ring-blue-500 focus:border-blue-500 bg-gray-50/50 p-3 text-sm"
+                          className="resize-none h-28 max-h-[150px] overflow-y-auto rounded-xl border-gray-200 focus:ring-blue-500 focus:border-blue-500 bg-gray-50/50 p-3 text-sm w-full max-w-full break-words break-all"
+                          style={{ fieldSizing: 'fixed' } as any}
+                          maxLength={500}
                         />
                       </div>
                     </div>

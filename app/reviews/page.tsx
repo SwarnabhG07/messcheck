@@ -59,6 +59,7 @@ export default function ReviewsPage() {
     register,
     handleSubmit,
     reset,
+    watch,
     formState: { errors },
   } = useForm<ReviewFormValues>({
     resolver: zodResolver(reviewSchema),
@@ -266,8 +267,8 @@ export default function ReviewsPage() {
               <DialogHeader>
                 <DialogTitle className="text-xl font-bold text-gray-900">{editingReviewId ? "Edit Review" : "Write a Review"}</DialogTitle>
               </DialogHeader>
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-2">
-                <div className="flex gap-4">
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-2 min-w-0 w-full">
+                <div className="flex gap-4 w-full">
                   <div className="flex-1">
                     <Label htmlFor="day" className="text-xs font-bold text-gray-600 uppercase tracking-widest">Day</Label>
                     <select
@@ -318,13 +319,20 @@ export default function ReviewsPage() {
                   {errors.rating && <p className="text-red-500 text-xs mt-1">{errors.rating.message}</p>}
                 </div>
 
-                <div>
-                  <Label htmlFor="text" className="text-xs font-bold text-gray-600 uppercase tracking-widest">Your Review</Label>
+                <div className="min-w-0 w-full">
+                  <div className="flex justify-between items-center mb-1.5">
+                    <Label htmlFor="text" className="text-xs font-bold text-gray-600 uppercase tracking-widest">Your Review</Label>
+                    <span className={`text-xs ${(watch("text") || "").length > 450 ? 'text-red-500 font-medium' : 'text-gray-400'}`}>
+                      {(watch("text") || "").length}/500
+                    </span>
+                  </div>
                   <Textarea
                     id="text"
                     {...register("text")}
                     placeholder="How was the food?"
-                    className="mt-1.5 rounded-lg bg-[#f0f4f8] border-none focus-visible:ring-black/10 min-h-25 text-sm resize-none"
+                    className="mt-1.5 rounded-lg bg-[#f0f4f8] border-none focus-visible:ring-black/10 min-h-25 max-h-[150px] overflow-y-auto text-sm resize-none w-full max-w-full break-words break-all"
+                    style={{ fieldSizing: 'fixed' } as any}
+                    maxLength={500}
                   />
                   {errors.text && <p className="text-red-500 text-xs mt-1">{errors.text.message}</p>}
                 </div>

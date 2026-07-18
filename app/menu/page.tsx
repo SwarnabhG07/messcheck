@@ -239,7 +239,7 @@ export default function MenuManagerPage() {
   };
 
   return (
-    <div className="p-8 max-w-6xl mx-auto space-y-6">
+    <div className="p-2 sm:p-4 md:p-8 max-w-6xl mx-auto space-y-4 md:space-y-6">
       <input 
         type="file" 
         accept="application/pdf" 
@@ -396,13 +396,13 @@ export default function MenuManagerPage() {
               )}
             </div>
           </div>
-          <div className="overflow-x-auto p-4 bg-white">
+          <div className="overflow-x-auto p-2 md:p-4 bg-white">
             <table className="w-full border-collapse min-w-max">
               <tbody>
                 {tableData.map((row, rowIndex) => (
                   <tr key={rowIndex} className="border-b border-gray-100 last:border-0 hover:bg-gray-50/50 transition-colors">
                     {row.map((cell, colIndex) => (
-                      <td key={colIndex} className="p-1 border border-gray-100 min-w-[120px]">
+                      <td key={colIndex} className={`p-1 border border-gray-100 align-top ${colIndex === 0 ? "w-20 md:w-32 min-w-[80px]" : "min-w-[160px] md:min-w-[200px]"}`}>
                         <textarea
                           value={cell}
                           readOnly={userRole !== "mess_secretary"}
