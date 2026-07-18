@@ -34,11 +34,13 @@ export async function GET() {
         likesCount: likes.length,
         dislikesCount: dislikes.length,
         hasLiked: likes.includes(session.user.email),
-        hasDisliked: dislikes.includes(session.user.email)
+        hasDisliked: dislikes.includes(session.user.email),
+        isAuthor: review.email === session.user.email
       };
       
       delete sanitized.likes;
       delete sanitized.dislikes;
+      delete sanitized.email;
       
       return sanitized;
     });

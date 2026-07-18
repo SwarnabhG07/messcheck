@@ -39,6 +39,7 @@ interface Review {
   dislikesCount?: number;
   hasLiked?: boolean;
   hasDisliked?: boolean;
+  isAuthor?: boolean;
 }
 
 export default function ReviewsPage() {
@@ -51,7 +52,7 @@ export default function ReviewsPage() {
   const [editingReviewId, setEditingReviewId] = useState<string | null>(null);
 
   const displayedReviews = showMyReviews 
-    ? reviews.filter(review => review.email && session?.user?.email && review.email === session.user.email) 
+    ? reviews.filter(review => review.isAuthor) 
     : reviews;
 
   const {
@@ -391,7 +392,7 @@ export default function ReviewsPage() {
                         <ThumbsDown className="w-3.5 h-3.5" />
                       </button>
                     </div>
-                    {review.email && session?.user?.email && review.email === session.user.email && (
+                    {review.isAuthor && (
                       <button 
                         onClick={() => handleEditClick(review)}
                         className="text-gray-400 hover:text-blue-500 transition-colors flex items-center gap-1 ml-1 bg-white border border-gray-100 p-1.5 rounded-full shadow-sm"
