@@ -236,13 +236,13 @@ export default function AdminPage() {
                     <td className="py-4 px-2 text-sm text-gray-700">
                       <div className="flex items-center">
                         <Building className="w-4 h-4 mr-2 text-gray-400" />
-                        {sec.college || 'Not set'}
+                        {sec.secretaryForCollege || 'Not set'}
                       </div>
                     </td>
                     <td className="py-4 px-2 text-sm text-gray-700">
                       <div className="flex items-center">
                         <Home className="w-4 h-4 mr-2 text-gray-400" />
-                        {sec.hostel || 'Not set'}
+                        {sec.secretaryForHostel || 'Not set'}
                       </div>
                     </td>
                     <td className="py-4 px-2 text-right">

@@ -24,7 +24,7 @@ export async function GET(req: Request) {
 
     const secretaries = await db.collection("users")
       .find({ role: "mess_secretary" })
-      .project({ _id: 1, name: 1, email: 1, college: 1, hostel: 1, createdAt: 1 })
+      .project({ _id: 1, name: 1, email: 1, college: 1, hostel: 1, secretaryForCollege: 1, secretaryForHostel: 1, createdAt: 1 })
       .toArray();
 
     return NextResponse.json({ secretaries });
