@@ -86,21 +86,36 @@ export default function MealDetailsPage(props: { params: Promise<{ meal: string 
           const data = await menuRes.json();
           if (data.tableData && data.tableData.length > 0) {
             const table = data.tableData;
-            const headers = table[0];
-            const today = dayjs().format("dddd"); 
-            
-            const colIndex = headers.findIndex((h: string) => h.trim().toLowerCase() === today.toLowerCase());
-            
-            if (colIndex !== -1) {
-              let foundItems = "Not serving today";
-              for (let i = 1; i < table.length; i++) {
-                const rowMeal = (table[i][0] || `Meal ${i}`).trim().toUpperCase();
-                if (rowMeal === mealName) {
-                  foundItems = table[i][colIndex] || "Not specified";
-                  break;
+            const targetDay = dayjs().format("dddd").toUpperCase();
+            const targetMeal = mealName.toUpperCase();
+
+            let dayRowIdx = -1, dayColIdx = -1;
+            let mealRowIdx = -1, mealColIdx = -1;
+
+            for (let r = 0; r < table.length; r++) {
+              for (let c = 0; c < table[r].length; c++) {
+                const cell = (table[r][c] || "").toUpperCase().trim();
+                if (cell.includes(targetDay)) {
+                  dayRowIdx = r;
+                  dayColIdx = c;
+                }
+                if (cell.includes(targetMeal)) {
+                  mealRowIdx = r;
+                  mealColIdx = c;
                 }
               }
-              setItems(foundItems);
+            }
+
+            if (dayRowIdx !== -1 && mealRowIdx !== -1) {
+              if (dayColIdx < mealColIdx) {
+                const intersection = table[dayRowIdx]?.[mealColIdx];
+                setItems(intersection && intersection.trim() !== "" ? intersection.trim() : "Could not find menu for today.");
+              } else if (mealColIdx < dayColIdx) {
+                const intersection = table[mealRowIdx]?.[dayColIdx];
+                setItems(intersection && intersection.trim() !== "" ? intersection.trim() : "Could not find menu for today.");
+              } else {
+                 setItems("Could not find menu for today.");
+              }
             } else {
               setItems("Could not find menu for today.");
             }

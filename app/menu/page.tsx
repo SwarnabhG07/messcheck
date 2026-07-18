@@ -56,6 +56,21 @@ export default function MenuManagerPage() {
     }
   };
 
+  const handleCreateManual = () => {
+    const template = [
+      ["Day", "Breakfast", "Lunch", "Snacks", "Dinner"],
+      ["Monday", "", "", "", ""],
+      ["Tuesday", "", "", "", ""],
+      ["Wednesday", "", "", "", ""],
+      ["Thursday", "", "", "", ""],
+      ["Friday", "", "", "", ""],
+      ["Saturday", "", "", "", ""],
+      ["Sunday", "", "", "", ""]
+    ];
+    setTableData(template);
+    setHasChanges(true);
+  };
+
   const parseCSV = (csvText: string) => {
     // Simple CSV parser that handles basic quotes and commas
     const rows = [];
@@ -162,6 +177,20 @@ export default function MenuManagerPage() {
     setHasChanges(true);
   };
 
+  const addRow = () => {
+    if (tableData.length === 0) return;
+    const numCols = tableData[0].length;
+    setTableData([...tableData, Array(numCols).fill("")]);
+    setHasChanges(true);
+  };
+
+  const addColumn = () => {
+    if (tableData.length === 0) return;
+    const newData = tableData.map(row => [...row, ""]);
+    setTableData(newData);
+    setHasChanges(true);
+  };
+
   const [isSaving, setIsSaving] = useState(false);
 
   const handleSaveMenu = async () => {
@@ -239,7 +268,7 @@ export default function MenuManagerPage() {
             Upload the PDF version of your mess menu. Our AI will automatically extract the tables so you can edit and publish them.
           </p>
           
-          <div className="flex gap-3">
+          <div className="flex flex-wrap items-center justify-center gap-3">
             <Button 
               variant="outline" 
               onClick={() => fileInputRef.current?.click()}
@@ -256,6 +285,14 @@ export default function MenuManagerPage() {
               {status === "PROCESSING" && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
               {status === "IDLE" || status === "COMPLETED" || status === "ERROR" ? "Start Extraction" : 
                status === "UPLOADING" ? "Uploading..." : "Extracting Tables..."}
+            </Button>
+            <div className="w-full text-center text-sm text-gray-400 font-medium my-2">OR</div>
+            <Button 
+              variant="outline" 
+              onClick={handleCreateManual}
+              className="font-medium bg-gray-50 hover:bg-gray-100"
+            >
+              Create Manually
             </Button>
           </div>
 
@@ -283,6 +320,24 @@ export default function MenuManagerPage() {
           <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
             <h3 className="font-bold text-gray-800">Mess Menu</h3>
             <div className="flex items-center gap-3">
+              {tableData.length > 0 && userRole === "mess_secretary" && (
+                <div className="flex items-center gap-2 mr-4 border-r border-gray-200 pr-4">
+                  <Button 
+                    variant="outline" 
+                    onClick={addRow}
+                    className="font-medium h-9 text-xs text-gray-600 hover:text-gray-900 bg-white px-2"
+                  >
+                    + Row
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    onClick={addColumn}
+                    className="font-medium h-9 text-xs text-gray-600 hover:text-gray-900 bg-white px-2"
+                  >
+                    + Col
+                  </Button>
+                </div>
+              )}
               {tableData.length > 0 && userRole === "mess_secretary" && (
                 <Button 
                   variant="outline" 
