@@ -105,7 +105,7 @@ export async function DELETE(req: Request) {
 
     const result = await db.collection("users").updateOne(
       { email },
-      { $set: { role: "student" } }
+      { $set: { role: "student" }, $unset: { secretaryForCollege: "", secretaryForHostel: "" } }
     );
 
     if (result.matchedCount === 0) {
