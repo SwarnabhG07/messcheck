@@ -317,9 +317,9 @@ export default function MenuManagerPage() {
         </div>
       ) : tableData.length > 0 && (
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+          <div className="p-4 border-b border-gray-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-0 bg-gray-50/50">
             <h3 className="font-bold text-gray-800">Mess Menu</h3>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2 md:gap-3">
               {tableData.length > 0 && userRole === "mess_secretary" && (
                 <div className="flex items-center gap-2 mr-4 border-r border-gray-200 pr-4">
                   <Button 
