@@ -389,7 +389,7 @@ export default function ReviewsPage() {
                   <p className={`text-gray-500 text-[14px] leading-relaxed break-words break-all ${expandedReviews.has(review._id || idx.toString()) ? '' : 'line-clamp-3'}`}>
                     {review.text}
                   </p>
-                  {review.text && review.text.length > 150 && (
+                  {review.text && review.text.length > 80 && (
                     <button 
                       onClick={() => toggleReview(review._id || idx.toString())}
                       className="text-amber-600 hover:text-amber-700 text-xs font-bold mt-1"

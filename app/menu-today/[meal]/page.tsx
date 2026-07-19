@@ -327,12 +327,12 @@ export default function MealDetailsPage(props: { params: Promise<{ meal: string 
         {/* Right Column: Reviews Feed */}
         <div className="lg:col-span-2">
           <Card className="rounded-2xl border-gray-100 shadow-sm h-full flex flex-col">
-            <div className="p-6 pb-4 border-b border-gray-50 flex items-center justify-between">
-              <h2 className="text-gray-900 font-bold text-lg flex items-center gap-2">
-                <MessageSquare className="w-5 h-5 text-blue-500" />
+            <div className="p-4 md:p-6 pb-4 border-b border-gray-50 flex flex-wrap items-center justify-between gap-3">
+              <h2 className="text-gray-900 font-bold text-lg flex items-center gap-2 shrink-0">
+                <MessageSquare className="w-5 h-5 shrink-0 text-blue-500" />
                 Recent Reviews
               </h2>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 md:gap-3">
                 <span className="bg-amber-50 text-amber-600 text-xs font-bold px-2.5 py-1 rounded-full">
                   {filteredReviews.length} Reviews
                 </span>
@@ -437,7 +437,7 @@ export default function MealDetailsPage(props: { params: Promise<{ meal: string 
                           <p className={`text-sm leading-relaxed break-words break-all ${hasFeedback ? 'text-gray-600' : 'text-gray-400 italic'} ${expandedReviews.has(review._id || i.toString()) ? '' : 'line-clamp-3'}`}>
                             {hasFeedback ? `"${review.text}"` : "(No written feedback provided)"}
                           </p>
-                          {hasFeedback && review.text.length > 150 && (
+                          {hasFeedback && review.text.length > 80 && (
                             <button 
                               onClick={() => toggleReview(review._id || i.toString())}
                               className="text-amber-600 hover:text-amber-700 text-xs font-bold mt-1"
