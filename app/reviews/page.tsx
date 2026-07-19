@@ -50,6 +50,16 @@ export default function ReviewsPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showMyReviews, setShowMyReviews] = useState(false);
   const [editingReviewId, setEditingReviewId] = useState<string | null>(null);
+  const [expandedReviews, setExpandedReviews] = useState<Set<string>>(new Set());
+
+  const toggleReview = (id: string) => {
+    setExpandedReviews(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
 
   const displayedReviews = showMyReviews 
     ? reviews.filter(review => review.isAuthor) 
@@ -375,9 +385,19 @@ export default function ReviewsPage() {
                     <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400 mb-0.5" />
                   </div>
                 </div>
-                <p className="text-gray-500 text-[14px] leading-relaxed mb-3">
-                  {review.text}
-                </p>
+                <div className="mb-3">
+                  <p className={`text-gray-500 text-[14px] leading-relaxed break-words break-all ${expandedReviews.has(review._id || idx.toString()) ? '' : 'line-clamp-3'}`}>
+                    {review.text}
+                  </p>
+                  {review.text && review.text.length > 150 && (
+                    <button 
+                      onClick={() => toggleReview(review._id || idx.toString())}
+                      className="text-amber-600 hover:text-amber-700 text-xs font-bold mt-1"
+                    >
+                      {expandedReviews.has(review._id || idx.toString()) ? "View Less" : "Read More"}
+                    </button>
+                  )}
+                </div>
                 <div className="text-gray-400 text-[13px] flex items-center justify-between mt-1">
                   <div>For: {review.day ? `${review.day} - ` : ""}{review.for} &bull; {review.time ? dayjs(review.time).fromNow() : "Just now"}</div>
                   <div className="flex items-center gap-3">

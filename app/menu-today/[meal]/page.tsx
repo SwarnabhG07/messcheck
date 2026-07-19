@@ -36,6 +36,16 @@ export default function MealDetailsPage(props: { params: Promise<{ meal: string 
   const [reviewRating, setReviewRating] = useState("5");
   const [reviewText, setReviewText] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [expandedReviews, setExpandedReviews] = useState<Set<string>>(new Set());
+
+  const toggleReview = (id: string) => {
+    setExpandedReviews(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
 
   const handleSubmitReview = async () => {
     setIsSubmitting(true);
@@ -423,9 +433,19 @@ export default function MealDetailsPage(props: { params: Promise<{ meal: string 
                           </div>
                         </div>
                         
-                        <p className={`text-sm leading-relaxed ml-13 ${hasFeedback ? 'text-gray-600' : 'text-gray-400 italic'}`}>
-                          {hasFeedback ? `"${review.text}"` : "(No written feedback provided)"}
-                        </p>
+                        <div className="ml-13 mb-3">
+                          <p className={`text-sm leading-relaxed break-words break-all ${hasFeedback ? 'text-gray-600' : 'text-gray-400 italic'} ${expandedReviews.has(review._id || i.toString()) ? '' : 'line-clamp-3'}`}>
+                            {hasFeedback ? `"${review.text}"` : "(No written feedback provided)"}
+                          </p>
+                          {hasFeedback && review.text.length > 150 && (
+                            <button 
+                              onClick={() => toggleReview(review._id || i.toString())}
+                              className="text-amber-600 hover:text-amber-700 text-xs font-bold mt-1"
+                            >
+                              {expandedReviews.has(review._id || i.toString()) ? "View Less" : "Read More"}
+                            </button>
+                          )}
+                        </div>
                       </div>
                     );
                   })}
