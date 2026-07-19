@@ -240,11 +240,11 @@ export default function Dashboard() {
           WEEKLY SATISFACTION TREND
         </h2>
         <Card className="p-0 rounded-xl shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] border-gray-50/50">
-          <CardContent className="p-5 h-60">
+          <CardContent className="px-1 py-5 md:p-5 h-60">
             <ResponsiveContainer width="100%" height="100%">
             <BarChart
               data={computedChartData}
-              margin={{ top: 20, right: 30, left: -20, bottom: 5 }}
+              margin={{ top: 20, right: 10, left: -25, bottom: 5 }}
             >
               <CartesianGrid
                 strokeDasharray="0"
@@ -255,7 +255,8 @@ export default function Dashboard() {
                 dataKey="name"
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: "#94a3b8", fontSize: 12 }}
+                tick={{ fill: "#94a3b8", fontSize: 10 }}
+                interval={0}
                 dy={10}
               />
               <YAxis
@@ -269,7 +270,7 @@ export default function Dashboard() {
                 dataKey="value"
                 fill="#f59e0b"
                 radius={[2, 2, 0, 0]}
-                barSize={32}
+                maxBarSize={24}
               />
             </BarChart>
           </ResponsiveContainer>
