@@ -245,14 +245,14 @@ export default function ReviewsPage() {
   }
 
   return (
-    <div className="px-8 pb-6 space-y-5 relative">
+    <div className="px-4 md:px-8 pb-6 space-y-5 relative">
       <section>
-        <div className="flex justify-between items-center mb-4 mt-2">
-          <h2 className="text-gray-600 text-xs font-bold tracking-widest uppercase">
+        <div className="flex justify-end md:justify-between items-center mb-4 mt-2">
+          <h2 className="hidden md:block text-gray-600 text-xs font-bold tracking-widest uppercase shrink-0">
             STUDENT REVIEWS
           </h2>
-          <div className="flex items-center gap-6">
-            <div className="flex items-center space-x-2">
+          <div className="flex items-center justify-between md:justify-end w-full md:w-auto gap-3 md:gap-6">
+            <div className="flex items-center space-x-2 shrink-0">
               <Switch 
                 id="my-reviews" 
                 checked={showMyReviews} 
@@ -267,7 +267,7 @@ export default function ReviewsPage() {
             <DialogTrigger asChild>
               <Button
                 onClick={handleOpenNewReview}
-                className="flex items-center gap-2 rounded-xl text-xs font-bold uppercase tracking-wider"
+                className="flex items-center gap-2 rounded-xl text-xs font-bold uppercase tracking-wider shrink-0"
               >
                 <Plus className="w-4 h-4" />
                 Write Review
