@@ -139,9 +139,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       : "MESS DASHBOARD");
 
   return (
-    <div className="flex h-screen bg-slate-50 font-sans overflow-hidden">
+    <div className="flex h-screen bg-slate-50 font-sans overflow-hidden relative">
+      {/* Mobile Overlay */}
+      {!isSidebarCollapsed && (
+        <div 
+          className="fixed inset-0 bg-black/20 z-50 md:hidden backdrop-blur-sm"
+          onClick={() => setIsSidebarCollapsed(true)}
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className={`bg-white border-r border-gray-100 flex flex-col py-6 transition-all duration-300 relative shrink-0 ${isSidebarCollapsed ? "w-20" : "w-64"}`}>
+      <aside className={`bg-white border-r border-gray-100 flex flex-col py-6 transition-all duration-300 z-[60] h-full shrink-0 ${isSidebarCollapsed ? "relative w-20" : "absolute left-0 top-0 md:relative w-64 shadow-[4px_0_24px_rgba(0,0,0,0.05)] md:shadow-none"}`}>
         <div className={`flex items-center mb-6 mt-2 ${isSidebarCollapsed ? "flex-col gap-4 justify-center px-0" : "justify-between px-4"}`}>
           <div className="flex items-center gap-2">
             <img src="/spoon-and-fork-stroke-rounded.svg" alt="MessCheck Logo" className="w-7 h-7" />
