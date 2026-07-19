@@ -118,10 +118,10 @@ export default function AdminPage() {
   return (
     <div className="max-w-4xl mx-auto py-8 px-4 space-y-8">
       {/* Assign Role Card */}
-      <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+      <div className="bg-white p-4 md:p-8 rounded-2xl shadow-sm border border-gray-100">
         <div className="flex items-center gap-3 mb-6 border-b border-gray-100 pb-6">
-          <div className="w-12 h-12 bg-amber-100 text-amber-700 rounded-xl flex items-center justify-center">
-            <UserCheck className="w-6 h-6" />
+          <div className="w-12 h-12 shrink-0 bg-amber-100 text-amber-700 rounded-xl flex items-center justify-center">
+            <UserCheck className="w-6 h-6 shrink-0" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Admin Control Panel</h1>
