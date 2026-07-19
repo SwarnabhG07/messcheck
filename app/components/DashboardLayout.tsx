@@ -263,7 +263,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   )}
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-80 rounded-xl p-0 shadow-[0_8px_30px_-6px_rgba(0,0,0,0.12)] border-gray-100 overflow-hidden mt-2">
+              <DropdownMenuContent align="center" className="w-64 md:w-80 rounded-xl p-0 shadow-[0_8px_30px_-6px_rgba(0,0,0,0.12)] border-gray-100 overflow-hidden mt-2">
                 <div className="px-4 py-3 border-b border-gray-100 bg-slate-50/50 flex justify-between items-center">
                   <h3 className="font-semibold text-gray-800">Announcements</h3>
                   <span className="text-xs bg-amber-100 text-amber-700 font-medium px-2 py-0.5 rounded-full">
@@ -278,8 +278,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     return (
                       <Link key={announcement._id} href="/announcements" className="block">
                         <div className={`px-4 py-3 border-b border-gray-50 flex flex-col gap-1 cursor-pointer transition-colors ${isUnread ? 'bg-amber-50/30 hover:bg-amber-50/50' : 'hover:bg-slate-50'}`}>
-                          <div className="flex justify-between items-start">
-                            <span className={`text-sm font-medium ${isUnread ? 'text-gray-900' : 'text-gray-700'}`}>{announcement.title}</span>
+                          <div className="flex justify-between items-start gap-2">
+                            <span className={`text-sm font-medium break-words break-all line-clamp-2 ${isUnread ? 'text-gray-900' : 'text-gray-700'}`}>{announcement.title}</span>
                             {isUnread && <span className="w-1.5 h-1.5 rounded-full bg-amber-600 mt-1.5 shrink-0" />}
                           </div>
                           <span className="text-xs text-gray-500">{dayjs(announcement.createdAt).format('MMM D, h:mm A')}</span>
