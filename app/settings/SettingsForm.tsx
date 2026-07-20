@@ -117,7 +117,7 @@ export default function SettingsForm({ initialData }: SettingsFormProps) {
   const graduationYears = Array.from({ length: 6 }, (_, i) => (currentYear + i).toString());
 
   // Generate hostels H1 to H13
-  const hostels = Array.from({ length: 13 }, (_, i) => `H${i + 1}`);
+  const hostels = [...Array.from({ length: 13 }, (_, i) => `H${i + 1}`), "Test Hostel"];
 
   return (
     <div className="space-y-5 pb-4">
@@ -272,7 +272,7 @@ export default function SettingsForm({ initialData }: SettingsFormProps) {
               Delete Account
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px] rounded-2xl border-none shadow-2xl">
+          <DialogContent className="sm:max-w-106.25 rounded-2xl border-none shadow-2xl">
             <DialogHeader>
               <DialogTitle className="text-xl text-gray-900">Are you absolutely sure?</DialogTitle>
               <DialogDescription className="text-gray-500 pt-2 leading-relaxed">

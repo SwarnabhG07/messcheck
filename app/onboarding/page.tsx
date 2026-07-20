@@ -72,7 +72,7 @@ export default function OnboardingPage() {
     }
   };
 
-  const hostels = Array.from({ length: 13 }, (_, i) => `H${i + 1}`);
+  const hostels = [...Array.from({ length: 13 }, (_, i) => `H${i + 1}`), "Test Hostel"];
   const currentYear = new Date().getFullYear();
   const gradYears = Array.from({ length: 6 }, (_, i) => (currentYear + i).toString());
 
