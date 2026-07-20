@@ -10,6 +10,7 @@ const options = {
   tls: true,
   serverSelectionTimeoutMS: 30000,
   connectTimeoutMS: 30000,
+  family: 4, // Force IPv4 to prevent Vercel DNS resolution timeouts
 };
 
 let clientPromise: Promise<MongoClient>;
