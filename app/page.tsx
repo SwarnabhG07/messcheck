@@ -218,7 +218,7 @@ export default function Dashboard() {
               className="p-0 rounded-xl shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] border-gray-50/50"
             >
               <CardContent className="p-2.5 md:p-4 flex flex-col items-center justify-center text-center h-full">
-              <div className="text-gray-500 text-[11px] md:text-[13px] font-medium mb-1 leading-tight min-h-[32px] md:min-h-0 flex items-center justify-center">
+              <div className="text-gray-500 text-[11px] md:text-[13px] font-medium mb-1 leading-tight min-h-8 md:min-h-0 flex items-center justify-center">
                 {stat.title}
               </div>
               <div className="font-bold text-xl md:text-2xl text-gray-900 mb-0.5 flex items-center gap-0.5 md:gap-1 justify-center">

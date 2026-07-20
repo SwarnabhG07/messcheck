@@ -83,16 +83,16 @@ export default function AnnouncementsPage() {
 
       {/* View Announcement Dialog */}
       <Dialog open={!!selectedAnnouncement} onOpenChange={(open) => !open && setSelectedAnnouncement(null)}>
-        <DialogContent className="sm:max-w-[500px] rounded-2xl border-gray-100 shadow-[0_8px_30px_-6px_rgba(0,0,0,0.12)]">
+        <DialogContent className="sm:max-w-125 rounded-2xl border-gray-100 shadow-[0_8px_30px_-6px_rgba(0,0,0,0.12)]">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-gray-900 break-words break-all">{selectedAnnouncement?.title}</DialogTitle>
+            <DialogTitle className="text-2xl font-bold text-gray-900 wrap-break-word break-all">{selectedAnnouncement?.title}</DialogTitle>
             <DialogDescription className="text-sm font-semibold text-amber-600 flex items-center gap-2 pt-1">
               <Clock className="w-4 h-4" />
               {selectedAnnouncement ? dayjs(selectedAnnouncement.createdAt).format('MMMM D, YYYY • h:mm A') : ''}
             </DialogDescription>
           </DialogHeader>
           <div className="py-4">
-            <p className="text-gray-700 whitespace-pre-wrap leading-relaxed break-words break-all max-h-[300px] overflow-y-auto pr-2">
+            <p className="text-gray-700 whitespace-pre-wrap leading-relaxed wrap-break-word break-all max-h-75 overflow-y-auto pr-2">
               {selectedAnnouncement?.content}
             </p>
           </div>

@@ -277,7 +277,7 @@ export default function AnalyticsPage() {
                   {timeframe === 'day' ? 'Average rating by meal type' : timeframe === 'week' ? 'Average rating by day of week' : 'Average rating by day of month'}
                 </p>
               </div>
-              <CardContent className="p-5 flex-1 min-h-[300px]">
+              <CardContent className="p-5 flex-1 min-h-75">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={trendData} margin={{ top: 20, right: 10, left: -20, bottom: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
@@ -315,7 +315,7 @@ export default function AnalyticsPage() {
                 </h2>
                 <p className="text-gray-500 text-sm mt-1">Performance by meal type</p>
               </div>
-              <CardContent className="p-5 flex-1 min-h-[300px]">
+              <CardContent className="p-5 flex-1 min-h-75">
                 <ResponsiveContainer width="100%" height="100%">
                   <RadarChart cx="50%" cy="50%" outerRadius="70%" data={breakdownData}>
                     <PolarGrid stroke="#e2e8f0" />

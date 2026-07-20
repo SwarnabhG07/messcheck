@@ -149,7 +149,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       )}
 
       {/* Sidebar */}
-      <aside className={`bg-white border-r border-gray-100 flex flex-col py-6 transition-all duration-300 z-[60] h-full shrink-0 ${isSidebarCollapsed ? "relative w-20" : "absolute left-0 top-0 md:relative w-64 shadow-[4px_0_24px_rgba(0,0,0,0.05)] md:shadow-none"}`}>
+      <aside className={`bg-white border-r border-gray-100 flex flex-col py-6 transition-all duration-300 z-60 h-full shrink-0 ${isSidebarCollapsed ? "relative w-20" : "absolute left-0 top-0 md:relative w-64 shadow-[4px_0_24px_rgba(0,0,0,0.05)] md:shadow-none"}`}>
         <div className={`flex items-center mb-6 mt-2 ${isSidebarCollapsed ? "flex-col gap-4 justify-center px-0" : "justify-between px-4"}`}>
           <div className="flex items-center gap-2">
             <img src="/spoon-and-fork-stroke-rounded.svg" alt="MessCheck Logo" className="w-7 h-7" />
@@ -216,7 +216,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     <span className="hidden md:inline text-sm">Write Announcement</span>
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px] rounded-2xl border-gray-100 shadow-[0_8px_30px_-6px_rgba(0,0,0,0.12)]">
+                <DialogContent className="sm:max-w-106.25 rounded-2xl border-gray-100 shadow-[0_8px_30px_-6px_rgba(0,0,0,0.12)]">
                   <DialogHeader>
                     <DialogTitle className="text-xl font-bold text-gray-900">New Announcement</DialogTitle>
                     <DialogDescription className="text-gray-500">
@@ -240,7 +240,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                           {newContent.length}/500
                         </span>
                       </div>
-                      <Textarea id="content" placeholder="Write your announcement here..." className="rounded-lg border-gray-200 min-h-[100px] max-h-[150px] overflow-y-auto focus-visible:ring-amber-500 w-full max-w-full break-words break-all" value={newContent} onChange={(e) => setNewContent(e.target.value)} maxLength={500} style={{ fieldSizing: 'fixed' } as any} />
+                      <Textarea id="content" placeholder="Write your announcement here..." className="rounded-lg border-gray-200 min-h-25 max-h-37.5 overflow-y-auto focus-visible:ring-amber-500 w-full max-w-full wrap-break-word break-all" value={newContent} onChange={(e) => setNewContent(e.target.value)} maxLength={500} style={{ fieldSizing: 'fixed' } as any} />
                     </div>
                   </div>
                   <DialogFooter>
@@ -270,7 +270,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     {announcements.filter(a => !lastReadAt || new Date(a.createdAt) > lastReadAt).length} New
                   </span>
                 </div>
-                <div className="flex flex-col max-h-[300px] overflow-y-auto">
+                <div className="flex flex-col max-h-75 overflow-y-auto">
                   {announcements.length === 0 ? (
                     <div className="p-4 text-center text-sm text-gray-500">No announcements yet</div>
                   ) : announcements.slice(0, 3).map((announcement) => {
@@ -279,7 +279,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                       <Link key={announcement._id} href="/announcements" className="block">
                         <div className={`px-4 py-3 border-b border-gray-50 flex flex-col gap-1 cursor-pointer transition-colors ${isUnread ? 'bg-amber-50/30 hover:bg-amber-50/50' : 'hover:bg-slate-50'}`}>
                           <div className="flex justify-between items-start gap-2">
-                            <span className={`text-sm font-medium break-words break-all line-clamp-2 ${isUnread ? 'text-gray-900' : 'text-gray-700'}`}>{announcement.title}</span>
+                            <span className={`text-sm font-medium wrap-break-word break-all line-clamp-2 ${isUnread ? 'text-gray-900' : 'text-gray-700'}`}>{announcement.title}</span>
                             {isUnread && <span className="w-1.5 h-1.5 rounded-full bg-amber-600 mt-1.5 shrink-0" />}
                           </div>
                           <span className="text-xs text-gray-500">{dayjs(announcement.createdAt).format('MMM D, h:mm A')}</span>

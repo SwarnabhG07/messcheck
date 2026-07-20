@@ -279,7 +279,7 @@ export default function MenuManagerPage() {
             <Button 
               onClick={handleUpload}
               disabled={!file || status === "UPLOADING" || status === "PROCESSING"}
-              className="bg-amber-600 text-white hover:bg-amber-700 font-medium min-w-[160px]"
+              className="bg-amber-600 text-white hover:bg-amber-700 font-medium min-w-40"
             >
               {status === "UPLOADING" && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
               {status === "PROCESSING" && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
@@ -402,12 +402,12 @@ export default function MenuManagerPage() {
                 {tableData.map((row, rowIndex) => (
                   <tr key={rowIndex} className="border-b border-gray-100 last:border-0 hover:bg-gray-50/50 transition-colors">
                     {row.map((cell, colIndex) => (
-                      <td key={colIndex} className={`p-1 border border-gray-100 align-top ${colIndex === 0 ? "w-20 md:w-32 min-w-[80px]" : "min-w-[160px] md:min-w-[200px]"}`}>
+                      <td key={colIndex} className={`p-1 border border-gray-100 align-top ${colIndex === 0 ? "w-20 md:w-32 min-w-20" : "min-w-40 md:min-w-50"}`}>
                         <textarea
                           value={cell}
                           readOnly={userRole !== "mess_secretary"}
                           onChange={(e) => updateCell(rowIndex, colIndex, e.target.value)}
-                          className={`w-full min-h-[100px] px-2 py-2 text-sm bg-transparent border-transparent ${userRole === "mess_secretary" ? "focus:border-orange-500 focus:ring-1 focus:ring-orange-500" : ""} rounded outline-none text-gray-700 font-medium transition-all resize-y`}
+                          className={`w-full min-h-25 px-2 py-2 text-sm bg-transparent border-transparent ${userRole === "mess_secretary" ? "focus:border-orange-500 focus:ring-1 focus:ring-orange-500" : ""} rounded outline-none text-gray-700 font-medium transition-all resize-y`}
                         />
                       </td>
                     ))}

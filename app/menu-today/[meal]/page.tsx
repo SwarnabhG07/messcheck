@@ -378,7 +378,7 @@ export default function MealDetailsPage(props: { params: Promise<{ meal: string 
                           placeholder="How was the food?" 
                           value={reviewText}
                           onChange={(e) => setReviewText(e.target.value)}
-                          className="resize-none h-28 max-h-[150px] overflow-y-auto rounded-xl border-gray-200 focus:ring-blue-500 focus:border-blue-500 bg-gray-50/50 p-3 text-sm w-full max-w-full break-words break-all"
+                          className="resize-none h-28 max-h-37.5 overflow-y-auto rounded-xl border-gray-200 focus:ring-blue-500 focus:border-blue-500 bg-gray-50/50 p-3 text-sm w-full max-w-full wrap-break-word break-all"
                           style={{ fieldSizing: 'fixed' } as any}
                           maxLength={500}
                         />
@@ -434,7 +434,7 @@ export default function MealDetailsPage(props: { params: Promise<{ meal: string 
                         </div>
                         
                         <div className="ml-13 mb-3">
-                          <p className={`text-sm leading-relaxed break-words break-all ${hasFeedback ? 'text-gray-600' : 'text-gray-400 italic'} ${expandedReviews.has(review._id || i.toString()) ? '' : 'line-clamp-3'}`}>
+                          <p className={`text-sm leading-relaxed wrap-break-word break-all ${hasFeedback ? 'text-gray-600' : 'text-gray-400 italic'} ${expandedReviews.has(review._id || i.toString()) ? '' : 'line-clamp-3'}`}>
                             {hasFeedback ? `"${review.text}"` : "(No written feedback provided)"}
                           </p>
                           {hasFeedback && review.text.length > 80 && (

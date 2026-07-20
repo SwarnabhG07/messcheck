@@ -84,7 +84,7 @@ export default function OnboardingPage() {
         <div className="absolute -bottom-40 -left-40 w-125 h-125 rounded-full bg-amber-500/5 blur-3xl" />
       </div>
 
-      <div className="relative z-10 w-full max-w-[500px]">
+      <div className="relative z-10 w-full max-w-125">
         {/* Header/Greeting */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold tracking-tight text-[#1e293b] mb-2">

@@ -340,7 +340,7 @@ export default function ReviewsPage() {
                     id="text"
                     {...register("text")}
                     placeholder="How was the food?"
-                    className="mt-1.5 rounded-lg bg-[#f0f4f8] border-none focus-visible:ring-black/10 min-h-25 max-h-[150px] overflow-y-auto text-sm resize-none w-full max-w-full break-words break-all"
+                    className="mt-1.5 rounded-lg bg-[#f0f4f8] border-none focus-visible:ring-black/10 min-h-25 max-h-37.5 overflow-y-auto text-sm resize-none w-full max-w-full wrap-break-word break-all"
                     style={{ fieldSizing: 'fixed' } as any}
                     maxLength={500}
                   />
@@ -386,7 +386,7 @@ export default function ReviewsPage() {
                   </div>
                 </div>
                 <div className="mb-3">
-                  <p className={`text-gray-500 text-[14px] leading-relaxed break-words break-all ${expandedReviews.has(review._id || idx.toString()) ? '' : 'line-clamp-3'}`}>
+                  <p className={`text-gray-500 text-[14px] leading-relaxed wrap-break-word break-all ${expandedReviews.has(review._id || idx.toString()) ? '' : 'line-clamp-3'}`}>
                     {review.text}
                   </p>
                   {review.text && review.text.length > 80 && (
