@@ -48,7 +48,7 @@ export async function POST(req: Request) {
 
     if (!response.ok) {
       const errText = await response.text();
-      console.error("FastAPI Error:", errText instanceof Error ? errText.message : String(errText));
+      console.error("FastAPI Error:", errText);
       return NextResponse.json(
         { error: "An error occurred while communicating with the OCR service" },
         { status: response.status === 413 ? 413 : response.status } // In case of size limit or other
@@ -88,7 +88,7 @@ export async function GET(req: Request) {
       const res = await fetch(`${baseUrl}/download/${taskId}`);
       if (!res.ok) {
           const err = await res.text();
-          console.error("Failed to download OCR CSV:", err instanceof Error ? err.message : String(err));
+          console.error("Failed to download OCR CSV:", err);
           throw new Error("Failed to download document");
       }
       const csvText = await res.text();
