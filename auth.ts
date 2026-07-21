@@ -123,7 +123,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           session.user.name = token.name;
         }
         
-        // Freshly fetch role from DB to ensure privileges haven't been revoked
         try {
           const client = await clientPromise;
           const db = client.db("messcheck");
@@ -132,13 +131,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             (session.user as any).role = dbUser.role || "student";
             (session.user as any).onboarded = dbUser.onboarded || false;
           } else {
-            // User was deleted from database, invalidate the session
-            return {} as any;
+            (session.user as any).role = token.role || "student";
+            (session.user as any).onboarded = token.onboarded || false;
           }
         } catch (error) {
           console.error("Error refreshing role in session callback:", error);
-          // If DB fails, we should be cautious, but returning empty might break app during DB blips.
-          // We'll fall back to token for now if there's a DB error, but not if user is explicitly missing.
           (session.user as any).role = token.role || "student";
           (session.user as any).onboarded = token.onboarded || false;
         }

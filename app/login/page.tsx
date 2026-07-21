@@ -39,8 +39,7 @@ export default function LoginPage() {
       if (res?.error) {
         setError("Invalid email or password");
       } else {
-        router.push("/");
-        router.refresh();
+        window.location.href = "/";
       }
     } catch {
       setError("Something went wrong. Please try again.");
