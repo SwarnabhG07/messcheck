@@ -103,6 +103,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
 
       if (trigger === "update") {
+        if (session) {
+          token.onboarded = session.onboarded ?? token.onboarded;
+          token.name = session.name ?? token.name;
+        }
         // Securely fetch the latest data from the DB instead of trusting client payload
         try {
           const client = await clientPromise;

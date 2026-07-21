@@ -6,6 +6,13 @@ export const authConfig = {
   },
   providers: [], // We add the actual providers in auth.ts to keep this edge-safe
   callbacks: {
+    session({ session, token }) {
+      if (session.user && token) {
+        (session.user as any).onboarded = token.onboarded;
+        (session.user as any).role = token.role;
+      }
+      return session;
+    },
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
       const isOnboardingRoute = nextUrl.pathname === "/onboarding";
