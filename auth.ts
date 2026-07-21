@@ -8,6 +8,7 @@ import { checkRateLimit } from "@/app/lib/rateLimit";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: MongoDBAdapter(clientPromise, { databaseName: "messcheck" }),
+  trustHost: true,
 
   // Use JWT sessions (required when using Credentials provider)
   session: {
@@ -25,6 +26,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      allowDangerousEmailAccountLinking: true,
     }),
 
     // Email + Password
