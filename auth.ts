@@ -46,32 +46,39 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           return null;
         }
 
+        const cleanEmail = email.trim().toLowerCase();
+
         // Rate limit failed login attempts (10 per 15 minutes per email)
-        if (!checkRateLimit(`login_${email}`, 10, 15 * 60 * 1000)) {
+        if (!checkRateLimit(`login_${cleanEmail}`, 10, 15 * 60 * 1000)) {
           throw new Error("Too many login attempts. Please try again later.");
         }
 
-        // Look up the user in MongoDB
-        const client = await clientPromise;
-        const db = client.db("messcheck");
-        const user = await db.collection("users").findOne({ email });
+        try {
+          const client = await clientPromise;
+          const db = client.db("messcheck");
+          const user = await db.collection("users").findOne({
+            email: { $regex: new RegExp(`^${cleanEmail}$`, "i") },
+          });
 
-        if (!user) {
+          if (!user || !user.password) {
+            return null;
+          }
+
+          const isValid = await bcrypt.compare(password, user.password);
+
+          if (!isValid) {
+            return null;
+          }
+
+          return {
+            id: user._id.toString(),
+            name: user.name,
+            email: user.email,
+          };
+        } catch (err) {
+          console.error("Auth authorize error:", err);
           return null;
         }
-
-        // Compare passwords
-        const isValid = await bcrypt.compare(password, user.password);
-
-        if (!isValid) {
-          return null;
-        }
-
-        return {
-          id: user._id.toString(),
-          name: user.name,
-          email: user.email,
-        };
       },
     }),
   ],
