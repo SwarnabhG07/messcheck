@@ -5,8 +5,10 @@ import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import clientPromise from "@/app/lib/mongodb";
 import bcrypt from "bcryptjs";
 import { checkRateLimit } from "@/app/lib/rateLimit";
+import { authConfig } from "./auth.config";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  ...authConfig,
   adapter: MongoDBAdapter(clientPromise, { databaseName: "messcheck" }),
   trustHost: true,
 
@@ -14,11 +16,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   session: {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 days
-  },
-
-  // Custom auth pages
-  pages: {
-    signIn: "/login",
   },
 
   providers: [
@@ -84,6 +81,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   ],
 
   callbacks: {
+    ...authConfig.callbacks,
     async jwt({ token, user, trigger, session }) {
       if (user) {
         token.id = user.id;
