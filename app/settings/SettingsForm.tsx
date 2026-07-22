@@ -157,10 +157,55 @@ export default function SettingsForm({ initialData }: SettingsFormProps) {
               </Label>
               <Input
                 id="college"
+                type="text"
+                list="settings-colleges-list"
                 placeholder="e.g. IIT Bombay"
                 {...register("college")}
                 className="w-full h-11 rounded-xl bg-gray-50 border-gray-200 focus-visible:ring-black/10 text-sm"
               />
+              <datalist id="settings-colleges-list">
+                {[
+                  "IIT Madras (Chennai)", "IIT Delhi", "IIT Bombay (Mumbai)", "IIT Kanpur", "IIT Kharagpur", 
+                  "IIT Roorkee", "IIT Guwahati", "IIT Hyderabad", "IIT Indore", "IIT (BHU) Varanasi", 
+                  "IIT (ISM) Dhanbad", "IIT Gandhinagar", "IIT Ropar", "IIT Jodhpur", "IIT Mandi", 
+                  "IIT Patna", "IIT Bhubaneswar", "IIT Tirupati", "IIT Palakkad", "IIT Dharwad", 
+                  "IIT Goa", "IIT Bhilai", "IIT Jammu", "NIT Tiruchirappalli (Trichy)", "NIT Karnataka (Surathkal)", 
+                  "NIT Rourkela", "NIT Warangal", "NIT Calicut", "VNIT Nagpur", "NIT Durgapur", "NIT Silchar", 
+                  "MNIT Jaipur", "MNNIT Allahabad (Prayagraj)", "NIT Kurukshetra", "NIT Jalandhar", 
+                  "MANIT Bhopal", "NIT Meghalaya", "NIT Raipur", "NIT Agartala", "NIT Goa", "NIT Jamshedpur", 
+                  "NIT Patna", "NIT Hamirpur", "NIT Puducherry", "NIT Manipur", "NIT Arunachal Pradesh", 
+                  "NIT Srinagar", "NIT Delhi", "NIT Mizoram", "NIT Nagaland", "NIT Sikkim", "NIT Uttarakhand", 
+                  "NIT Andhra Pradesh (Tadepalligudem)", "IIEST Shibpur (Shibpur, West Bengal)", "ABV-IIITM Gwalior", 
+                  "IIIT Allahabad", "IIITDM Jabalpur", "IIITDM Kancheepuram", "IIIT Sri City (Chittoor)", 
+                  "IIIT Guwahati", "IIIT Vadodara", "IIIT Kota", "IIIT Tiruchirappalli", "IIIT Una", 
+                  "IIIT Sonepat", "IIIT Kalyani", "IIIT Lucknow", "IIIT Dharwad", "IIITDM Kurnool", 
+                  "IIIT Kottayam", "IIIT Manipur", "IIIT Nagpur", "IIIT Pune", "IIIT Ranchi", "IIIT Surat", 
+                  "IIIT Bhopal", "IIIT Bhagalpur", "IIIT Agartala", "IIIT Raichur", "IIIT Vadodara (International Diu Campus)", 
+                  "Assam University (Silchar)", "BIT Mesra", "BIT Deoghar (Off-Campus)", "BIT Patna (Off-Campus)", 
+                  "Gurukula Kangri Vishwavidyalaya (Haridwar)", "Indian Institute of Carpet Technology (Bhadohi)", 
+                  "Institute of Infrastructure Technology Research and Management (IITRAM, Ahmedabad)", 
+                  "Guru Ghasidas Vishwavidyalaya (Bilaspur)", "J.K. Institute of Applied Physics & Technology (Prayagraj)", 
+                  "National Institute of Electronics and Information Technology (Aurangabad)", 
+                  "National Institute of Advanced Manufacturing Technology (NIAMT, Ranchi)", 
+                  "Sant Longowal Institute of Engineering and Technology (SLIET, Punjab)", "Mizoram University (Aizawl)", 
+                  "Tezpur University (Assam)", "Shri Mata Vaishno Devi University (Katra)", 
+                  "Dr. SPM International Institute of Information Technology (Naya Raipur)", "University of Hyderabad", 
+                  "Punjab Engineering College (PEC, Chandigarh)", "Jawaharlal Nehru University (JNU, Delhi)", 
+                  "International Institute of Information Technology (IIIT Bhubaneswar)", "Central Institute of Technology (Kokrajhar, Assam)", 
+                  "Puducherry Technological University", "Ghani Khan Choudhury Institute of Engineering and Technology (Malda)", 
+                  "Central University of Rajasthan", "National Institute of Food Technology Entrepreneurship and Management (NIFTEM, Kundli)", 
+                  "National Institute of Food Technology, Entrepreneurship and Management (NIFTEM, Thanjavur)", 
+                  "North Eastern Regional Institute of Science and Technology (NERIST, Itanagar)", 
+                  "Indian Institute of Handloom Technology (Varanasi)", "Chhattisgarh Swami Vivekanand Technical University (Bhilai)", 
+                  "Institute of Chemical Technology (ICT, Bhubaneswar)", "North-Eastern Hill University (Shillong)", 
+                  "Central University of Jammu", "Dr. Harisingh Gour Vishwavidyalaya (Sagar)", "Central University of Haryana", 
+                  "Indian Institute of Handloom Technology (Salem)", "Gati Shakti Vishwavidyalaya (Vadodara)", 
+                  "School of Planning and Architecture (SPA, Bhopal)", "School of Planning and Architecture (SPA, New Delhi)", 
+                  "School of Planning and Architecture (SPA, Vijayawada)"
+                ].map(college => (
+                  <option key={college} value={college}>{college}</option>
+                ))}
+              </datalist>
               {errors.college && <p className="text-red-500 text-xs mt-1 font-medium">{errors.college.message}</p>}
             </div>
           </div>
