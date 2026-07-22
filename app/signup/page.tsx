@@ -10,6 +10,7 @@ import * as z from "zod";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Utensils } from "lucide-react";
 
 const signupSchema = z.object({
   name: z.string().min(2, "Full Name is required"),
@@ -88,7 +89,7 @@ export default function SignupPage() {
         {/* Header/Logo */}
         <div className="text-center mb-8">
           <div className="w-16 h-16 bg-amber-600 rounded-2xl mx-auto mb-6 flex items-center justify-center shadow-xl shadow-amber-600/20 transform rotate-3">
-            <span className="text-white font-bold text-2xl -rotate-3">MC</span>
+            <Utensils className="w-8 h-8 text-white -rotate-3" />
           </div>
           <h1 className="text-3xl font-bold tracking-tight text-gray-900 mb-2">
             Create an Account
