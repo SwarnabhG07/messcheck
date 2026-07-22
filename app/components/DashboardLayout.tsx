@@ -140,16 +140,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="flex h-screen bg-slate-50 font-sans overflow-hidden relative">
-      {/* Mobile Overlay */}
-      {!isSidebarCollapsed && (
-        <div 
-          className="fixed inset-0 bg-black/20 z-50 md:hidden backdrop-blur-sm"
-          onClick={() => setIsSidebarCollapsed(true)}
-        />
-      )}
-
       {/* Sidebar */}
-      <aside className={`bg-white border-r border-gray-100 flex flex-col py-6 transition-all duration-300 z-60 h-full shrink-0 ${isSidebarCollapsed ? "relative w-20" : "absolute left-0 top-0 md:relative w-64 shadow-[4px_0_24px_rgba(0,0,0,0.05)] md:shadow-none"}`}>
+      <aside className={`hidden md:flex bg-white border-r border-gray-100 flex-col py-6 transition-all duration-300 z-60 h-full shrink-0 ${isSidebarCollapsed ? "relative w-20" : "relative w-64"}`}>
         <div className={`flex items-center mb-6 mt-2 ${isSidebarCollapsed ? "flex-col gap-4 justify-center px-0" : "justify-between px-4"}`}>
           <div className="flex items-center gap-2">
             <img src="/spoon-and-fork-stroke-rounded.svg" alt="MessCheck Logo" className="w-7 h-7" />
@@ -194,7 +186,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto">
+      <main className="flex-1 overflow-y-auto pb-16 md:pb-0">
         {/* Header */}
         <header className="sticky top-0 z-50 flex justify-between items-start px-4 md:px-8 pt-6 pb-4 bg-slate-50/80 backdrop-blur-md">
           <div className="shrink min-w-0 pr-2">
@@ -313,6 +305,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48 rounded-xl p-1.5 shadow-[0_8px_30px_-6px_rgba(0,0,0,0.12)] border-gray-100">
+                {userRole === "supreme_leader" && (
+                  <DropdownMenuItem asChild className="rounded-lg cursor-pointer md:hidden">
+                    <Link href="/admin" className="flex items-center gap-3 px-3 py-2 text-sm text-gray-600">
+                      <ShieldAlert className="w-4 h-4" />
+                      Admin
+                    </Link>
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem asChild className="rounded-lg cursor-pointer">
                   <Link href="/settings" className="flex items-center gap-3 px-3 py-2 text-sm text-gray-600">
                     <Settings className="w-4 h-4" />
@@ -336,6 +336,40 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
         {children}
       </main>
+
+      {/* Mobile Bottom Navigation */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center h-16 z-50 px-2 pb-safe shadow-[0_-4px_24px_rgba(0,0,0,0.05)]">
+        {filteredMenuItems
+          .filter((item) => item.name !== "Settings" && item.name !== "Admin")
+          .sort((a, b) => {
+            const order = ["Analytics", "Mess Menu", "Dashboard", "Today's Menu", "View Reviews"];
+            return order.indexOf(a.name) - order.indexOf(b.name);
+          })
+          .map((item) => {
+            const isActive =
+              pathname === item.href ||
+              (pathname === "/" && item.name === "Dashboard") ||
+              (pathname.startsWith("/reviews") && item.name === "View Reviews");
+            
+            const mobileName = item.name === "View Reviews" ? "Reviews" : 
+                               item.name === "Today's Menu" ? "Today" : 
+                               item.name === "Mess Menu" ? "Menu" : 
+                               item.name;
+
+            return (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={`flex flex-col items-center justify-center w-full h-full space-y-1 ${
+                  isActive ? "text-amber-600" : "text-gray-500 hover:text-gray-900"
+                }`}
+              >
+                <item.icon className={`w-5 h-5 ${isActive ? "stroke-[2.5px]" : "stroke-2"}`} />
+                <span className="text-[10px] font-medium leading-none">{mobileName}</span>
+              </Link>
+            );
+          })}
+      </nav>
     </div>
   );
 }
