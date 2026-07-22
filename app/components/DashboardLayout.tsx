@@ -188,7 +188,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto pb-16 md:pb-0">
         {/* Header */}
-        <header className="sticky top-0 z-50 flex justify-between items-start px-4 md:px-8 pt-6 pb-4 bg-slate-50/80 backdrop-blur-md">
+        <header className="sticky top-0 z-50 flex justify-between items-start px-4 md:px-8 pt-3 pb-3 md:pt-6 md:pb-4 bg-slate-50/80 backdrop-blur-md">
           <div className="shrink min-w-0 pr-2">
             <h1 className="text-xl md:text-2xl font-bold text-[#1e293b] tracking-tight leading-tight truncate">
               {headerTitle}
@@ -320,14 +320,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator className="bg-gray-100 mx-2" />
-                <DropdownMenuItem 
-                  onClick={() => signOut()}
-                  className="rounded-lg cursor-pointer text-red-500 focus:text-red-600 focus:bg-red-50"
-                >
-                  <div className="flex items-center gap-3 px-1 py-1 text-sm w-full">
+                <DropdownMenuItem asChild className="rounded-lg cursor-pointer text-red-500 focus:text-red-600 focus:bg-red-50">
+                  <button onClick={() => signOut()} className="flex items-center gap-3 px-3 py-2 text-sm w-full">
                     <LogOut className="w-4 h-4" />
                     Sign Out
-                  </div>
+                  </button>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -338,7 +335,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </main>
 
       {/* Mobile Bottom Navigation */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center h-16 z-50 px-2 pb-safe shadow-[0_-4px_24px_rgba(0,0,0,0.05)]">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md border-t border-gray-200 flex justify-around items-center h-16 z-50 px-2 pb-safe shadow-[0_-4px_24px_rgba(0,0,0,0.05)]">
         {filteredMenuItems
           .filter((item) => item.name !== "Settings" && item.name !== "Admin")
           .sort((a, b) => {
