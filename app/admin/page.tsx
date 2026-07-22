@@ -235,13 +235,13 @@ export default function AdminPage() {
                     </td>
                     <td className="py-4 px-2 text-sm text-gray-700">
                       <div className="flex items-center">
-                        <Building className="w-4 h-4 mr-2 text-gray-400" />
+                        <Building className="hidden md:block w-4 h-4 mr-2 text-gray-400 shrink-0" />
                         {sec.secretaryForCollege || 'Not set'}
                       </div>
                     </td>
                     <td className="py-4 px-2 text-sm text-gray-700">
                       <div className="flex items-center">
-                        <Home className="w-4 h-4 mr-2 text-gray-400" />
+                        <Home className="hidden md:block w-4 h-4 mr-2 text-gray-400 shrink-0" />
                         {sec.secretaryForHostel || 'Not set'}
                       </div>
                     </td>
